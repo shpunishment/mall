@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallUserCouponMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallUserCoupon">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
+    <result column="get_type" jdbcType="INTEGER" property="getType" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="use_time" jdbcType="TIMESTAMP" property="useTime" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallUserCouponVo">
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+
+    <association columnPrefix="c_" property="couponVo" resultMap="com.shpun.mall.common.mapper.MallCouponMapper.VoResultMap" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, create_time, user_id, coupon_id, get_type, `status`, start_time, end_time, use_time
+    order_id
+  </sql>
+
+  <sql id="Vo_Column_List">
+    id, create_time, user_id, coupon_id, `status`, start_time, end_time
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mall_user_coupon
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mall_user_coupon
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.shpun.mall.common.model.MallUserCoupon">
+    insert into mall_user_coupon
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="couponId != null">
+        coupon_id,
+      </if>
+      <if test="getType != null">
+        get_type,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="useTime != null">
+        use_time,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="couponId != null">
+        #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="getType != null">
+        #{getType,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useTime != null">
+        #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallUserCoupon">
+    update mall_user_coupon
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="couponId != null">
+        coupon_id = #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="getType != null">
+        get_type = #{getType,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useTime != null">
+        use_time = #{useTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getVoListByFilter" resultMap="VoResultMap">
+    SELECT
+	  c.`name` as c_name,
+	  c.`desc` as c_desc,
+	  c.min_price as c_min_price,
+	  c.discount as c_discount,
+	  uc.create_time,
+	  uc.coupon_id,
+	  uc.`status`,
+	  uc.start_time,
+	  uc.end_time
+    FROM
+	  mall_coupon AS c
+	  LEFT JOIN mall_user_coupon AS uc ON uc.coupon_id = c.coupon_id
+    WHERE c.deleted = 0
+	  AND c.`status` = 1
+	  AND uc.user_id = #{userId,jdbcType=INTEGER}
+	  AND uc.`status` = #{status,jdbcType=INTEGER}
+  </select>
+
+  <select id="getAvailableCouponIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select coupon_id
+    from mall_user_coupon
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+</mapper>

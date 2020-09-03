@@ -1,0 +1,36 @@
+
+server:
+  port: 8200
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:4306/mall_sun?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
+
+    # 使用阿里的Druid连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    # druid配置
+    druid:
+      # 初始化大小
+      initial-size: 5
+      # 最小
+      min-idle: 10
+      # 最大
+      max-active: 30
+      # 配置获取连接等待超时的时间
+      max-wait: 6000
+
+  security:
+    user:
+      name: admin
+      password: $2a$10$OVaK3MyIM8.8IhdeFFRzau9GP4ySpJBXghN61K06ziDO9GO6YDTU6
+
+mybatis:
+  typeAliasesPackage: com.shpun.mall.common.model
+  mapper-locations: classpath:mapper/**.xml
+
+logging:
+  level:
+    com.shpun: debug

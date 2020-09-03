@@ -1,0 +1,40 @@
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:4306/mall_sun?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: root
+
+    # 使用阿里的Druid连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    # druid配置
+    druid:
+      # 初始化大小
+      initial-size: 5
+      # 最小
+      min-idle: 10
+      # 最大
+      max-active: 30
+      # 配置获取连接等待超时的时间
+      max-wait: 6000
+
+  redis:
+    # Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
+    database: 0
+    host: localhost
+    port: 6379
+    # 连接密码（默认为空）
+    password:
+    # 连接超时时间（毫秒)
+    timeout: 10000ms
+    lettuce:
+      pool:
+        # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-active: 8
+        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+        max-wait: -1
+        # 连接池中的最大空闲连接 默认 8
+        max-idle: 8
+        # 连接池中的最小空闲连接 默认 0
+        min-idle: 0

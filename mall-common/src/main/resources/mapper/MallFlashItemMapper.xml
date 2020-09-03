@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallFlashItemMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallFlashItem">
+    <id column="flash_item_id" jdbcType="INTEGER" property="flashItemId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_id" jdbcType="INTEGER" property="createId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_id" jdbcType="INTEGER" property="updateId" />
+    <result column="flash_id" jdbcType="INTEGER" property="flashId" />
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="sales" jdbcType="INTEGER" property="sales" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="limit" jdbcType="INTEGER" property="limit" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    flash_item_id, create_time, create_id, update_time, update_id, flash_id, product_id,
+    stock, sales, price, `limit`
+  </sql>
+
+  <sql id="Vo_Column_List">
+    flash_item_id, flash_id, product_id, stock, sales, price, `limit`
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_flash_item
+    where flash_item_id = #{flashItemId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_flash_item
+    set deleted = 1
+    where flash_item_id = #{flashItemId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="flashItemId" parameterType="com.shpun.mall.common.model.MallFlashItem">
+    insert into mall_flash_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateId != null">
+        update_id,
+      </if>
+      <if test="flashId != null">
+        flash_id,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="stock != null">
+        stock,
+      </if>
+      <if test="sales != null">
+        sales,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="limit != null">
+        `limit`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null">
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="flashId != null">
+        #{flashId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null">
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="sales != null">
+        #{sales,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="limit != null">
+        #{limit,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallFlashItem">
+    update mall_flash_item
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null">
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="flashId != null">
+        flash_id = #{flashId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="stock != null">
+        stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="sales != null">
+        sales = #{sales,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="limit != null">
+        `limit` = #{limit,jdbcType=INTEGER},
+      </if>
+    </set>
+    where flash_item_id = #{flashItemId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getFlashByProductId" resultMap="BaseResultMap">
+    SELECT
+      flash_item.flash_item_id,
+      flash_item.stock,
+      flash_item.sales,
+      flash_item.price,
+      flash_item.`limit`
+    FROM
+        mall_flash AS flash
+        LEFT JOIN mall_flash_item AS flash_item ON flash_item.flash_id = flash.flash_id
+    WHERE
+      flash.`year` = YEAR ( now( ) )
+      AND flash.`month` = MONTH ( now( ) )
+      AND flash.`day` = DAY ( now( ) )
+      AND flash.`hour` = HOUR ( now( ) )
+      AND flash.deleted = 0
+      AND flash.`minute` <![CDATA[<=]]> MINUTE ( now( ) )
+      AND flash.`minute` <![CDATA[>]]> ( MINUTE ( now( ) ) - #{flashLimitMins,jdbcType=INTEGER} )
+      AND flash_item.product_id = #{productId,jdbcType=INTEGER} and flash_item.deleted = 0
+  </select>
+
+  <select id="lockStock" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select flash_item_id, flash_id, stock, sales, price
+    from mall_flash_item
+    where flash_item_id = #{flashItemId,jdbcType=INTEGER}
+    for update
+  </select>
+
+  <select id="getByFlashId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_flash_item
+    where flash_id = #{flashId,jdbcType=INTEGER}
+  </select>
+
+</mapper>

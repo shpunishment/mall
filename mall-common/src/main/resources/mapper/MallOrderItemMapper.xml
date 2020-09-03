@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallOrderItemMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallOrderItem">
+    <id column="order_item_id" jdbcType="INTEGER" property="orderItemId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="pic" jdbcType="INTEGER" property="pic" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="flash_item_id" jdbcType="INTEGER" property="flashItemId" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallOrderItemVo">
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="pic" jdbcType="INTEGER" property="pic" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    order_item_id, order_id, order_number, product_id, product_name, pic, price, quantity, flash_item_id
+  </sql>
+
+  <sql id="Vo_Column_List">
+    product_id, product_name, pic, price, quantity
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_order_item
+    where order_item_id = #{orderItemId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mall_order_item
+    where order_item_id = #{orderItemId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.shpun.mall.common.model.MallOrderItem">
+    insert into mall_order_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderItemId != null">
+        order_item_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="orderNumber != null">
+        order_number,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="productName != null">
+        product_name,
+      </if>
+      <if test="pic != null">
+        pic,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="quantity != null">
+        quantity,
+      </if>
+      <if test="flashItemId != null">
+        flash_item_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderItemId != null">
+        #{orderItemId,jdbcType=INTEGER},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="productName != null">
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null">
+        #{pic,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="flashItemId != null">
+        #{flashItemId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallOrderItem">
+    update mall_order_item
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
+      <if test="orderNumber != null">
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="productName != null">
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="quantity != null">
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="flashItemId != null">
+        flash_item_id = #{flashItemId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where order_item_id = #{orderItemId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into mall_order_item (order_id, order_number, product_id, product_name, pic, price, quantity, flash_item_id) values
+    <foreach item="item" collection="orderItemList" index="index" separator=",">
+      (#{item.orderId,jdbcType=INTEGER}, #{item.orderNumber,jdbcType=VARCHAR},#{item.productId,jdbcType=INTEGER},
+      #{item.productName,jdbcType=VARCHAR}, #{item.pic,jdbcType=INTEGER},#{item.price,jdbcType=DECIMAL},
+      #{item.quantity,jdbcType=INTEGER}, #{item.flashItemId,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+
+  <select id="getVoByOrderId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_order_item
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getByOrderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_order_item
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getLimitVoListByOrderId" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_order_item
+    where order_id = #{orderId,jdbcType=INTEGER}
+    limit #{limit,jdbcType=INTEGER}
+  </select>
+
+  <select id="getLimitVoListBySearch" resultMap="VoResultMap">
+    SELECT
+	  A.product_id, A.product_name, A.pic, A.price, A.quantity
+    FROM
+	  ( SELECT <include refid="Vo_Column_List" />
+        FROM mall_order_item
+	    WHERE order_id = #{orderId,jdbcType=INTEGER}
+	      AND product_name LIKE CONCAT('%', #{productName}, '%')
+        LIMIT 3
+      ) A UNION
+    SELECT
+      B.product_id, B.product_name, B.pic, B.price, B.quantity
+    FROM
+	  ( SELECT <include refid="Vo_Column_List" />
+        FROM mall_order_item
+	    WHERE order_id = #{orderId,jdbcType=INTEGER}
+	      AND product_name NOT LIKE CONCAT('%', #{productName}, '%')
+        LIMIT 2
+      ) B
+  </select>
+
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallCartMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallCart">
+    <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallCartVo">
+    <id column="cart_id" jdbcType="INTEGER" property="cartId" />
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+
+    <association columnPrefix="p_" property="productVo" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    cart_id, create_time, update_time, user_id, product_id, quantity
+  </sql>
+
+  <sql id="Vo_Column_List">
+    cart_id, product_id, quantity
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_cart
+    where cart_id = #{cartId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_cart
+    set deleted = 1
+    where cart_id = #{cartId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="cartId" parameterType="com.shpun.mall.common.model.MallCart">
+    insert into mall_cart
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="quantity != null">
+        quantity,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="quantity != null">
+        #{quantity,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallCart">
+    update mall_cart
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="quantity != null">
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+    </set>
+    where cart_id = #{cartId,jdbcType=INTEGER}
+  </update>
+
+  <update id="deleteAllByUserId" parameterType="java.lang.Integer">
+    update mall_cart
+    set deleted = 1
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getByCartIdList" resultMap="BaseResultMap">
+    select product_id, quantity
+    from mall_cart
+    where deleted = 0 and cart_id in
+    <foreach item="cartId" collection="cartIdList" open="(" separator="," close=")">
+      #{cartId,jdbcType=INTEGER}
+    </foreach>
+  </select>
+
+  <update id="deleteBatch" parameterType="java.util.List">
+    update mall_cart
+    set deleted = 1
+    where cart_id in
+    <foreach item="cartId" collection="cartIdList" open="(" separator="," close=")">
+      #{cartId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+  <select id="getVoByUserId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    SELECT
+	  p.product_id as p_product_id,
+	  p.product_name as p_product_name,
+	  p.`desc` as p_desc,
+	  p.pic as p_pic,
+	  p.original_price as p_original_price,
+	  p.current_price as p_current_price,
+	  p.stock as p_stock,
+	  p.`limit` as p_limit,
+	  p.new_status as p_new_status,
+	  p.label as p_label,
+	  c.cart_id,
+	  c.product_id,
+	  c.quantity
+    FROM
+	  mall_cart AS c
+	  LEFT JOIN mall_product AS p ON p.product_id = c.product_id
+    WHERE c.user_id = #{userId,jdbcType=INTEGER}
+	  AND c.deleted = 0
+	  AND p.deleted = 0
+	  AND p.publish_status = 1
+    ORDER BY
+	  c.update_time DESC,
+	  c.create_time DESC
+  </select>
+
+  <select id="getVoByUserIdAndProductId" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_cart
+    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0 and product_id = #{productId,jdbcType=INTEGER}
+  </select>
+
+</mapper>

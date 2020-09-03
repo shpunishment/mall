@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallOrderMapper">
+  
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallOrder">
+    <id column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
+    <result column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="receive_name" jdbcType="VARCHAR" property="receiveName" />
+    <result column="receive_phone" jdbcType="VARCHAR" property="receivePhone" />
+    <result column="receive_address" jdbcType="VARCHAR" property="receiveAddress" />
+    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
+    <result column="delivery_price" jdbcType="DECIMAL" property="deliveryPrice" />
+    <result column="coupon_price" jdbcType="DECIMAL" property="couponPrice" />
+    <result column="total_price" jdbcType="DECIMAL" property="totalPrice" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="expect_time" jdbcType="VARCHAR" property="expectTime" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="delivery_man" jdbcType="VARCHAR" property="deliveryMan" />
+    <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
+    <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallOrderVo">
+    <id column="order_id" jdbcType="INTEGER" property="orderId" />
+    <result column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="receive_name" jdbcType="VARCHAR" property="receiveName" />
+    <result column="receive_phone" jdbcType="VARCHAR" property="receivePhone" />
+    <result column="receive_address" jdbcType="VARCHAR" property="receiveAddress" />
+    <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
+    <result column="delivery_price" jdbcType="DECIMAL" property="deliveryPrice" />
+    <result column="coupon_price" jdbcType="DECIMAL" property="couponPrice" />
+    <result column="total_price" jdbcType="DECIMAL" property="totalPrice" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="expect_time" jdbcType="VARCHAR" property="expectTime" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="delivery_man" jdbcType="VARCHAR" property="deliveryMan" />
+    <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
+    <result column="score" jdbcType="INTEGER" property="score" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    order_id, order_number, order_time, end_time, user_id, coupon_id, address_id, receive_name,
+    receive_phone, receive_address, product_price, delivery_price, coupon_price, total_price,
+    `status`, remark, expect_time, pay_type, pay_time, delivery_man, delivery_time, receive_time,
+    score, comment, comment_time
+  </sql>
+
+  <sql id="Vo_Column_List">
+    order_id, order_time, total_price, `status`
+  </sql>
+
+  <sql id="Vo_Detail_Column_List">
+    order_id, order_number, order_time, user_id, receive_name, receive_phone, receive_address,
+    product_price, delivery_price, coupon_price, total_price, `status`, remark, expect_time,
+    pay_type, pay_time, delivery_man, delivery_time, receive_time, score, comment
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mall_order
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_order
+    set deleted = 1
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="orderId" parameterType="com.shpun.mall.common.model.MallOrder">
+    insert into mall_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderNumber != null">
+        order_number,
+      </if>
+      <if test="orderTime != null">
+        order_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="couponId != null">
+        coupon_id,
+      </if>
+      <if test="addressId != null">
+        address_id,
+      </if>
+      <if test="receiveName != null">
+        receive_name,
+      </if>
+      <if test="receivePhone != null">
+        receive_phone,
+      </if>
+      <if test="receiveAddress != null">
+        receive_address,
+      </if>
+      <if test="productPrice != null">
+        product_price,
+      </if>
+      <if test="deliveryPrice != null">
+        delivery_price,
+      </if>
+      <if test="couponPrice != null">
+        coupon_price,
+      </if>
+      <if test="totalPrice != null">
+        total_price,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="expectTime != null">
+        expect_time,
+      </if>
+      <if test="payType != null">
+        pay_type,
+      </if>
+      <if test="payTime != null">
+        pay_time,
+      </if>
+      <if test="deliveryMan != null">
+        delivery_man,
+      </if>
+      <if test="deliveryTime != null">
+        delivery_time,
+      </if>
+      <if test="receiveTime != null">
+        receive_time,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="comment != null">
+        comment,
+      </if>
+      <if test="commentTime != null">
+        comment_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderNumber != null">
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="orderTime != null">
+        #{orderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="couponId != null">
+        #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="addressId != null">
+        #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveName != null">
+        #{receiveName,jdbcType=VARCHAR},
+      </if>
+      <if test="receivePhone != null">
+        #{receivePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveAddress != null">
+        #{receiveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="productPrice != null">
+        #{productPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryPrice != null">
+        #{deliveryPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="couponPrice != null">
+        #{couponPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="totalPrice != null">
+        #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null">
+        #{expectTime,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null">
+        #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="payTime != null">
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryMan != null">
+        #{deliveryMan,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryTime != null">
+        #{deliveryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveTime != null">
+        #{receiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="commentTime != null">
+        #{commentTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallOrder">
+    update mall_order
+    <set>
+      <if test="orderNumber != null">
+        order_number = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="orderTime != null">
+        order_time = #{orderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="couponId != null">
+        coupon_id = #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="addressId != null">
+        address_id = #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="receiveName != null">
+        receive_name = #{receiveName,jdbcType=VARCHAR},
+      </if>
+      <if test="receivePhone != null">
+        receive_phone = #{receivePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiveAddress != null">
+        receive_address = #{receiveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="productPrice != null">
+        product_price = #{productPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="deliveryPrice != null">
+        delivery_price = #{deliveryPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="couponPrice != null">
+        coupon_price = #{couponPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="totalPrice != null">
+        total_price = #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="expectTime != null">
+        expect_time = #{expectTime,jdbcType=VARCHAR},
+      </if>
+      <if test="payType != null">
+        pay_type = #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="payTime != null">
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deliveryMan != null">
+        delivery_man = #{deliveryMan,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryTime != null">
+        delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="receiveTime != null">
+        receive_time = #{receiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="commentTime != null">
+        comment_time = #{commentTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where order_id = #{orderId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_order
+    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getVoListByFilter" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_order
+    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+    <if test="status != null">
+      and `status` = #{status,jdbcType=INTEGER}
+    </if>
+  </select>
+
+  <select id="getDetailVo" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Detail_Column_List" />
+    from mall_order
+    where order_id = #{orderId,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getVoByProductName" resultMap="VoResultMap">
+    SELECT distinct
+	  o.order_id, o.order_time, o.total_price, o.`status`
+    FROM
+	  mall_order AS o
+	  LEFT JOIN mall_order_item AS oi ON oi.order_id = o.order_id
+    WHERE
+	  o.user_id = #{userId,jdbcType=INTEGER} and o.deleted = 0
+	  AND oi.product_name LIKE CONCAT('%', #{productName}, '%')
+  </select>
+
+  <select id="getList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_order
+    order by order_time desc
+  </select>
+
+</mapper>

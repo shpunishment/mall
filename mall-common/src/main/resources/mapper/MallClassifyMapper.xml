@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallClassifyMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallClassify">
+    <id column="classify_id" jdbcType="INTEGER" property="classifyId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_id" jdbcType="INTEGER" property="createId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_id" jdbcType="INTEGER" property="updateId" />
+    <result column="pic" jdbcType="INTEGER" property="pic" />
+    <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="sn" jdbcType="INTEGER" property="sn" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallClassifyVo">
+    <id column="classify_id" jdbcType="INTEGER" property="classifyId" />
+    <result column="pic" jdbcType="INTEGER" property="pic" />
+    <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
+    <result column="pid" jdbcType="INTEGER" property="pid" />
+    <result column="sn" jdbcType="INTEGER" property="sn" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    classify_id, create_time, create_id, update_time, update_id, pic, classify_name, 
+    pid, sn
+  </sql>
+
+  <sql id="Vo_Column_List">
+    classify_id, pic, classify_name, pid, sn
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mall_classify
+    where classify_id = #{classifyId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_classify
+    set deleted = 1
+    where classify_id = #{classifyId,jdbcType=INTEGER}
+  </update>
+
+  <update id="deleteBatch" parameterType="java.util.List">
+    update mall_classify
+    set deleted = 1
+    where classify_id in
+    <foreach item="classifyId" collection="classifyIdList" open="(" separator="," close=")">
+      #{classifyId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="classifyId" parameterType="com.shpun.mall.common.model.MallClassify">
+    insert into mall_classify
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateId != null">
+        update_id,
+      </if>
+      <if test="pic != null">
+        pic,
+      </if>
+      <if test="classifyName != null">
+        classify_name,
+      </if>
+      <if test="pid != null">
+        pid,
+      </if>
+      <if test="sn != null">
+        sn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null">
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="pic != null">
+        #{pic,jdbcType=INTEGER},
+      </if>
+      <if test="classifyName != null">
+        #{classifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="sn != null">
+        #{sn,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallClassify">
+    update mall_classify
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null">
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="pic != null">
+        pic = #{pic,jdbcType=INTEGER},
+      </if>
+      <if test="classifyName != null">
+        classify_name = #{classifyName,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null">
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="sn != null">
+        sn = #{sn,jdbcType=INTEGER},
+      </if>
+    </set>
+    where classify_id = #{classifyId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getMaxSnByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select max(sn)
+    from mall_classify
+    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getMinSnByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select min(sn)
+    from mall_classify
+    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getClassifyIdByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select classify_id
+    from mall_classify
+    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getPrev" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
+    select classify_id,sn
+    from mall_classify
+	where pid = #{pid,jdbcType=INTEGER} and sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	order by sn desc
+	limit 1
+  </select>
+
+  <select id="getNext" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
+    select classify_id,sn
+    from mall_classify
+	where pid = #{pid,jdbcType=INTEGER} and sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	order by sn desc
+	limit 1
+  </select>
+
+  <update id="goNext">
+    update mall_classify
+    set sn = sn + 1
+    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER} and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
+  </update>
+
+  <select id="getByPid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_classify
+    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getAllVo" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_classify
+    where deleted = 0
+    order by sn
+  </select>
+
+  <select id="getVoByPid" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_classify
+    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    order by sn
+  </select>
+
+</mapper>

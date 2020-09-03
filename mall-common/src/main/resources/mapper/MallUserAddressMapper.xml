@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallUserAddressMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallUserAddress">
+    <id column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallUserAddressVo">
+    <id column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    address_id, create_time, update_time, user_id, `name`, sex, phone, address, `type`
+  </sql>
+
+  <sql id="Vo_Column_List">
+    address_id, `name`, sex, phone, address, `type`
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_address
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_user_address
+    set deleted = 1
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="addressId" parameterType="com.shpun.mall.common.model.MallUserAddress">
+    insert into mall_user_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallUserAddress">
+    update mall_user_address
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+    </set>
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_address
+    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getVoListByUserId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_user_address
+    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+  <select id="getVoByAddressId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_user_address
+    where address_id = #{addressId,jdbcType=INTEGER}
+  </select>
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallUserFootprintMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallUserFootprint">
+    <id column="footprint_id" jdbcType="INTEGER" property="footprintId" />
+    <result column="view_time" jdbcType="TIMESTAMP" property="viewTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    footprint_id, view_time, user_id, product_id
+  </sql>
+
+  <sql id="Vo_Column_List">
+    footprint_id, user_id, product_id
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_footprint
+    where footprint_id = #{footprintId,jdbcType=INTEGER}
+  </select>
+
+  <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_user_footprint
+    set deleted = 1
+    where footprint_id = #{footprintId,jdbcType=INTEGER}
+  </update>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="footprintId" parameterType="com.shpun.mall.common.model.MallUserFootprint">
+    insert into mall_user_footprint
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="viewTime != null">
+        view_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="viewTime != null">
+        #{viewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallUserFootprint">
+    update mall_user_footprint
+    <set>
+      <if test="viewTime != null">
+        view_time = #{viewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where footprint_id = #{footprintId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_footprint
+    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+  </select>
+
+</mapper>
