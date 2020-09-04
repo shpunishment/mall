@@ -45,8 +45,6 @@ public class MallUserServiceImpl implements MallUserService {
     public void updateByPrimaryKeySelective(MallUser record) {
         record.setUpdateTime(new Date());
         userMapper.updateByPrimaryKeySelective(record);
-        // 删除用户信息缓存
-        this.deleteCache(record.getUserId());
     }
 
     @Override

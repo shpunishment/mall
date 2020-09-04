@@ -162,10 +162,30 @@
 	  AND uc.`status` = #{status,jdbcType=INTEGER}
   </select>
 
-  <select id="getAvailableCouponIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+  <select id="getReceivedCouponId" resultType="java.lang.Integer">
     select coupon_id
     from mall_user_coupon
     where user_id = #{userId,jdbcType=INTEGER}
+    and coupon_id IN
+    <foreach item="couponId" collection="couponIdList" open="(" separator="," close=")">
+      #{couponId,jdbcType=INTEGER}
+    </foreach>
+  </select>
+
+  <select id="getByUserIdAndCouponId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_coupon
+    where user_id = #{userId,jdbcType=INTEGER}
+      and coupon_id = #{couponId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getTodayUseCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select count(*)
+    from mall_user_coupon
+    where user_id = #{userId,jdbcType=INTEGER}
+      and `status` = 2
+      and to_days(start_time) = to_days(now())
   </select>
 
 </mapper>

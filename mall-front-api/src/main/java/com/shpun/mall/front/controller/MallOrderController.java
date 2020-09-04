@@ -1,11 +1,14 @@
 package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.vo.MallOrderItemVo;
 import com.shpun.mall.common.model.vo.MallOrderVo;
+import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.*;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.Api;
@@ -17,7 +20,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:
@@ -47,6 +53,12 @@ public class MallOrderController {
     @Autowired
     private MallFlashItemService flashItemService;
 
+    @Autowired
+    private MallUserCouponService userCouponService;
+
+    @Autowired
+    private MallCouponService couponService;
+
     @ApiOperation("计算价格")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "cartIdList", value = "购物车idList", dataType = "List<Integer>")
@@ -60,9 +72,36 @@ public class MallOrderController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "cartIdList", value = "购物车idList", dataType = "List<Integer>")
     })
-    @PostMapping("/calculateByCoupon")
-    public MallOrder calculateByCoupon(@RequestBody MallOrderVo orderVo) {
-        return orderService.calculatePrice(orderVo.getCartIdList(), orderVo.getCouponId());
+    @PostMapping("/calculateWithCoupon")
+    public Map<String, List<MallUserCouponVo>> calculateWithCoupon(@RequestParam("cartIdList") List<Integer> cartIdList) {
+
+        List<MallUserCouponVo> userCouponVoList = userCouponService.getVoListByFilter(SecurityUserUtils.getUserId(), MallUserCouponStatusEnums.UNUSED.getValue());
+
+        Map<String, List<MallUserCouponVo>> resultMap = null;
+        if (CollectionUtils.isNotEmpty(userCouponVoList)) {
+            resultMap = new HashMap<>(2);
+            resultMap.put("can", new ArrayList<>(userCouponVoList.size()));
+            resultMap.put("cannot", new ArrayList<>(userCouponVoList.size()));
+
+            // 今日是否可用优惠券
+            boolean canTodayUse = userCouponService.getTodayUseCount(SecurityUserUtils.getUserId()) < Const.TODAY_USE_COUPON_COUNT;
+            for (MallUserCouponVo userCouponVo : userCouponVoList) {
+                if (canTodayUse) {
+                    MallOrder order = orderService.calculatePrice(cartIdList, userCouponVo.getCouponId());
+                    if (order.getCouponId() != null) {
+                        List<MallUserCouponVo> canUseList = resultMap.get("can");
+                        canUseList.add(userCouponVo);
+                    } else {
+                        List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
+                        cannotUseList.add(userCouponVo);
+                    }
+                } else {
+                    List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
+                    cannotUseList.add(userCouponVo);
+                }
+            }
+        }
+        return resultMap;
     }
 
     @ApiOperation("生成订单")
@@ -73,14 +112,16 @@ public class MallOrderController {
         order.setUserId(SecurityUserUtils.getUserId());
         orderService.generateOrder(order, orderVo.getCartIdList());
 
-        // 删除商品缓存
-        productService.deleteCache();
         // 删除购物车缓存
         cartService.deleteCache(SecurityUserUtils.getUserId());
-        // 删除订单缓存
-        orderService.deleteCache(SecurityUserUtils.getUserId());
+        // 删除商品缓存
+        productService.deleteCache();
         // 删除限时抢购缓存
         flashItemService.deleteCache();
+        // 删除订单缓存
+        orderService.deleteCache(SecurityUserUtils.getUserId());
+        // 删除用户优惠券缓存
+        userCouponService.deleteCache(SecurityUserUtils.getUserId());
     }
 
     @ApiOperation("分页获取订单")
@@ -133,6 +174,8 @@ public class MallOrderController {
 
         // 删除订单缓存
         orderService.deleteCache(SecurityUserUtils.getUserId());
+        // 删除用户优惠券缓存
+        userCouponService.deleteCache(SecurityUserUtils.getUserId());
     }
 
     @ApiOperation("分页搜索订单")
@@ -157,7 +200,6 @@ public class MallOrderController {
                 orderVo.setOrderItemVoList(orderItemVoList);
             }
         }
-
         return orderVoPageInfo;
     }
 
@@ -165,6 +207,7 @@ public class MallOrderController {
     @PostMapping("/comment")
     public void comment(@RequestBody MallOrder order) {
         orderService.commentSuccess(order);
+
         // 删除订单缓存
         orderService.deleteCache(SecurityUserUtils.getUserId());
     }

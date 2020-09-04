@@ -19,6 +19,11 @@ public interface MallUserCouponMapper {
     List<MallUserCouponVo> getVoListByFilter(@Param("userId") Integer userId,
                                              @Param("status") Integer status);
 
-    List<Integer> getAvailableCouponIdList(Integer userId);
+    List<Integer> getReceivedCouponId(@Param("userId") Integer userId,
+                                      @Param("couponIdList") List<Integer> couponIdList);
+
+    MallUserCoupon getByUserIdAndCouponId(@Param("userId") Integer userId, @Param("couponId") Integer couponId);
+
+    Integer getTodayUseCount(Integer userId);
 
 }

@@ -6,6 +6,7 @@ import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallProductMapper;
+import com.shpun.mall.common.model.MallCart;
 import com.shpun.mall.common.model.MallFlashItem;
 import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallCartVo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -262,16 +264,6 @@ public class MallProductServiceImpl implements MallProductService {
     }
 
     @Override
-    public List<MallProductVo> getVoListByFavorite(Integer userId) {
-        return productMapper.getVoListByFavorite(userId);
-    }
-
-    @Override
-    public List<MallProductVo> getVoListByFootprint(Integer userId) {
-        return productMapper.getVoListByFootprint(userId);
-    }
-
-    @Override
     public List<MallProduct> getListByClassifyId(Integer classifyId) {
         return productMapper.getListByClassifyId(classifyId);
     }
@@ -286,12 +278,14 @@ public class MallProductServiceImpl implements MallProductService {
         return productMapper.getVoListFilterByClassifyIdList(classifyIdList, inStock, priceSort);
     }
 
+    @RedisCache
     @Override
     public PageInfo<MallProductVo> getVoPageByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
         return new PageInfo<>(this.getVoListByFilterClassifyId(classifyIdList, inStock, priceSort));
     }
 
+    @RedisCache
     @Override
     public List<MallProductVo> getVoListByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort) {
         return productMapper.getVoListByProductIdList(productIdList, inStock, priceSort);
@@ -301,5 +295,18 @@ public class MallProductServiceImpl implements MallProductService {
     public PageInfo<MallProductVo> getVoPageByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
         return new PageInfo<>(this.getVoListByFilterProductId(productIdList, inStock, priceSort));
+    }
+
+    @Override
+    public List<MallProduct> getByCartIdList(List<Integer> cartIdList) {
+        List<MallProduct> productList = new ArrayList<>(cartIdList.size());
+        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
+        for(MallCart cart : cartList) {
+            Integer productId = cart.getProductId();
+            Integer quantity = cart.getQuantity();
+            MallProduct product = this.checkProduct(productId, quantity);
+            productList.add(product);
+        }
+        return productList;
     }
 }

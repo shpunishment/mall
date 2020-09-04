@@ -1,11 +1,13 @@
 package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallUserCouponGetTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.MallUserCoupon;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
+import com.shpun.mall.common.service.MallCouponService;
 import com.shpun.mall.common.service.MallOrderService;
 import com.shpun.mall.common.service.MallUserCouponService;
 import com.shpun.mall.front.security.SecurityUserUtils;
@@ -36,7 +38,7 @@ public class MallUserCouponController {
     private MallUserCouponService userCouponService;
 
     @Autowired
-    private MallOrderService orderService;
+    private MallCouponService couponService;
 
     @ApiOperation("领取优惠券")
     @ApiImplicitParams(value = {
@@ -49,6 +51,11 @@ public class MallUserCouponController {
         userCoupon.setCouponId(couponId);
         userCoupon.setGetType(MallUserCouponGetTypeEnums.INITIATIVE.getValue());
         userCouponService.insertSelective(userCoupon);
+
+        // 删除优惠券缓存
+        couponService.deleteCache();
+        // 删除用户优惠券缓存
+        userCouponService.deleteCache(SecurityUserUtils.getUserId());
     }
 
     @ApiOperation("分页获取优惠券")
@@ -66,36 +73,10 @@ public class MallUserCouponController {
         return userCouponVoPageInfo;
     }
 
-    @ApiOperation("检查优惠券是否可用")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "status", value = "使用状态", dataType = "Integer"),
-            @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
-            @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
-    })
-    @PostMapping("/check")
-    public Map<String, List<MallUserCouponVo>> checkCouponAvailable(@RequestParam("cartIdList") List<Integer> cartIdList) {
-
-        List<MallUserCouponVo> userCouponVoList = userCouponService.getVoListByFilter(SecurityUserUtils.getUserId(), MallUserCouponStatusEnums.UNUSED.getValue());
-
-        Map<String, List<MallUserCouponVo>> resultMap = null;
-        if (CollectionUtils.isNotEmpty(userCouponVoList)) {
-            resultMap = new HashMap<>(2);
-            resultMap.put("can", new ArrayList<>(userCouponVoList.size()));
-            resultMap.put("cannot", new ArrayList<>(userCouponVoList.size()));
-
-            for (MallUserCouponVo userCouponVo : userCouponVoList) {
-                MallOrder order = orderService.calculatePrice(cartIdList, userCouponVo.getCouponId());
-                if (order.getCouponId() != null) {
-                    List<MallUserCouponVo> canUseList = resultMap.get("can");
-                    canUseList.add(userCouponVo);
-                } else {
-                    List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                    cannotUseList.add(userCouponVo);
-                }
-            }
-        }
-
-        return resultMap;
+    @ApiOperation("今日是否能使用优惠券")
+    @GetMapping("/can")
+    public Boolean canUseCoupon() {
+        return userCouponService.getTodayUseCount(SecurityUserUtils.getUserId()) < Const.TODAY_USE_COUPON_COUNT;
     }
 
 }

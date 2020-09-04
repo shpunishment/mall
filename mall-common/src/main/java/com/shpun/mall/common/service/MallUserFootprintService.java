@@ -1,6 +1,8 @@
 package com.shpun.mall.common.service;
 
+import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallUserFootprint;
+import com.shpun.mall.common.model.vo.MallProductVo;
 
 import java.util.List;
 
@@ -20,5 +22,14 @@ public interface MallUserFootprintService {
     void updateByPrimaryKeySelective(MallUserFootprint record);
 
     List<MallUserFootprint> getByUserId(Integer userId);
+
+    List<MallProductVo> getVoListByFootprint(Integer userId);
+
+    PageInfo<MallProductVo> getVoPageByFootprint(Integer userId, Integer offset, Integer limit);
+
+    /**
+     * 新增删除，根据用户id刷新缓存
+     */
+    void deleteCache(Integer userId);
 
 }

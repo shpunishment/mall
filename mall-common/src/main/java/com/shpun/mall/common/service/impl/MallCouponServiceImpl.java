@@ -2,6 +2,7 @@ package com.shpun.mall.common.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.mapper.MallCouponMapper;
 import com.shpun.mall.common.model.MallCoupon;
@@ -9,6 +10,7 @@ import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.service.MallCouponClassifyService;
 import com.shpun.mall.common.service.MallCouponProductService;
 import com.shpun.mall.common.service.MallCouponService;
+import com.shpun.mall.common.service.RedisService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ public class MallCouponServiceImpl implements MallCouponService {
 
     @Autowired
     private MallCouponProductService couponProductService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public void deleteByPrimaryKey(Integer couponId) {
@@ -99,21 +104,24 @@ public class MallCouponServiceImpl implements MallCouponService {
     }
 
     @Override
-    public List<MallCouponVo> getVoListByFilter(List<Integer> notCouponIdList) {
-        return couponMapper.getVoListByFilter(notCouponIdList);
+    public List<MallCouponVo> getVoList() {
+        return couponMapper.getVoList();
     }
 
+    @RedisCache
     @Override
-    public PageInfo<MallCouponVo> getVoPageByFilter(List<Integer> notCouponIdList, Integer offset, Integer limit) {
+    public PageInfo<MallCouponVo> getVoPage(Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
-        return new PageInfo<>(this.getVoListByFilter(notCouponIdList));
+        return new PageInfo<>(this.getVoList());
     }
 
+    @RedisCache
     @Override
     public List<Integer> getClassifyIdList(Integer couponId) {
         return couponMapper.getClassifyIdList(couponId);
     }
 
+    @RedisCache
     @Override
     public List<Integer> getProductIdList(Integer couponId) {
         return couponMapper.getProductIdList(couponId);
@@ -139,4 +147,8 @@ public class MallCouponServiceImpl implements MallCouponService {
         return couponMapper.getForOrder(couponId);
     }
 
+    @Override
+    public void deleteCache() {
+        redisService.deleteByPrefix(MallCouponServiceImpl.class, "getVoPage");
+    }
 }

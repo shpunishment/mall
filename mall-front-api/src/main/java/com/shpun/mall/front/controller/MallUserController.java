@@ -52,6 +52,9 @@ public class MallUserController {
     public void update(@RequestBody MallUser user) {
         user.setUserId(SecurityUserUtils.getUserId());
         userService.updateByPrimaryKeySelective(user);
+
+        // 删除用户信息缓存
+        userService.deleteCache(user.getUserId());
     }
 
     @ApiOperation("修改密码")

@@ -64,6 +64,7 @@ public class MallOrderItemServiceImpl implements MallOrderItemService {
         return orderItemMapper.getLimitVoListByOrderId(orderId, Const.DEFAULT_LIMIT_ORDER_ITEM);
     }
 
+    @RedisCache
     @Override
     public List<MallOrderItemVo> getLimitVoListBySearch(Integer orderId, String productName) {
         return orderItemMapper.getLimitVoListBySearch(orderId, productName);

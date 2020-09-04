@@ -242,7 +242,7 @@
     where deleted = 0
   </select>
 
-  <select id="getVoListByFilter" resultMap="VoResultMap">
+  <select id="getVoList" resultMap="VoResultMap">
     SELECT
     <include refid="Vo_Column_List" />
     FROM
@@ -252,12 +252,6 @@
       AND `status` = 1
       AND `type` = 1
       AND ( ( start_time IS NULL AND end_time IS NULL ) OR ( start_time <![CDATA[<=]]> now( ) AND end_time <![CDATA[>=]]> now( ) ) )
-    <if test="notCouponIdList != null and notCouponIdList.size() > 0">
-      AND coupon_id not in
-      <foreach item="notCouponId" collection="notCouponIdList" open="(" separator="," close=")">
-        #{notCouponId,jdbcType=INTEGER}
-      </foreach>
-    </if>
   </select>
 
   <select id="getClassifyIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">

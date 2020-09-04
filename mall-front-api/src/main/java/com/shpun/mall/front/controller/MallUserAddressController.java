@@ -45,6 +45,7 @@ public class MallUserAddressController {
     public void add(@RequestBody MallUserAddress userAddress) {
         userAddress.setUserId(SecurityUserUtils.getUserId());
         userAddressService.insertSelective(userAddress);
+
         // 删除用户地址缓存
         userAddressService.deleteCache(SecurityUserUtils.getUserId());
     }
@@ -56,6 +57,7 @@ public class MallUserAddressController {
     @GetMapping("/delete/{id}")
     public void delete(@PathVariable("id") Integer id) {
         userAddressService.deleteByPrimaryKey(id);
+
         // 删除用户地址缓存
         userAddressService.deleteCache(SecurityUserUtils.getUserId());
     }
@@ -64,6 +66,7 @@ public class MallUserAddressController {
     @GetMapping("/update")
     public void update(@RequestBody MallUserAddress userAddress) {
         userAddressService.updateByPrimaryKeySelective(userAddress);
+
         // 删除用户地址缓存
         userAddressService.deleteCache(SecurityUserUtils.getUserId());
     }

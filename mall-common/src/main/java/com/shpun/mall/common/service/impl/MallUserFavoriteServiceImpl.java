@@ -1,8 +1,13 @@
 package com.shpun.mall.common.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.mapper.MallUserFavoriteMapper;
 import com.shpun.mall.common.model.MallUserFavorite;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallUserFavoriteService;
+import com.shpun.mall.common.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +24,9 @@ public class MallUserFavoriteServiceImpl implements MallUserFavoriteService {
 
     @Autowired
     private MallUserFavoriteMapper userFavoriteMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public void deleteByPrimaryKey(Integer favoriteId) {
@@ -49,5 +57,22 @@ public class MallUserFavoriteServiceImpl implements MallUserFavoriteService {
     @Override
     public Integer isFavorite(Integer userId, Integer favoriteId) {
         return userFavoriteMapper.isFavorite(userId, favoriteId);
+    }
+
+    @Override
+    public List<MallProductVo> getVoListByFavorite(Integer userId) {
+        return userFavoriteMapper.getVoListByFavorite(userId);
+    }
+
+    @RedisCache
+    @Override
+    public PageInfo<MallProductVo> getVoPageByFavorite(Integer userId, Integer offset, Integer limit) {
+        PageHelper.offsetPage(offset, limit);
+        return new PageInfo<>(this.getVoListByFavorite(userId));
+    }
+
+    @Override
+    public void deleteCache(Integer userId) {
+        redisService.deleteByPrefix(MallUserFavoriteServiceImpl.class, "getVoPageByFavorite", userId);
     }
 }

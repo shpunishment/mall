@@ -99,6 +99,8 @@ public class MallCartServiceImpl implements MallCartService {
 
     @Override
     public void deleteCache(Integer userId) {
-        redisService.deleteByPrefix(MallCartServiceImpl.class, null);
+        redisService.deleteByPrefix(MallCartServiceImpl.class, "getVoByUserIdAndProductId", userId);
+        redisService.deleteByPrefix(MallCartServiceImpl.class, "getVoPageByUserId", userId);
     }
+
 }

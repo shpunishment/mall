@@ -25,6 +25,24 @@ public interface MallUserCouponService {
 
     PageInfo<MallUserCouponVo> getVoPageByFilter(Integer userId, Integer status, Integer offset, Integer limit);
 
-    List<Integer> getAvailableCouponIdList(Integer userId);
+    /**
+     * 根据couponIdList获取用户已领取的couponId
+     * @param userId
+     * @param couponIdList
+     * @return
+     */
+    List<Integer> getReceivedCouponId(Integer userId, List<Integer> couponIdList);
+
+    MallUserCoupon getByUserIdAndCouponId(Integer userId, Integer couponId);
+
+    Integer getTodayUseCount(Integer userId);
+
+    MallUserCoupon canUse(Integer userId, Integer couponId);
+
+    /**
+     * 领取优惠券，下单成功，根据用户id删除缓存
+     * @param userId
+     */
+    void deleteCache(Integer userId);
 
 }

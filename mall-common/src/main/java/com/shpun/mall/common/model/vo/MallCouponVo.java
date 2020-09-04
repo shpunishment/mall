@@ -42,6 +42,9 @@ public class MallCouponVo implements Serializable {
     @ApiModelProperty("使用类型，1全场，2指定分类，3指定商品")
     private Integer useType;
 
+    @ApiModelProperty("已领取标识")
+    private Boolean received;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getCouponId() {
@@ -114,5 +117,13 @@ public class MallCouponVo implements Serializable {
 
     public void setUseType(Integer useType) {
         this.useType = useType;
+    }
+
+    public Boolean getReceived() {
+        return received;
+    }
+
+    public void setReceived(Boolean received) {
+        this.received = received;
     }
 }

@@ -32,6 +32,9 @@ public interface MallFlashItemService {
 
     List<MallFlashItem> getByFlashId(Integer flashId);
 
+    /**
+     * 下单成功，删除缓存
+     */
     void deleteCache();
 
 }

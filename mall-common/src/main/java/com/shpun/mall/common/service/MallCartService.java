@@ -33,6 +33,10 @@ public interface MallCartService {
 
     PageInfo<MallCartVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit);
 
+    /**
+     * 新增更新购物车，下单成功，根据用户id删除
+     * @param userId
+     */
     void deleteCache(Integer userId);
 
 }

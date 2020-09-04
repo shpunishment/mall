@@ -3,6 +3,7 @@ package com.shpun.mall.common.service;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallProductVo;
+import com.sun.java.swing.plaf.windows.WindowsTextAreaUI;
 
 import java.util.List;
 
@@ -105,12 +106,11 @@ public interface MallProductService {
      */
     void additionalVoList(List<MallProductVo> productVoList, Integer userId, boolean replaceWithFlash);
 
-    List<MallProductVo> getVoListByFavorite(Integer userId);
-
-    List<MallProductVo> getVoListByFootprint(Integer userId);
-
     List<MallProduct> getListByClassifyId(Integer classifyId);
 
+    /**
+     * 下单成功，删除缓存
+     */
     void deleteCache();
 
     List<MallProductVo> getVoListByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort);
@@ -120,5 +120,7 @@ public interface MallProductService {
     List<MallProductVo> getVoListByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort);
 
     PageInfo<MallProductVo> getVoPageByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+
+    List<MallProduct> getByCartIdList(List<Integer> cartIdList);
 
 }

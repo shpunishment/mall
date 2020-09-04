@@ -18,7 +18,7 @@ public interface MallCouponMapper {
 
     List<MallCoupon> getList();
 
-    List<MallCouponVo> getVoListByFilter(@Param("notCouponIdList") List<Integer> notCouponIdList);
+    List<MallCouponVo> getVoList();
 
     List<Integer> getClassifyIdList(Integer couponId);
 

@@ -1,8 +1,13 @@
 package com.shpun.mall.common.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.mapper.MallUserFootprintMapper;
 import com.shpun.mall.common.model.MallUserFootprint;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallUserFootprintService;
+import com.shpun.mall.common.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +24,9 @@ public class MallUserFootprintServiceImpl implements MallUserFootprintService {
 
     @Autowired
     private MallUserFootprintMapper userFootprintMapper;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public void deleteByPrimaryKey(Integer footprintId) {
@@ -46,4 +54,20 @@ public class MallUserFootprintServiceImpl implements MallUserFootprintService {
         return userFootprintMapper.getByUserId(userId);
     }
 
+    @Override
+    public List<MallProductVo> getVoListByFootprint(Integer userId) {
+        return userFootprintMapper.getVoListByFootprint(userId);
+    }
+
+    @RedisCache
+    @Override
+    public PageInfo<MallProductVo> getVoPageByFootprint(Integer userId, Integer offset, Integer limit) {
+        PageHelper.offsetPage(offset, limit);
+        return new PageInfo<>(this.getVoListByFootprint(userId));
+    }
+
+    @Override
+    public void deleteCache(Integer userId) {
+        redisService.deleteByPrefix(MallUserFootprintServiceImpl.class, "getVoPageByFootprint", userId);
+    }
 }

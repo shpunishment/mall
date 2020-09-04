@@ -2,7 +2,9 @@ package com.shpun.mall.common.service;
 
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallOrder;
+import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallOrderVo;
+import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -29,6 +31,12 @@ public interface MallOrderService {
      */
     MallOrder calculatePrice(List<Integer> cartIdList);
 
+    /**
+     * 根据优惠券计算价格
+     * @param cartIdList
+     * @param couponId
+     * @return
+     */
     MallOrder calculatePrice(List<Integer> cartIdList, Integer couponId);
 
     /**
@@ -83,6 +91,10 @@ public interface MallOrderService {
 
     List<MallOrder> getList();
 
+    /**
+     * 下单成功，取消订单，评价订单，根据用户id删除缓存
+     * @param userId
+     */
     void deleteCache(Integer userId);
 
 }

@@ -136,7 +136,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 BigDecimal price = product.getCurrentPrice().multiply(new BigDecimal(quantity));
                 productPrice = productPrice.add(price);
 
-                // 优惠券不会空，并且商品非限时抢购
+                // 优惠券不为空，并且商品非限时抢购
                 if (coupon != null && useType != null && meetIdSet != null && !product.getFlashing()) {
                     if (MallCouponUseTypeEnums.ALL.getValue().equals(useType)) {
                         meetPrice = meetPrice.add(price);
@@ -164,10 +164,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                     order.setCouponId(couponId);
                     discount = coupon.getDiscount();
                 }
-            } else {
-                order.setCouponId(null);
             }
-
             this.setPrice(order, productPrice, discount);
             return order;
         } else {
@@ -185,6 +182,30 @@ public class MallOrderServiceImpl implements MallOrderService {
             List<MallOrderItem> orderItemList = new ArrayList<>(cartList.size());
             BigDecimal productPrice = new BigDecimal("0.00");
 
+            // 判断优惠券是否可用，获取优惠券中规定的分类id、商品id
+            Integer couponId = order.getCouponId();
+            BigDecimal meetPrice = new BigDecimal("0.00");
+            MallCoupon coupon = null;
+            MallUserCoupon userCoupon = null;
+            Integer useType = null;
+            Set<Integer> meetIdSet = null;
+            boolean canUseCoupon = false;
+            if (couponId != null) {
+                coupon = couponService.getForOrder(couponId);
+                userCoupon = userCouponService.canUse(order.getUserId(), couponId);
+                if (coupon != null && userCoupon != null) {
+                    canUseCoupon = true;
+                    useType = coupon.getUseType();
+                    if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType)) {
+                        List<Integer> classifyIdList = couponService.getClassifyIdList(couponId);
+                        meetIdSet = new HashSet<>(classifyIdList);
+                    } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType)) {
+                        List<Integer> productIdList = couponService.getProductIdList(couponId);
+                        meetIdSet = new HashSet<>(productIdList);
+                    }
+                }
+            }
+
             for(MallCart cart : cartList) {
                 Integer productId = cart.getProductId();
                 Integer quantity = cart.getQuantity();
@@ -195,12 +216,12 @@ public class MallOrderServiceImpl implements MallOrderService {
                     Integer stock;
                     BigDecimal price;
 
-                    boolean isFlash = false;
                     // 判断当前商品是否限时抢购
+                    boolean flashing = false;
                     MallFlashItem flashItemTemp = flashItemService.getFlashByProductId(product.getProductId());
                     MallFlashItem flashItem = null;
                     if (flashItemTemp != null) {
-                        isFlash = true;
+                        flashing = true;
                         // 锁定限时抢购商品库存
                         flashItem = flashItemService.lockStock(flashItemTemp.getFlashItemId());
                         stock = flashItem.getStock();
@@ -214,7 +235,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                         throw new MallException("库存不足");
                     } else {
                         // 减库存，加销量
-                        if (isFlash) {
+                        if (flashing) {
                             flashItem.setStock(stock - quantity);
                             flashItem.setSales(flashItem.getSales() + quantity);
                             flashItemList.add(flashItem);
@@ -227,6 +248,25 @@ public class MallOrderServiceImpl implements MallOrderService {
                         // 计算价格
                         productPrice = productPrice.add(price.multiply(new BigDecimal(quantity)));
 
+                        // 优惠券不为空，并且商品非限时抢购
+                        if (canUseCoupon && coupon != null && useType != null && meetIdSet != null && !flashing) {
+                            if (MallCouponUseTypeEnums.ALL.getValue().equals(useType)) {
+                                meetPrice = meetPrice.add(price);
+                            } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType)) {
+                                // 判断商品的分类，是否存在于优惠券的分类中
+                                List<Integer> classifyIdList = productClassifyService.getClassifyIdByProductId(productId);
+                                List<Integer> meetClassifyIdList = classifyIdList.stream().filter(meetIdSet::contains).collect(Collectors.toList());
+                                if (CollectionUtils.isNotEmpty(meetClassifyIdList)) {
+                                    meetPrice = meetPrice.add(price);
+                                }
+                            } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType)) {
+                                // 判断商品，是否存在于优惠券的商品中
+                                if (meetIdSet.contains(productId)) {
+                                    meetPrice = meetPrice.add(price);
+                                }
+                            }
+                        }
+
                         // 订单商品
                         MallOrderItem orderItem = new MallOrderItem();
                         orderItem.setProductId(productId);
@@ -234,7 +274,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                         orderItem.setPic(product.getPic());
                         orderItem.setPrice(price);
                         orderItem.setQuantity(quantity);
-                        orderItem.setFlashItemId(isFlash ? flashItem.getFlashItemId() : Const.DEFAULT_NO_FLASH_ITEM_ID);
+                        orderItem.setFlashItemId(flashing ? flashItem.getFlashItemId() : Const.DEFAULT_NO_FLASH_ITEM_ID);
                         orderItemList.add(orderItem);
                     }
                 } else {
@@ -249,12 +289,22 @@ public class MallOrderServiceImpl implements MallOrderService {
             // 更新限时抢购商品，减库存，加销量
             flashItemService.updateBatch(flashItemList);
 
-            // 订单，设值价格，生成订单号
-            // todo 优惠价格
-            this.setPrice(order, productPrice, null);
+            // 计算价格
+            BigDecimal discount = new BigDecimal("0.00");
+            if (canUseCoupon && coupon != null) {
+                BigDecimal minPrice = coupon.getMinPrice();
+                if (meetPrice.compareTo(minPrice) > -1) {
+                    order.setCouponId(couponId);
+                    discount = coupon.getDiscount();
+                }
+            }
+            this.setPrice(order, productPrice, discount);
+
+            // 生成订单号
             String orderNumber = new Date().getTime() + "" + new Random().nextInt(1000);
             order.setOrderNumber(orderNumber);
             order.setOrderTime(new Date());
+
             // 订单地址
             MallUserAddress userAddress = userAddressService.selectByPrimaryKey(order.getAddressId());
             StringBuilder receiveNameSb = new StringBuilder(userAddress.getName());
@@ -267,6 +317,14 @@ public class MallOrderServiceImpl implements MallOrderService {
             order.setReceivePhone(userAddress.getPhone());
             order.setReceiveAddress(userAddress.getAddress());
             orderMapper.insertSelective(order);
+
+            // 用户优惠券更新
+            if (canUseCoupon && userCoupon != null) {
+                userCoupon.setStatus(MallUserCouponStatusEnums.USED.getValue());
+                userCoupon.setUseTime(new Date());
+                userCoupon.setOrderId(order.getOrderId());
+                userCouponService.updateByPrimaryKeySelective(userCoupon);
+            }
 
             // 订单商品
             for(MallOrderItem orderItem : orderItemList) {
@@ -346,6 +404,15 @@ public class MallOrderServiceImpl implements MallOrderService {
         productService.updateBatch(productList);
         // 更新限时抢购商品，加库存，减销量
         flashItemService.updateBatch(flashItemList);
+        // 返还优惠券
+        Integer couponId = order.getCouponId();
+        if (couponId != null) {
+            MallUserCoupon userCoupon = userCouponService.getByUserIdAndCouponId(userId, couponId);
+            userCoupon.setStatus(MallUserCouponStatusEnums.UNUSED.getValue());
+            userCoupon.setUseTime(null);
+            userCoupon.setOrderId(null);
+            userCouponService.updateByPrimaryKeySelective(userCoupon);
+        }
     }
 
     @Override

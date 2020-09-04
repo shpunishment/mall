@@ -117,4 +117,9 @@ public class Const {
      */
     public static final String REDIS_PARAM_DELIMITER = ":";
 
+    /**
+     * 今日可用优惠券数
+     */
+    public static final Integer TODAY_USE_COUPON_COUNT = 2;
+
 }

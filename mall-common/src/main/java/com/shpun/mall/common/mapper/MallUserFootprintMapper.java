@@ -1,6 +1,7 @@
 package com.shpun.mall.common.mapper;
 
 import com.shpun.mall.common.model.MallUserFootprint;
+import com.shpun.mall.common.model.vo.MallProductVo;
 
 import java.util.List;
 
@@ -15,5 +16,7 @@ public interface MallUserFootprintMapper {
     int updateByPrimaryKeySelective(MallUserFootprint record);
 
     List<MallUserFootprint> getByUserId(Integer userId);
+
+    List<MallProductVo> getVoListByFootprint(Integer userId);
 
 }

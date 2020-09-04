@@ -35,10 +35,6 @@ public interface MallProductMapper {
 
     MallProductVo getDetailVo(Integer productId);
 
-    List<MallProductVo> getVoListByFavorite(Integer userId);
-
-    List<MallProductVo> getVoListByFootprint(Integer userId);
-
     List<MallProduct> getListByClassifyId(Integer classifyId);
 
     List<MallProductVo> getVoListFilterByClassifyIdList(@Param("classifyIdList") List<Integer> classifyIdList,

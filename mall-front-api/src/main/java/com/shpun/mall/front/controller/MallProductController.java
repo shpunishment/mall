@@ -85,6 +85,7 @@ public class MallProductController {
                                                           @RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                                           @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
 
+        // 判断优惠券id是否可用
         MallCoupon coupon = couponService.getAvailable(couponId);
         if (coupon == null) {
             throw new MallException("优惠券异常！");

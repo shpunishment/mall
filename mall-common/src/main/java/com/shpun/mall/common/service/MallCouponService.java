@@ -31,16 +31,13 @@ public interface MallCouponService {
 
     List<MallCoupon> getList();
 
-    List<MallCouponVo> getVoListByFilter(List<Integer> notCouponIdList);
-
     /**
      * 获取启用的，通用类型的，优惠券
-     * @param notCouponIdList 过滤这些优惠券
-     * @param offset
-     * @param limit
      * @return
      */
-    PageInfo<MallCouponVo> getVoPageByFilter(List<Integer> notCouponIdList, Integer offset, Integer limit);
+    List<MallCouponVo> getVoList();
+
+    PageInfo<MallCouponVo> getVoPage(Integer offset, Integer limit);
 
     List<Integer> getClassifyIdList(Integer couponId);
 
@@ -53,5 +50,10 @@ public interface MallCouponService {
     void update(MallCoupon coupon);
 
     MallCoupon getForOrder(Integer couponId);
+
+    /**
+     * 优惠券被领取，删除缓存
+     */
+    void deleteCache();
 
 }

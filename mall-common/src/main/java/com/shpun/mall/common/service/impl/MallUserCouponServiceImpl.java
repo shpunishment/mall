@@ -3,7 +3,11 @@ package com.shpun.mall.common.service.impl;
 import com.github.pagehelper.PageException;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.aop.RedisCache;
+import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallCouponTimeTypeEnums;
+import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
+import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallUserCouponMapper;
 import com.shpun.mall.common.model.MallCoupon;
@@ -11,6 +15,7 @@ import com.shpun.mall.common.model.MallUserCoupon;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.MallCouponService;
 import com.shpun.mall.common.service.MallUserCouponService;
+import com.shpun.mall.common.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -34,6 +40,9 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
 
     @Autowired
     private MallCouponService couponService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public void deleteByPrimaryKey(Integer id) {
@@ -103,6 +112,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         return userCouponMapper.getVoListByFilter(userId, status);
     }
 
+    @RedisCache
     @Override
     public PageInfo<MallUserCouponVo> getVoPageByFilter(Integer userId, Integer status, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
@@ -110,7 +120,34 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     }
 
     @Override
-    public List<Integer> getAvailableCouponIdList(Integer userId) {
-        return userCouponMapper.getAvailableCouponIdList(userId);
+    public List<Integer> getReceivedCouponId(Integer userId, List<Integer> couponIdList) {
+        return userCouponMapper.getReceivedCouponId(userId, couponIdList);
+    }
+
+    @Override
+    public MallUserCoupon getByUserIdAndCouponId(Integer userId, Integer couponId) {
+        return userCouponMapper.getByUserIdAndCouponId(userId, couponId);
+    }
+
+    @Override
+    public Integer getTodayUseCount(Integer userId) {
+        return userCouponMapper.getTodayUseCount(userId);
+    }
+
+    @Override
+    public MallUserCoupon canUse(Integer userId, Integer couponId) {
+        Integer todayUseCount = this.getTodayUseCount(userId);
+        if (todayUseCount < Const.TODAY_USE_COUPON_COUNT) {
+            MallUserCoupon userCoupon = this.getByUserIdAndCouponId(userId, couponId);
+            if (userCoupon != null && MallUserCouponStatusEnums.UNUSED.getValue().equals(userCoupon.getStatus())) {
+                return userCoupon;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteCache(Integer userId) {
+        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
     }
 }

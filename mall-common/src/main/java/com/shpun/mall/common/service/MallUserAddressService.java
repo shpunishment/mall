@@ -30,6 +30,10 @@ public interface MallUserAddressService {
 
     MallUserAddressVo getVoByAddressId(Integer addressId);
 
+    /**
+     * 新增删除更新地址，根据用户id删除缓存
+     * @param userId
+     */
     void deleteCache(Integer userId);
 
 }

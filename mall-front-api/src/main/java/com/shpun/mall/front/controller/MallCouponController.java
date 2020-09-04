@@ -10,10 +10,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -40,13 +42,21 @@ public class MallCouponController {
     public PageInfo<MallCouponVo> page(@RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                        @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
 
-        List<Integer> notCouponIdList = null;
-        if (SecurityUserUtils.getUserId() != null) {
-            notCouponIdList = userCouponService.getAvailableCouponIdList(SecurityUserUtils.getUserId());
-        }
+        PageInfo<MallCouponVo> couponVoPageInfo = couponService.getVoPage(offset, limit);
 
-        // todo 不过滤优惠券，显示已领取状态
-        PageInfo<MallCouponVo> couponVoPageInfo = couponService.getVoPageByFilter(notCouponIdList, offset, limit);
+        if (CollectionUtils.isNotEmpty(couponVoPageInfo.getList()) && SecurityUserUtils.getUserId() != null) {
+            List<Integer> couponIdList = couponVoPageInfo.getList().stream().map(MallCouponVo::getCouponId).collect(Collectors.toList());
+            List<Integer> receivedList = userCouponService.getReceivedCouponId(SecurityUserUtils.getUserId(), couponIdList);
+
+            for (MallCouponVo couponVo : couponVoPageInfo.getList()) {
+                Integer couponId = couponVo.getCouponId();
+                if (receivedList.contains(couponId)) {
+                    couponVo.setReceived(true);
+                } else {
+                    couponVo.setReceived(false);
+                }
+            }
+        }
         return couponVoPageInfo;
     }
 

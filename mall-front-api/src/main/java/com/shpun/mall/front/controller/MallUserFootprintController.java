@@ -39,8 +39,7 @@ public class MallUserFootprintController {
     public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
                                               @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
 
-        PageHelper.offsetPage(offset, limit);
-        PageInfo<MallProductVo> productVoPageInfo = new PageInfo<>(productService.getVoListByFootprint(SecurityUserUtils.getUserId()));
+        PageInfo<MallProductVo> productVoPageInfo = userFootprintService.getVoPageByFootprint(SecurityUserUtils.getUserId(), offset, limit);
 
         productService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), true);
         return productVoPageInfo;
@@ -56,6 +55,9 @@ public class MallUserFootprintController {
         userFootprint.setUserId(SecurityUserUtils.getUserId());
         userFootprint.setProductId(productId);
         userFootprintService.insertSelective(userFootprint);
+
+        // 删除用户足迹缓存
+        userFootprintService.deleteCache(SecurityUserUtils.getUserId());
     }
 
     @ApiOperation("删除足迹")
@@ -65,6 +67,9 @@ public class MallUserFootprintController {
     @GetMapping("/delete/{footprintId}")
     public void delete(@PathVariable("footprintId") Integer footprintId) {
         userFootprintService.deleteByPrimaryKey(footprintId);
+
+        // 删除用户足迹缓存
+        userFootprintService.deleteCache(SecurityUserUtils.getUserId());
     }
 
 }

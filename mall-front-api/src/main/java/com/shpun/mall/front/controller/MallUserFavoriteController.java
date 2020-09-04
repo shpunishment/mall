@@ -1,6 +1,5 @@
 package com.shpun.mall.front.controller;
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallUserFavorite;
 import com.shpun.mall.common.model.vo.MallProductVo;
@@ -39,8 +38,7 @@ public class MallUserFavoriteController {
     public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
                                              @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
 
-        PageHelper.offsetPage(offset, limit);
-        PageInfo<MallProductVo> productVoPageInfo = new PageInfo<>(productService.getVoListByFavorite(SecurityUserUtils.getUserId()));
+        PageInfo<MallProductVo> productVoPageInfo = userFavoriteService.getVoPageByFavorite(SecurityUserUtils.getUserId(), offset, limit);
 
         // 检查商品是否在限时抢购，在用户购物车中
         productService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), true);
@@ -57,6 +55,9 @@ public class MallUserFavoriteController {
         userFavorite.setProductId(productId);
         userFavorite.setUserId(SecurityUserUtils.getUserId());
         userFavoriteService.insertSelective(userFavorite);
+
+        // 删除用户收藏缓存
+        userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
     }
 
     @ApiOperation("取消收藏商品")
@@ -66,6 +67,9 @@ public class MallUserFavoriteController {
     @GetMapping("/unfavorite/{favoriteId}")
     public void unfavorite(@PathVariable("favoriteId") Integer favoriteId) {
         userFavoriteService.deleteByPrimaryKey(favoriteId);
+
+        // 删除用户收藏缓存
+        userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
     }
 
 }

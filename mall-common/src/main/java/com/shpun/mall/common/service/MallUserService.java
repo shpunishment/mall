@@ -24,6 +24,10 @@ public interface MallUserService {
 
     boolean isExist(String username);
 
+    /**
+     * 更新用户，根据用户id删除缓存
+     * @param userId
+     */
     void deleteCache(Integer userId);
 
 }
