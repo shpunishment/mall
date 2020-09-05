@@ -37,6 +37,9 @@ public class MallUserFootprintServiceImpl implements MallUserFootprintService {
     public void insertSelective(MallUserFootprint record) {
         record.setViewTime(new Date());
         userFootprintMapper.insertSelective(record);
+
+        // 删除用户足迹缓存
+        this.deleteCache(record.getUserId());
     }
 
     @Override

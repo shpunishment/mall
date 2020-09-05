@@ -45,21 +45,6 @@ public class MallUserFootprintController {
         return productVoPageInfo;
     }
 
-    @ApiOperation("添加用户足迹")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "productId", value = "商品id", dataType = "Integer")
-    })
-    @GetMapping("/add/{productId}")
-    public void add(@PathVariable("productId") Integer productId) {
-        MallUserFootprint userFootprint = new MallUserFootprint();
-        userFootprint.setUserId(SecurityUserUtils.getUserId());
-        userFootprint.setProductId(productId);
-        userFootprintService.insertSelective(userFootprint);
-
-        // 删除用户足迹缓存
-        userFootprintService.deleteCache(SecurityUserUtils.getUserId());
-    }
-
     @ApiOperation("删除足迹")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "footprintId", value = "足迹id", dataType = "Integer")

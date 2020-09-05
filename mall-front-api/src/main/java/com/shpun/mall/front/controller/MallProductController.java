@@ -4,9 +4,11 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallCoupon;
+import com.shpun.mall.common.model.MallUserFootprint;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallCouponService;
 import com.shpun.mall.common.service.MallProductService;
+import com.shpun.mall.common.service.MallUserFootprintService;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -33,6 +35,9 @@ public class MallProductController {
 
     @Autowired
     private MallCouponService couponService;
+
+    @Autowired
+    private MallUserFootprintService userFootprintService;
 
     @ApiOperation("根据商品二级分类id分页获取商品")
     @ApiImplicitParams(value = {
@@ -66,6 +71,12 @@ public class MallProductController {
         if (productVo == null) {
             throw new MallException("商品不存在！");
         }
+
+        // 添加用户足迹
+        MallUserFootprint userFootprint = new MallUserFootprint();
+        userFootprint.setUserId(SecurityUserUtils.getUserId());
+        userFootprint.setProductId(productId);
+        userFootprintService.insertSelective(userFootprint);
 
         // 检查商品是否在限时抢购，在用户购物车中，是否收藏
         productService.additionalVo(productVo, SecurityUserUtils.getUserId(), true, true);
