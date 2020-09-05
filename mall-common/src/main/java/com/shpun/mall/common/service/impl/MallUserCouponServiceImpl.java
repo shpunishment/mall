@@ -6,6 +6,7 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallCouponTimeTypeEnums;
+import com.shpun.mall.common.enums.MallCouponTypeEnums;
 import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.exception.MallException;
@@ -63,6 +64,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
             throw new MallException("优惠券不可重复领取");
         }
 
+        // 根据时间类型计算券使用期限
         if (MallCouponTimeTypeEnums.DAY.getValue().equals(coupon.getTimeType())) {
             Integer days = coupon.getDays();
             record.setStartTime(new Date());
@@ -75,9 +77,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         record.setCreateTime(new Date());
         userCouponMapper.insertSelective(record);
 
-        // 优惠券减数量
-        coupon.setTotal(coupon.getTotal() - 1);
-        couponService.update(coupon);
+        // 通用券减数量
+        if (MallCouponTypeEnums.UNIVERSAL.equals(coupon.getType())) {
+            coupon.setTotal(coupon.getTotal() - 1);
+            couponService.update(coupon);
+        }
     }
 
     /**

@@ -44,15 +44,15 @@ public class MallCouponServiceTest {
 
         // 新人
         MallCoupon coupon4 = buildMallCoupon("全品类新人礼券1", "全品类新人礼券（全场，除限时抢购商品）", new BigDecimal("20.00"), new BigDecimal("10.00"),
-                0, 2,1,1,7, null, null);
+                null, 2,1,1,7, null, null);
         couponService.insertSelective(coupon4);
 
         MallCoupon coupon5 = buildMallCoupon("全品类新人礼券2", "全品类新人礼券（全场，除限时抢购商品）", new BigDecimal("30.00"), new BigDecimal("10.00"),
-                0, 2,1,1,7, null, null);
+                null, 2,1,1,7, null, null);
         couponService.insertSelective(coupon5);
 
         MallCoupon coupon6 = buildMallCoupon("全品类新人礼券3", "全品类新人礼券（全场，除限时抢购商品）", new BigDecimal("40.00"), new BigDecimal("10.00"),
-                0, 2,1,1,7, null, null);
+                null, 2,1,1,7, null, null);
         couponService.insertSelective(coupon6);
 
     }
@@ -68,7 +68,7 @@ public class MallCouponServiceTest {
 
         // 新人
         MallCoupon coupon2 = buildMallCoupon("水果类新人礼券1", "水果类新人礼券", new BigDecimal("20.00"), new BigDecimal("5.00"),
-                0, 2,2,1,7, null, null);
+                null, 2,2,1,7, null, null);
         couponService.insertWithClassifyIdList(coupon2, classifyIdList);
     }
 
@@ -83,7 +83,7 @@ public class MallCouponServiceTest {
 
         // 新人
         MallCoupon coupon2 = buildMallCoupon("XX芒果新人礼券1", "XX芒果新人礼券", new BigDecimal("20.00"), new BigDecimal("2.00"),
-                0, 2,3,1,7, null, null);
+                null, 2,3,1,7, null, null);
         couponService.insertWithProductIdList(coupon2, productIdList);
     }
 

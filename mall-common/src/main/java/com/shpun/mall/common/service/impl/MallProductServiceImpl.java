@@ -126,12 +126,13 @@ public class MallProductServiceImpl implements MallProductService {
             productVo.setCurrentPrice(flashItem.getPrice());
             productVo.setLimit(flashItem.getLimit());
 
-            // 计算库存剩余百分比
-            BigDecimal stock = new BigDecimal(productVo.getStock());
-            BigDecimal sales = new BigDecimal(productVo.getSales() == null ? 0 : productVo.getSales());
+            // 计算限时抢购商品库存剩余百分比
+            BigDecimal stock = new BigDecimal(flashItem.getStock());
+            BigDecimal sales = new BigDecimal(flashItem.getSales());
             BigDecimal total = stock.add(sales);
             BigDecimal remainStockRatio = stock.divide(total, 2, RoundingMode.HALF_UP);
-            productVo.setRemainStockPercent(remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toString());
+            String remainStockPercent = remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString();
+            productVo.setRemainStockPercent(remainStockPercent);
         } else {
             productVo.setFlashing(false);
         }
@@ -254,7 +255,7 @@ public class MallProductServiceImpl implements MallProductService {
         BigDecimal currentPrice = productVo.getCurrentPrice();
         if (currentPrice.compareTo(originalPrice) < 0) {
             BigDecimal discount = currentPrice.divide(originalPrice, 2, RoundingMode.HALF_UP);
-            productVo.setDiscountStr(discount.multiply(new BigDecimal("10")).stripTrailingZeros().toString());
+            productVo.setDiscountStr(discount.multiply(new BigDecimal("10")).stripTrailingZeros().toPlainString());
         }
     }
 

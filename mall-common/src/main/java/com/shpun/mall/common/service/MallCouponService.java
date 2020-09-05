@@ -56,4 +56,6 @@ public interface MallCouponService {
      */
     void deleteCache();
 
+    List<Integer> getNewUserCouponId();
+
 }

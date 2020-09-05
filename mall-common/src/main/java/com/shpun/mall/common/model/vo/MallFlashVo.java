@@ -35,6 +35,9 @@ public class MallFlashVo implements Serializable {
     @ApiModelProperty("分")
     private Integer minute;
 
+    @ApiModelProperty("结束时间")
+    private Date endTime;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getFlashId() {
@@ -91,5 +94,13 @@ public class MallFlashVo implements Serializable {
 
     public void setMinute(Integer minute) {
         this.minute = minute;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }

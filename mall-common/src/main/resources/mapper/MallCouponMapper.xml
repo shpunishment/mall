@@ -313,4 +313,12 @@
 	  AND c.`status` = 1
   </select>
 
+  <select id="getNewUserCouponId" resultType="java.lang.Integer">
+    SELECT coupon_id
+    FROM mall_coupon
+    WHERE deleted = 0
+	  AND `status` = 1
+	  AND `type` = 2
+  </select>
+
 </mapper>
