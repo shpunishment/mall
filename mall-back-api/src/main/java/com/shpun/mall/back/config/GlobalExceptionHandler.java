@@ -4,7 +4,11 @@ import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.vo.MallResultVo;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,18 +22,20 @@ import javax.servlet.http.HttpServletResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * 处理 MallException
-     * @param request
      * @param e
      * @return
      */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = MallException.class)
-    public MallResultVo<?> mallExceptionHandler(HttpServletRequest request, HttpServletResponse response, MallException e) {
+    public MallResultVo<?> mallExceptionHandler(MallException e) {
         e.printStackTrace();
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        logger.error(e.getMessage());
 
-        Integer code = e.getCode() != null ? e.getCode() : Const.API_RETURN_CODE_ERROR;
+        Integer code = e.getCode() != null ? e.getCode() : Const.API_RETURN_CODE_INTERNAL_SERVER_ERROR;
         return MallResultVo.failure(code, e.getMessage());
     }
 
@@ -39,10 +45,11 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = Exception.class)
-    public MallResultVo<?> exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception e) {
+    public MallResultVo<?> exceptionHandler(HttpServletRequest request, Exception e) {
         e.printStackTrace();
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        logger.error(e.getMessage());
 
         String message;
         if (request.getRequestURI().contains(Const.API_URL_PREFIX)) {
@@ -55,7 +62,7 @@ public class GlobalExceptionHandler {
             }
         }
 
-        return MallResultVo.failure(Const.API_RETURN_CODE_ERROR, message);
+        return MallResultVo.failure(Const.API_RETURN_CODE_INTERNAL_SERVER_ERROR, message);
     }
 
 }

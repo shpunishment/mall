@@ -36,20 +36,6 @@ public class GlobalExceptionHandler {
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * 处理 MallException
-     * @param e
-     * @return
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(value = MallException.class)
-    public MallResultVo<?> mallExceptionHandler(MallException e) {
-        e.printStackTrace();
-        logger.error(e.getMessage());
-        Integer code = e.getCode() != null ? e.getCode() : Const.API_RETURN_CODE_INTERNAL_SERVER_ERROR;
-        return MallResultVo.failure(code, e.getMessage());
-    }
-
-    /**
      * path，参数校验 抛出 ConstraintViolationException 异常
      * @param exception
      * @return
@@ -96,6 +82,20 @@ public class GlobalExceptionHandler {
 
         logger.error(message);
         return MallResultVo.failure(Const.API_RETURN_CODE_BAD_REQUEST, message);
+    }
+
+    /**
+     * 处理 MallException
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = MallException.class)
+    public MallResultVo<?> mallExceptionHandler(MallException e) {
+        e.printStackTrace();
+        logger.error(e.getMessage());
+        Integer code = e.getCode() != null ? e.getCode() : Const.API_RETURN_CODE_INTERNAL_SERVER_ERROR;
+        return MallResultVo.failure(code, e.getMessage());
     }
 
     /**
