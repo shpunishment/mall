@@ -13,6 +13,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 /**
  * @Description:
  * @Author: sun
@@ -36,7 +39,7 @@ public class MallUserFavoriteController {
     })
     @GetMapping("/page")
     public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                             @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+                                        @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = userFavoriteService.getVoPageByFavorite(SecurityUserUtils.getUserId(), offset, limit);
 
@@ -50,7 +53,7 @@ public class MallUserFavoriteController {
             @ApiImplicitParam(name = "productId", value = "商品id", dataType = "Integer")
     })
     @GetMapping("/favorite/{productId}")
-    public void favorite(@PathVariable("productId") Integer productId) {
+    public void favorite(@PathVariable("productId") @Min(1) @Max(2147483647) Integer productId) {
         MallUserFavorite userFavorite = new MallUserFavorite();
         userFavorite.setProductId(productId);
         userFavorite.setUserId(SecurityUserUtils.getUserId());
@@ -65,7 +68,7 @@ public class MallUserFavoriteController {
             @ApiImplicitParam(name = "favoriteId", value = "收藏id", dataType = "Integer")
     })
     @GetMapping("/unfavorite/{favoriteId}")
-    public void unfavorite(@PathVariable("favoriteId") Integer favoriteId) {
+    public void unfavorite(@PathVariable("favoriteId") @Min(1) @Max(2147483647) Integer favoriteId) {
         userFavoriteService.deleteByPrimaryKey(favoriteId);
 
         // 删除用户收藏缓存

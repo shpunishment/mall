@@ -1,6 +1,7 @@
 package com.shpun.mall.front.controller;
 
 import com.shpun.mall.common.enums.MallUserCouponGetTypeEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallUser;
 import com.shpun.mall.common.model.MallUserCoupon;
@@ -46,7 +47,7 @@ public class MallUserController {
     @PostMapping("/register")
     public void register(@RequestBody MallUser user) {
         if (userService.isExist(user.getUsername())) {
-            throw new MallException("用户名已存在");
+            throw new MallException(MallError.MallErrorEnum.USERNAME_EXIST.format(user.getUsername()));
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -88,14 +89,13 @@ public class MallUserController {
             @ApiImplicitParam(name = "newPassword", value = "新密码", dataType = "String")
     })
     @PostMapping("/changePassword")
-    public void changePassword(@RequestParam("oldPassword") String oldPassword,
-                               @RequestParam("newPassword") String newPassword) {
+    public void changePassword(@RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword) {
         MallUser user = userService.selectByPrimaryKey(SecurityUserUtils.getUserId());
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.updateByPrimaryKeySelective(user);
         } else {
-            throw new MallException("原密码错误");
+            throw new MallException(MallError.MallErrorEnum.OLD_PASSWORD_ERROR);
         }
     }
 

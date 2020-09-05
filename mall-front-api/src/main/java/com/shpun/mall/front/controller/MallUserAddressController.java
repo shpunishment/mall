@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * @Description:
@@ -34,7 +36,7 @@ public class MallUserAddressController {
     })
     @GetMapping("/page")
     public PageInfo<MallUserAddressVo> page(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                      @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+                                            @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
 
         PageInfo<MallUserAddressVo> userAddressVoPageInfo = userAddressService.getVoPageByUserId(SecurityUserUtils.getUserId(), offset, limit);
         return userAddressVoPageInfo;
@@ -52,11 +54,11 @@ public class MallUserAddressController {
 
     @ApiOperation("删除用户地址")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "收货地址id", dataType = "Integer")
+            @ApiImplicitParam(name = "addressId", value = "收货地址id", dataType = "Integer")
     })
-    @GetMapping("/delete/{id}")
-    public void delete(@PathVariable("id") Integer id) {
-        userAddressService.deleteByPrimaryKey(id);
+    @GetMapping("/delete/{addressId}")
+    public void delete(@PathVariable("addressId") @Min(1) @Max(2147483647) Integer addressId) {
+        userAddressService.deleteByPrimaryKey(addressId);
 
         // 删除用户地址缓存
         userAddressService.deleteCache(SecurityUserUtils.getUserId());

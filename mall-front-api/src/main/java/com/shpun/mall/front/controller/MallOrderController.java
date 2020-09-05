@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.vo.MallOrderItemVo;
@@ -20,6 +21,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.*;
 
 /**
@@ -158,10 +161,10 @@ public class MallOrderController {
             @ApiImplicitParam(name = "orderId", value = "订单id", dataType = "Integer")
     })
     @GetMapping("/detail/{orderId}")
-    public MallOrderVo detail(@PathVariable("orderId") Integer orderId) {
+    public MallOrderVo detail(@PathVariable("orderId") @Min(1) @Max(2147483647) Integer orderId) {
         MallOrder order = orderService.selectByPrimaryKey(orderId);
         if (!order.getUserId().equals(SecurityUserUtils.getUserId())) {
-            throw new MallException("系统内部错误！");
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
 
         MallOrderVo orderVo = orderService.getDetailVo(orderId);
@@ -176,7 +179,7 @@ public class MallOrderController {
             @ApiImplicitParam(name = "orderId", value = "订单id", dataType = "Integer")
     })
     @PostMapping("/close/{orderId}")
-    public void closeOrder(@PathVariable("orderId") Integer orderId) {
+    public void closeOrder(@PathVariable("orderId") @Min(1) @Max(2147483647) Integer orderId) {
         orderService.closeOrder(orderId, SecurityUserUtils.getUserId());
 
         // 删除订单缓存
@@ -192,7 +195,7 @@ public class MallOrderController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/search")
-    public PageInfo<MallOrderVo> search(@RequestParam("productName") String productName,
+    public PageInfo<MallOrderVo> search(@RequestParam(value = "productName", defaultValue = "") String productName,
                                         @RequestParam(value = "offset",defaultValue = "0") Integer offset,
                                         @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
 

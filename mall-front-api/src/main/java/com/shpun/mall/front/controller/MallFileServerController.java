@@ -6,12 +6,15 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * @Description:
@@ -21,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 @Api(tags = "文件服务器控制器")
 @RequestMapping("/api/file")
 @RestController
+@Validated
 public class MallFileServerController {
 
     @Autowired
@@ -28,10 +32,10 @@ public class MallFileServerController {
 
     @ApiOperation("获取图片")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id", value = "文件id", dataType = "Integer")
+            @ApiImplicitParam(name = "fileId", value = "文件id", dataType = "Integer")
     })
-    @GetMapping("/img/{id}")
-    public void getImgFile(@PathVariable("id") Integer fileId, HttpServletResponse httpServletResponse) {
+    @GetMapping("/img/{fileId}")
+    public void getImgFile(@PathVariable("fileId") @Min(1) @Max(2147483647) Integer fileId, HttpServletResponse httpServletResponse) {
         fileServerService.getImgFile(fileId, httpServletResponse);
     }
 

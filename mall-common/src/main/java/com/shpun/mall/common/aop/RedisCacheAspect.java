@@ -2,6 +2,7 @@ package com.shpun.mall.common.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.service.RedisService;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -63,7 +64,7 @@ public class RedisCacheAspect {
             try {
                 result = joinPoint.proceed();
             } catch (Throwable e) {
-                throw new MallException("内部错误");
+                throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
             }
 
             RedisCache redisCache = signature.getMethod().getAnnotation(RedisCache.class);

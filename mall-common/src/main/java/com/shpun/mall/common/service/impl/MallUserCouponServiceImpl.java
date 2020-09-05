@@ -9,6 +9,7 @@ import com.shpun.mall.common.enums.MallCouponTimeTypeEnums;
 import com.shpun.mall.common.enums.MallCouponTypeEnums;
 import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallUserCouponMapper;
 import com.shpun.mall.common.model.MallCoupon;
@@ -56,12 +57,12 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         Integer couponId = record.getCouponId();
         MallCoupon coupon = couponService.lockCoupon(couponId);
         if (coupon == null) {
-            throw new MallException("优惠券领取失败！");
+            throw new MallException(MallError.MallErrorEnum.COUPON_GET_ERROR);
         }
 
         MallUserCoupon isExist = this.getByUserIdAndCouponId(record.getUserId(), couponId);
         if (isExist != null) {
-            throw new MallException("优惠券不可重复领取");
+            throw new MallException(MallError.MallErrorEnum.COUPON_REPEAT_ERROR);
         }
 
         // 根据时间类型计算券使用期限
@@ -101,7 +102,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         try {
             result = datetimeFormat.parse(date + " 23:59:59");
         } catch (ParseException e) {
-            throw new MallException("系统内部异常");
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
         return result;
     }

@@ -2,6 +2,7 @@ package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserFootprint;
@@ -17,6 +18,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 
@@ -47,8 +50,8 @@ public class MallProductController {
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
-    @GetMapping("/getByClassifyId")
-    public PageInfo<MallProductVo> getByClassifyId(@RequestParam("classifyId") Integer classifyId,
+    @GetMapping("/getByClassifyId/{classifyId}")
+    public PageInfo<MallProductVo> getByClassifyId(@PathVariable("classifyId") @Min(1) @Max(2147483647) Integer classifyId,
                                                    @RequestParam(value = "inStock", defaultValue = "0") Integer inStock,
                                                    @RequestParam(value = "priceSort", defaultValue = "1") Integer priceSort,
                                                    @RequestParam(value = "offset", defaultValue = "0") Integer offset,
@@ -66,10 +69,10 @@ public class MallProductController {
             @ApiImplicitParam(name = "productId", value = "商品id", dataType = "Integer")
     })
     @GetMapping("/detail/{productId}")
-    public MallProductVo detail(@PathVariable("productId") Integer productId) {
+    public MallProductVo detail(@PathVariable("productId") @Min(1) @Max(2147483647) Integer productId) {
         MallProductVo productVo = productService.getDetailVo(productId);
         if (productVo == null) {
-            throw new MallException("商品不存在！");
+            throw new MallException(MallError.MallErrorEnum.PRODUCT_NOT_FOUND.format(productId));
         }
 
         // 添加用户足迹
@@ -92,7 +95,7 @@ public class MallProductController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/getByCouponId/{couponId}")
-    public PageInfo<MallProductVo> getProductVoByCouponId(@PathVariable("couponId") Integer couponId,
+    public PageInfo<MallProductVo> getProductVoByCouponId(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId,
                                                           @RequestParam(value = "inStock", defaultValue = "0") Integer inStock,
                                                           @RequestParam(value = "priceSort", defaultValue = "1") Integer priceSort,
                                                           @RequestParam(value = "offset", defaultValue = "0") Integer offset,
@@ -101,7 +104,7 @@ public class MallProductController {
         // 判断优惠券id是否可用
         MallCoupon coupon = couponService.getAvailable(couponId);
         if (coupon == null || MallCouponUseTypeEnums.ALL.getValue().equals(coupon.getUseType())) {
-            throw new MallException("优惠券异常！");
+            throw new MallException(MallError.MallErrorEnum.COUPON_ERROR);
         }
 
         PageInfo<MallProductVo> productVoPageInfo = null;

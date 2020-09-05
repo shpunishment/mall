@@ -11,11 +11,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class MallHomeController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/search")
-    public PageInfo<MallProductVo> search(@RequestParam("productName") String productName,
+    public PageInfo<MallProductVo> search(@RequestParam(value = "productName", defaultValue = "") String productName,
                                           @RequestParam(value = "inStock", defaultValue = "0") Integer inStock,
                                           @RequestParam(value = "priceSort", defaultValue = "1") Integer priceSort,
                                           @RequestParam(value = "offset", defaultValue = "0") Integer offset,
@@ -107,8 +106,8 @@ public class MallHomeController {
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
-    @GetMapping("/getProductByFlashId")
-    public PageInfo<MallProductVo> getProductByFlashId(@RequestParam("flashId") Integer flashId,
+    @GetMapping("/getProductByFlashId/{flashId}")
+    public PageInfo<MallProductVo> getProductByFlashId(@PathVariable("flashId") @Min(1) @Max(2147483647) Integer flashId,
                                                        @RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                                        @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
 

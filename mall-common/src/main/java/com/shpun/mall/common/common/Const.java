@@ -43,9 +43,14 @@ public class Const {
     public static final Integer API_RETURN_CODE_SUCCESS = 200;
 
     /**
+     * api请求错误code
+     */
+    public static final Integer API_RETURN_CODE_BAD_REQUEST = 400;
+
+    /**
      * api返回错误code
      */
-    public static final Integer API_RETURN_CODE_ERROR = 500;
+    public static final Integer API_RETURN_CODE_INTERNAL_SERVER_ERROR = 500;
 
     /**
      * api返回登录失败code

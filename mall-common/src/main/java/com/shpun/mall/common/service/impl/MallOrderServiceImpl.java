@@ -8,6 +8,7 @@ import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.enums.MallOrderStatusEnums;
 import com.shpun.mall.common.enums.MallUserAddressSexEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallOrderMapper;
 import com.shpun.mall.common.model.*;
@@ -86,8 +87,8 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Override
     public MallOrder calculatePrice(List<Integer> cartIdList) {
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
         if (CollectionUtils.isNotEmpty(cartIdList)) {
+            List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
             BigDecimal productPrice = new BigDecimal("0.00");
 
             for(MallCart cart : cartList) {
@@ -103,14 +104,14 @@ public class MallOrderServiceImpl implements MallOrderService {
             this.setPrice(order, productPrice, new BigDecimal("0.00"));
             return order;
         } else {
-            throw new MallException("购物车为空");
+            throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
     }
 
     @Override
     public MallOrder calculatePrice(List<Integer> cartIdList, Integer couponId) {
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
         if (CollectionUtils.isNotEmpty(cartIdList)) {
+            List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
             BigDecimal productPrice = new BigDecimal("0.00");
 
             // 获取优惠券中规定的分类id、商品id
@@ -168,15 +169,15 @@ public class MallOrderServiceImpl implements MallOrderService {
             this.setPrice(order, productPrice, discount);
             return order;
         } else {
-            throw new MallException("购物车为空");
+            throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
     }
 
     @Transactional
     @Override
     public void generateOrder(MallOrder order, List<Integer> cartIdList) {
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
-        if (CollectionUtils.isNotEmpty(cartList)) {
+        if (CollectionUtils.isNotEmpty(cartIdList)) {
+            List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
             List<MallProduct> productList = new ArrayList<>(cartList.size());
             List<MallFlashItem> flashItemList = new ArrayList<>(cartList.size());
             List<MallOrderItem> orderItemList = new ArrayList<>(cartList.size());
@@ -232,7 +233,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                     }
 
                     if (stock < quantity) {
-                        throw new MallException("库存不足");
+                        throw new MallException(MallError.MallErrorEnum.STOCK_NULL.format(product.getProductName()));
                     } else {
                         // 减库存，加销量
                         if (flashing) {
@@ -279,7 +280,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                         orderItemList.add(orderItem);
                     }
                 } else {
-                    throw new MallException("已下架");
+                    throw new MallException(MallError.MallErrorEnum.OFF_SHELF.format(product.getProductName()));
                 }
             }
 
@@ -334,13 +335,8 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
             orderItemService.insertBatch(orderItemList);
         } else {
-            throw new MallException("购物车为空");
+            throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
-    }
-
-    @Override
-    public List<MallOrder> getByUserId(Integer userId) {
-        return orderMapper.getByUserId(userId);
     }
 
     /**
@@ -361,13 +357,18 @@ public class MallOrderServiceImpl implements MallOrderService {
         }
     }
 
+    @Override
+    public List<MallOrder> getByUserId(Integer userId) {
+        return orderMapper.getByUserId(userId);
+    }
+
     @Transactional
     @Override
     public void closeOrder(Integer orderId, Integer userId) {
         // 查找订单是否存在
         MallOrder order = this.selectByPrimaryKey(orderId);
         if (!order.getUserId().equals(userId)) {
-            throw new MallException("内部错误");
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
 
         order.setStatus(MallOrderStatusEnums.CLOSE.getValue());

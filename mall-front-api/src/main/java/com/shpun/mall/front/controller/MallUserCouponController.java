@@ -19,6 +19,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +47,7 @@ public class MallUserCouponController {
             @ApiImplicitParam(name = "couponId", value = "优惠券id", dataType = "Integer")
     })
     @GetMapping("/{couponId}")
-    public void get(@PathVariable("couponId") Integer couponId) {
+    public void get(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId) {
         MallUserCoupon userCoupon = new MallUserCoupon();
         userCoupon.setUserId(SecurityUserUtils.getUserId());
         userCoupon.setCouponId(couponId);
@@ -58,7 +60,7 @@ public class MallUserCouponController {
         userCouponService.deleteCache(SecurityUserUtils.getUserId());
     }
 
-    @ApiOperation("分页获取优惠券")
+    @ApiOperation("分页获取用户已领取的优惠券")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "status", value = "使用状态", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),

@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallProductMapper;
 import com.shpun.mall.common.model.MallCart;
@@ -153,16 +154,16 @@ public class MallProductServiceImpl implements MallProductService {
             limit = product.getLimit();
 
             if (stock < quantity) {
-                throw new MallException(product.getProductName() + " 库存不足");
+                throw new MallException(MallError.MallErrorEnum.STOCK_NULL.format(product.getProductName()));
             } else {
                 if (limit >= quantity) {
                     return product;
                 } else {
-                    throw new MallException(product.getProductName() + " 限购数 " + limit);
+                    throw new MallException(MallError.MallErrorEnum.LIMIT_ERROR.format(product.getProductName(), limit));
                 }
             }
         } else {
-            throw new MallException(product.getProductName() + " 已下架");
+            throw new MallException(MallError.MallErrorEnum.OFF_SHELF.format(product.getProductName()));
         }
     }
 

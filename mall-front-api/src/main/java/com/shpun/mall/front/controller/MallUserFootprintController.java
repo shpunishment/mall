@@ -14,6 +14,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 /**
  * @Description:
  * @Author: sun
@@ -37,7 +40,7 @@ public class MallUserFootprintController {
     })
     @GetMapping("/page")
     public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                              @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+                                        @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = userFootprintService.getVoPageByFootprint(SecurityUserUtils.getUserId(), offset, limit);
 
@@ -50,7 +53,7 @@ public class MallUserFootprintController {
             @ApiImplicitParam(name = "footprintId", value = "足迹id", dataType = "Integer")
     })
     @GetMapping("/delete/{footprintId}")
-    public void delete(@PathVariable("footprintId") Integer footprintId) {
+    public void delete(@PathVariable("footprintId") @Min(1) @Max(2147483647) Integer footprintId) {
         userFootprintService.deleteByPrimaryKey(footprintId);
 
         // 删除用户足迹缓存
