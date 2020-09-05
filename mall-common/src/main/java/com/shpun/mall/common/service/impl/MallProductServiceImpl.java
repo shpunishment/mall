@@ -128,7 +128,7 @@ public class MallProductServiceImpl implements MallProductService {
 
             // 计算库存剩余百分比
             BigDecimal stock = new BigDecimal(productVo.getStock());
-            BigDecimal sales = new BigDecimal(productVo.getSales());
+            BigDecimal sales = new BigDecimal(productVo.getSales() == null ? 0 : productVo.getSales());
             BigDecimal total = stock.add(sales);
             BigDecimal remainStockRatio = stock.divide(total, 2, RoundingMode.HALF_UP);
             productVo.setRemainStockPercent(remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toString());
@@ -243,12 +243,16 @@ public class MallProductServiceImpl implements MallProductService {
 
         // 赋值库存标识
         Integer stock = productVo.getStock();
-        productVo.setHasStock(stock > 0);
+        if (stock != null) {
+            productVo.setHasStock(stock > 0);
+            productVo.setStock(null);
+        }
+
 
         // 赋值打折数
         BigDecimal originalPrice = productVo.getOriginalPrice();
         BigDecimal currentPrice = productVo.getCurrentPrice();
-        if (originalPrice.compareTo(currentPrice) < 0) {
+        if (currentPrice.compareTo(originalPrice) < 0) {
             BigDecimal discount = currentPrice.divide(originalPrice, 2, RoundingMode.HALF_UP);
             productVo.setDiscountStr(discount.multiply(new BigDecimal("10")).stripTrailingZeros().toString());
         }

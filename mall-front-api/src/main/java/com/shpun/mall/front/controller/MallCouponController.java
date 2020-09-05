@@ -33,7 +33,7 @@ public class MallCouponController {
     @Autowired
     private MallUserCouponService userCouponService;
 
-    @ApiOperation("分页获取优惠券")
+    @ApiOperation("分页获取可领取优惠券")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")

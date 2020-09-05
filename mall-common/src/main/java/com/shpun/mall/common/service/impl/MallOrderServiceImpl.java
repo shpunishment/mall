@@ -100,7 +100,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
 
             MallOrder order = new MallOrder();
-            this.setPrice(order, productPrice, null);
+            this.setPrice(order, productPrice, new BigDecimal("0.00"));
             return order;
         } else {
             throw new MallException("购物车为空");
@@ -214,7 +214,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 MallProduct product = productService.lockStock(productId);
                 if (product.getPublishStatus() == 1) {
                     Integer stock;
-                    BigDecimal price;
+                    BigDecimal unitPrice;
 
                     // 判断当前商品是否限时抢购
                     boolean flashing = false;
@@ -225,10 +225,10 @@ public class MallOrderServiceImpl implements MallOrderService {
                         // 锁定限时抢购商品库存
                         flashItem = flashItemService.lockStock(flashItemTemp.getFlashItemId());
                         stock = flashItem.getStock();
-                        price = flashItem.getPrice();
+                        unitPrice = flashItem.getPrice();
                     } else {
                         stock = product.getStock();
-                        price = product.getCurrentPrice();
+                        unitPrice = product.getCurrentPrice();
                     }
 
                     if (stock < quantity) {
@@ -246,7 +246,8 @@ public class MallOrderServiceImpl implements MallOrderService {
                         }
 
                         // 计算价格
-                        productPrice = productPrice.add(price.multiply(new BigDecimal(quantity)));
+                        BigDecimal price = unitPrice.multiply(new BigDecimal(quantity));
+                        productPrice = productPrice.add(price);
 
                         // 优惠券不为空，并且商品非限时抢购
                         if (canUseCoupon && coupon != null && useType != null && meetIdSet != null && !flashing) {
@@ -272,7 +273,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                         orderItem.setProductId(productId);
                         orderItem.setProductName(product.getProductName());
                         orderItem.setPic(product.getPic());
-                        orderItem.setPrice(price);
+                        orderItem.setPrice(unitPrice);
                         orderItem.setQuantity(quantity);
                         orderItem.setFlashItemId(flashing ? flashItem.getFlashItemId() : Const.DEFAULT_NO_FLASH_ITEM_ID);
                         orderItemList.add(orderItem);

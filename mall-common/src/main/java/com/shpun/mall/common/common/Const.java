@@ -122,4 +122,14 @@ public class Const {
      */
     public static final Integer TODAY_USE_COUPON_COUNT = 2;
 
+    /**
+     * 当前环境，开发
+     */
+    public static final String PROFILE_DEV = "dev";
+
+    /**
+     * 当前环境，生产
+     */
+    public static final String PROFILE_PROD = "prod";
+
 }

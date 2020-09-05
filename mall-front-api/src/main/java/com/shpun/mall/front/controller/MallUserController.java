@@ -38,6 +38,7 @@ public class MallUserController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.insertSelective(user);
+        // todo 注册成功，赠予优惠券
     }
 
     @ApiOperation("获取用户信息")

@@ -26,4 +26,8 @@ public interface MallUserCouponMapper {
 
     Integer getTodayUseCount(Integer userId);
 
+    MallUserCoupon canUse(@Param("userId") Integer userId, @Param("couponId") Integer couponId);
+
+    List<MallUserCouponVo> getAvailableVoList(Integer userId);
+
 }

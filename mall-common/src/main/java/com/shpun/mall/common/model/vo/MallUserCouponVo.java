@@ -32,8 +32,8 @@ public class MallUserCouponVo implements Serializable {
     @ApiModelProperty("有效期限，结束时间")
     private Date endTime;
 
-    @ApiModelProperty("是否可使用")
-    private Boolean canUse;
+    @ApiModelProperty("订单信息")
+    private MallOrderVo orderVo;
 
     private static final long serialVersionUID = 1L;
 
@@ -85,11 +85,11 @@ public class MallUserCouponVo implements Serializable {
         this.endTime = endTime;
     }
 
-    public Boolean getCanUse() {
-        return canUse;
+    public MallOrderVo getOrderVo() {
+        return orderVo;
     }
 
-    public void setCanUse(Boolean canUse) {
-        this.canUse = canUse;
+    public void setOrderVo(MallOrderVo orderVo) {
+        this.orderVo = orderVo;
     }
 }

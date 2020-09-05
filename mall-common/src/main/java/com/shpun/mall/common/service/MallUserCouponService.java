@@ -45,4 +45,6 @@ public interface MallUserCouponService {
      */
     void deleteCache(Integer userId);
 
+    List<MallUserCouponVo> getAvailableVoList(Integer userId);
+
 }

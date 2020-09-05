@@ -75,6 +75,8 @@ public class MallProductController {
     @ApiOperation("根据优惠券id分页获取商品")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "couponId", value = "优惠券id", dataType = "Integer"),
+            @ApiImplicitParam(name = "inStock", value = "有货过滤", dataType = "Integer"),
+            @ApiImplicitParam(name = "priceSort", value = "价格排序，1顺序，2倒序", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
@@ -87,7 +89,7 @@ public class MallProductController {
 
         // 判断优惠券id是否可用
         MallCoupon coupon = couponService.getAvailable(couponId);
-        if (coupon == null) {
+        if (coupon == null || MallCouponUseTypeEnums.ALL.getValue().equals(coupon.getUseType())) {
             throw new MallException("优惠券异常！");
         }
 

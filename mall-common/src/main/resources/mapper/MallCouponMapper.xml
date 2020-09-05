@@ -38,11 +38,11 @@
 
   <sql id="Base_Column_List">
     coupon_id, create_time, create_id, update_time, update_id, `name`, `desc`, min_price,
-    discount, limit, total, status, `type`, use_type, time_type, days, start_time, end_time
+    discount, `limit`, total, status, `type`, use_type, time_type, days, start_time, end_time
   </sql>
 
   <sql id="Vo_Column_List">
-    coupon_id, `name`, `desc`, min_price, discount, limit, total, `type`, use_type
+    coupon_id, `name`, `desc`, min_price, discount, `limit`, total, `type`, use_type
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

@@ -20,10 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description:
@@ -56,9 +53,6 @@ public class MallOrderController {
     @Autowired
     private MallUserCouponService userCouponService;
 
-    @Autowired
-    private MallCouponService couponService;
-
     @ApiOperation("计算价格")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "cartIdList", value = "购物车idList", dataType = "List<Integer>")
@@ -75,6 +69,7 @@ public class MallOrderController {
     @PostMapping("/calculateWithCoupon")
     public Map<String, List<MallUserCouponVo>> calculateWithCoupon(@RequestParam("cartIdList") List<Integer> cartIdList) {
 
+        // 获取用户所有未使用的优惠券
         List<MallUserCouponVo> userCouponVoList = userCouponService.getVoListByFilter(SecurityUserUtils.getUserId(), MallUserCouponStatusEnums.UNUSED.getValue());
 
         Map<String, List<MallUserCouponVo>> resultMap = null;
@@ -87,10 +82,22 @@ public class MallOrderController {
             boolean canTodayUse = userCouponService.getTodayUseCount(SecurityUserUtils.getUserId()) < Const.TODAY_USE_COUPON_COUNT;
             for (MallUserCouponVo userCouponVo : userCouponVoList) {
                 if (canTodayUse) {
-                    MallOrder order = orderService.calculatePrice(cartIdList, userCouponVo.getCouponId());
-                    if (order.getCouponId() != null) {
-                        List<MallUserCouponVo> canUseList = resultMap.get("can");
-                        canUseList.add(userCouponVo);
+                    // 判断优惠券使用时间，是否可用
+                    Date startTime = userCouponVo.getStartTime();
+                    Date endTime = userCouponVo.getEndTime();
+                    Date now = new Date();
+                    if (startTime.compareTo(now) <= 0 && endTime.compareTo(now) >= 0) {
+                        MallOrder order = orderService.calculatePrice(cartIdList, userCouponVo.getCouponId());
+                        if (order.getCouponId() != null) {
+                            MallOrderVo orderVo = new MallOrderVo();
+                            BeanUtils.copyProperties(order, orderVo);
+                            userCouponVo.setOrderVo(orderVo);
+                            List<MallUserCouponVo> canUseList = resultMap.get("can");
+                            canUseList.add(userCouponVo);
+                        } else {
+                            List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
+                            cannotUseList.add(userCouponVo);
+                        }
                     } else {
                         List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
                         cannotUseList.add(userCouponVo);

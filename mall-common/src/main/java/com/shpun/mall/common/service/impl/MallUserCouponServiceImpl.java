@@ -58,6 +58,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
             throw new MallException("优惠券领取失败！");
         }
 
+        MallUserCoupon isExist = this.getByUserIdAndCouponId(record.getUserId(), couponId);
+        if (isExist != null) {
+            throw new MallException("优惠券不可重复领取");
+        }
+
         if (MallCouponTimeTypeEnums.DAY.getValue().equals(coupon.getTimeType())) {
             Integer days = coupon.getDays();
             record.setStartTime(new Date());
@@ -138,8 +143,8 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     public MallUserCoupon canUse(Integer userId, Integer couponId) {
         Integer todayUseCount = this.getTodayUseCount(userId);
         if (todayUseCount < Const.TODAY_USE_COUPON_COUNT) {
-            MallUserCoupon userCoupon = this.getByUserIdAndCouponId(userId, couponId);
-            if (userCoupon != null && MallUserCouponStatusEnums.UNUSED.getValue().equals(userCoupon.getStatus())) {
+            MallUserCoupon userCoupon = userCouponMapper.canUse(userId, couponId);
+            if (userCoupon != null) {
                 return userCoupon;
             }
         }
@@ -149,5 +154,10 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
+    }
+
+    @Override
+    public List<MallUserCouponVo> getAvailableVoList(Integer userId) {
+        return userCouponMapper.getAvailableVoList(userId);
     }
 }
