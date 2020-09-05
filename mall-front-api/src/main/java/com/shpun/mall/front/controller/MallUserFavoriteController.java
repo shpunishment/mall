@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
@@ -24,6 +25,7 @@ import javax.validation.constraints.Min;
 @Api(tags = "用户收藏控制器")
 @RequestMapping("/api/user/favorite")
 @RestController
+@Validated
 public class MallUserFavoriteController {
 
     @Autowired
@@ -38,8 +40,8 @@ public class MallUserFavoriteController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                        @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+    public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                        @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = userFavoriteService.getVoPageByFavorite(SecurityUserUtils.getUserId(), offset, limit);
 

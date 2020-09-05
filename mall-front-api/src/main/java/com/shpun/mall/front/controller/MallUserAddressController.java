@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +25,7 @@ import javax.validation.constraints.Min;
 @Api(tags = "用户地址控制器")
 @RequestMapping("/api/user/address")
 @RestController
+@Validated
 public class MallUserAddressController {
 
     @Autowired
@@ -35,8 +37,8 @@ public class MallUserAddressController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallUserAddressVo> page(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                            @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+    public PageInfo<MallUserAddressVo> page(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                            @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallUserAddressVo> userAddressVoPageInfo = userAddressService.getVoPageByUserId(SecurityUserUtils.getUserId(), offset, limit);
         return userAddressVoPageInfo;
@@ -44,7 +46,7 @@ public class MallUserAddressController {
 
     @ApiOperation("新增用户地址")
     @GetMapping("/add")
-    public void add(@RequestBody MallUserAddress userAddress) {
+    public void add(@RequestBody @Validated(MallUserAddress.Add.class) MallUserAddress userAddress) {
         userAddress.setUserId(SecurityUserUtils.getUserId());
         userAddressService.insertSelective(userAddress);
 
@@ -66,7 +68,7 @@ public class MallUserAddressController {
 
     @ApiOperation("更新用户地址")
     @GetMapping("/update")
-    public void update(@RequestBody MallUserAddress userAddress) {
+    public void update(@RequestBody @Validated(MallUserAddress.Update.class) MallUserAddress userAddress) {
         userAddressService.updateByPrimaryKeySelective(userAddress);
 
         // 删除用户地址缓存

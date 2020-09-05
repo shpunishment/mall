@@ -2,7 +2,9 @@ package com.shpun.mall.common.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,12 +28,16 @@ public class MallUser implements Serializable {
     @ApiModelProperty("头像，为文件id")
     private Integer avatar;
 
+    @NotBlank(groups = Register.class)
+    @Length(min = 2, max = 20, groups = Register.class)
     @ApiModelProperty("用户名")
     private String username;
 
     @ApiModelProperty("昵称")
     private String nickname;
 
+    @NotBlank(groups = Register.class)
+    @Length(min = 16, max = 32, groups = Register.class)
     @ApiModelProperty("密码")
     private String password;
 
@@ -134,4 +140,11 @@ public class MallUser implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
+    /**
+     * 用户注册校验分组
+     */
+    public interface Register {
+    }
+
 }

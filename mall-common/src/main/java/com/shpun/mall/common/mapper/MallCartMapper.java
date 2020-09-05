@@ -18,12 +18,16 @@ public interface MallCartMapper {
 
     void deleteAllByUserId(Integer userId);
 
-    List<MallCart> getByCartIdList(@Param("cartIdList") List<Integer> cartIdList);
+    List<MallCart> getByUserIdAndCartIdList(@Param("userId") Integer userId, @Param("cartIdList") List<Integer> cartIdList);
 
     void deleteBatch(@Param("cartIdList") List<Integer> cartIdList);
 
     List<MallCartVo> getVoByUserId(Integer userId);
 
     MallCartVo getVoByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
+
+    MallCart getByUserIdAndCartId(@Param("userId") Integer userId, @Param("cartId") Integer cartId);
+
+    MallCart getByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
 
 }

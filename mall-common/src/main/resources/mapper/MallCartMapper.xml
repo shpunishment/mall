@@ -107,13 +107,15 @@
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
 
-  <select id="getByCartIdList" resultMap="BaseResultMap">
+  <select id="getByUserIdAndCartIdList" resultMap="BaseResultMap">
     select product_id, quantity
     from mall_cart
-    where deleted = 0 and cart_id in
+    where cart_id in
     <foreach item="cartId" collection="cartIdList" open="(" separator="," close=")">
       #{cartId,jdbcType=INTEGER}
     </foreach>
+      and user_id = #{userId,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <update id="deleteBatch" parameterType="java.util.List">
@@ -156,7 +158,27 @@
     select
     <include refid="Vo_Column_List" />
     from mall_cart
-    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0 and product_id = #{productId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+      and product_id = #{productId,jdbcType=INTEGER}
+      and deleted = 0
+  </select>
+
+  <select id="getByUserIdAndCartId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_cart
+    where cart_id = #{cartId,jdbcType=INTEGER}
+      and user_id = #{userId,jdbcType=INTEGER}
+      and deleted = 0
+  </select>
+
+  <select id="getByUserIdAndProductId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_cart
+    where user_id = #{userId,jdbcType=INTEGER}
+      and product_id = #{productId,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
 </mapper>

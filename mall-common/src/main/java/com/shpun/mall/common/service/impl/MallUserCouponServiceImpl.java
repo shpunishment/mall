@@ -139,6 +139,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         return userCouponMapper.getByUserIdAndCouponId(userId, couponId);
     }
 
+    @RedisCache
     @Override
     public Integer getTodayUseCount(Integer userId) {
         return userCouponMapper.getTodayUseCount(userId);
@@ -159,6 +160,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
+        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);
     }
 
     @Override

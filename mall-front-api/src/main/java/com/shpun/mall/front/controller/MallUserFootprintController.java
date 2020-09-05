@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
@@ -25,6 +26,7 @@ import javax.validation.constraints.Min;
 @Api(tags = "用户足迹控制器")
 @RequestMapping("/api/user/footprint")
 @RestController
+@Validated
 public class MallUserFootprintController {
 
     @Autowired
@@ -39,11 +41,12 @@ public class MallUserFootprintController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                        @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+    public PageInfo<MallProductVo> list(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                        @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = userFootprintService.getVoPageByFootprint(SecurityUserUtils.getUserId(), offset, limit);
 
+        // 检查商品是否在限时抢购，在用户购物车中
         productService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), true);
         return productVoPageInfo;
     }

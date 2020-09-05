@@ -20,7 +20,7 @@ public interface MallOrderMapper {
 
     List<MallOrderVo> getVoListByFilter(@Param("userId") Integer userId, @Param("status") Integer status);
 
-    MallOrderVo getDetailVo(Integer orderId);
+    MallOrderVo getDetailVo(@Param("userId")Integer userId, @Param("orderId") Integer orderId);
 
     List<MallOrderVo> getVoByProductName(@Param("userId") Integer userId, @Param("productName") String productName);
 

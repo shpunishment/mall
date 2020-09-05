@@ -17,8 +17,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
@@ -33,6 +35,7 @@ import java.util.*;
 @Api(tags = "订单控制器")
 @RequestMapping("/api/order")
 @RestController
+@Validated
 public class MallOrderController {
 
     @Autowired
@@ -62,7 +65,7 @@ public class MallOrderController {
     })
     @PostMapping("/calculate")
     public MallOrder calculatePrice(@RequestParam("cartIdList") List<Integer> cartIdList) {
-        return orderService.calculatePrice(cartIdList);
+        return orderService.calculatePrice(SecurityUserUtils.getUserId(), cartIdList);
     }
 
     @ApiOperation("根据用户优惠券计算价格")
@@ -90,7 +93,7 @@ public class MallOrderController {
                     Date endTime = userCouponVo.getEndTime();
                     Date now = new Date();
                     if (startTime.compareTo(now) <= 0 && endTime.compareTo(now) >= 0) {
-                        MallOrder order = orderService.calculatePrice(cartIdList, userCouponVo.getCouponId());
+                        MallOrder order = orderService.calculatePrice(SecurityUserUtils.getUserId(), cartIdList, userCouponVo.getCouponId());
                         if (order.getCouponId() != null) {
                             MallOrderVo orderVo = new MallOrderVo();
                             BeanUtils.copyProperties(order, orderVo);
@@ -116,7 +119,7 @@ public class MallOrderController {
 
     @ApiOperation("生成订单")
     @PostMapping("/generate")
-    public void generateOrder(@RequestBody MallOrderVo orderVo) {
+    public void generateOrder(@RequestBody @Validated(MallOrderVo.Generate.class) MallOrderVo orderVo) {
         MallOrder order = new MallOrder();
         BeanUtils.copyProperties(orderVo, order);
         order.setUserId(SecurityUserUtils.getUserId());
@@ -141,9 +144,9 @@ public class MallOrderController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallOrderVo> list(@RequestParam(value = "status",required = false) Integer status,
-                                      @RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                      @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+    public PageInfo<MallOrderVo> list(@RequestParam(value = "status",required = false) @Min(-1) @Max(4) Integer status,
+                                      @RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                      @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallOrderVo> orderVoPageInfo = orderService.getVoPageByFilter(SecurityUserUtils.getUserId(), status, offset, limit);
 
@@ -162,12 +165,10 @@ public class MallOrderController {
     })
     @GetMapping("/detail/{orderId}")
     public MallOrderVo detail(@PathVariable("orderId") @Min(1) @Max(2147483647) Integer orderId) {
-        MallOrder order = orderService.selectByPrimaryKey(orderId);
-        if (!order.getUserId().equals(SecurityUserUtils.getUserId())) {
+        MallOrderVo orderVo = orderService.getDetailVo(SecurityUserUtils.getUserId(), orderId);
+        if (orderVo == null) {
             throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
-
-        MallOrderVo orderVo = orderService.getDetailVo(orderId);
 
         List<MallOrderItemVo> orderItemVoList = orderItemService.getVoByOrderId(orderVo.getOrderId());
         orderVo.setOrderItemVoList(orderItemVoList);
@@ -195,9 +196,9 @@ public class MallOrderController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/search")
-    public PageInfo<MallOrderVo> search(@RequestParam(value = "productName", defaultValue = "") String productName,
-                                        @RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                        @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+    public PageInfo<MallOrderVo> search(@RequestParam(value = "productName", defaultValue = "") @Length(max = 20) String productName,
+                                        @RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                        @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         // 添加用户搜索历史
         userSearchHistoryService.insertOrUpdate(SecurityUserUtils.getUserId(), productName, MallUserSearchHistoryTypeEnums.ORDER.getValue());
@@ -215,7 +216,8 @@ public class MallOrderController {
 
     @ApiOperation("评价订单")
     @PostMapping("/comment")
-    public void comment(@RequestBody MallOrder order) {
+    public void comment(@RequestBody @Validated(MallOrder.Comment.class) MallOrder order) {
+        // todo 校验：订单是否属于该用户
         orderService.commentSuccess(order);
 
         // 删除订单缓存

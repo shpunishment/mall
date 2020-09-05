@@ -10,7 +10,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
@@ -25,6 +27,7 @@ import java.util.List;
 @Api(tags = "首页控制器")
 @RequestMapping("/api/home")
 @RestController
+@Validated
 public class MallHomeController {
 
     @Autowired
@@ -48,11 +51,11 @@ public class MallHomeController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/search")
-    public PageInfo<MallProductVo> search(@RequestParam(value = "productName", defaultValue = "") String productName,
-                                          @RequestParam(value = "inStock", defaultValue = "0") Integer inStock,
-                                          @RequestParam(value = "priceSort", defaultValue = "1") Integer priceSort,
-                                          @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                          @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+    public PageInfo<MallProductVo> search(@RequestParam(value = "productName", defaultValue = "") @Length(max = 20) String productName,
+                                          @RequestParam(value = "inStock", defaultValue = "0") @Min(0) @Max(1) Integer inStock,
+                                          @RequestParam(value = "priceSort", defaultValue = "1") @Min(1) @Max(2) Integer priceSort,
+                                          @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                          @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         if (SecurityUserUtils.getCurrentUser() != null) {
             // 添加用户搜索历史
@@ -84,8 +87,8 @@ public class MallHomeController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/getHotProduct")
-    public PageInfo<MallProductVo> getHotProductVo(@RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                                   @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+    public PageInfo<MallProductVo> getHotProductVo(@RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                                   @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = productService.getHotVoPage(offset, limit);
 
@@ -108,8 +111,8 @@ public class MallHomeController {
     })
     @GetMapping("/getProductByFlashId/{flashId}")
     public PageInfo<MallProductVo> getProductByFlashId(@PathVariable("flashId") @Min(1) @Max(2147483647) Integer flashId,
-                                                       @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                                       @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+                                                       @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                                       @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = productService.getVoPageByFlashId(flashId, offset, limit);
 

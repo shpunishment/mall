@@ -86,9 +86,9 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public MallOrder calculatePrice(List<Integer> cartIdList) {
+    public MallOrder calculatePrice(Integer userId, List<Integer> cartIdList) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
-            List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
+            List<MallCart> cartList = cartService.getByUserIdAndCartIdList(userId, cartIdList);
             BigDecimal productPrice = new BigDecimal("0.00");
 
             for(MallCart cart : cartList) {
@@ -109,9 +109,9 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public MallOrder calculatePrice(List<Integer> cartIdList, Integer couponId) {
+    public MallOrder calculatePrice(Integer userId, List<Integer> cartIdList, Integer couponId) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
-            List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
+            List<MallCart> cartList = cartService.getByUserIdAndCartIdList(userId, cartIdList);
             BigDecimal productPrice = new BigDecimal("0.00");
 
             // 获取优惠券中规定的分类id、商品id
@@ -177,7 +177,10 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public void generateOrder(MallOrder order, List<Integer> cartIdList) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
-            List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
+            // 订单地址
+            this.setAddress(order);
+
+            List<MallCart> cartList = cartService.getByUserIdAndCartIdList(order.getUserId(), cartIdList);
             List<MallProduct> productList = new ArrayList<>(cartList.size());
             List<MallFlashItem> flashItemList = new ArrayList<>(cartList.size());
             List<MallOrderItem> orderItemList = new ArrayList<>(cartList.size());
@@ -306,18 +309,6 @@ public class MallOrderServiceImpl implements MallOrderService {
             String orderNumber = new Date().getTime() + "" + new Random().nextInt(1000);
             order.setOrderNumber(orderNumber);
             order.setOrderTime(new Date());
-
-            // 订单地址
-            MallUserAddress userAddress = userAddressService.selectByPrimaryKey(order.getAddressId());
-            StringBuilder receiveNameSb = new StringBuilder(userAddress.getName());
-            if (!userAddress.getSex().equals(MallUserAddressSexEnums.NO.getValue())) {
-                receiveNameSb.append("(")
-                        .append(MallUserAddressSexEnums.getEnum(userAddress.getSex()).getName())
-                        .append(")");
-            }
-            order.setReceiveName(receiveNameSb.toString());
-            order.setReceivePhone(userAddress.getPhone());
-            order.setReceiveAddress(userAddress.getAddress());
             orderMapper.insertSelective(order);
 
             // 用户优惠券更新
@@ -355,6 +346,25 @@ public class MallOrderServiceImpl implements MallOrderService {
             order.setDeliveryPrice(Const.DELIVERY_PRICE);
             order.setTotalPrice(productPrice.add(Const.DELIVERY_PRICE).subtract(couponPrice));
         }
+    }
+
+    /**
+     * 设值订单地址
+     * @param order
+     */
+    private void setAddress(MallOrder order) {
+        MallUserAddress userAddress = userAddressService.getByUserIdAndAddressId(order.getUserId(), order.getAddressId());
+        if (userAddress == null) {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+
+        StringBuilder receiveNameSb = new StringBuilder(userAddress.getName());
+        if (!userAddress.getSex().equals(MallUserAddressSexEnums.NO.getValue())) {
+            receiveNameSb.append("(").append(MallUserAddressSexEnums.getEnum(userAddress.getSex()).getName()).append(")");
+        }
+        order.setReceiveName(receiveNameSb.toString());
+        order.setReceivePhone(userAddress.getPhone());
+        order.setReceiveAddress(userAddress.getAddress());
     }
 
     @Override
@@ -463,8 +473,9 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @RedisCache
     @Override
-    public MallOrderVo getDetailVo(Integer orderId) {
-        return orderMapper.getDetailVo(orderId);
+    public MallOrderVo getDetailVo(Integer userId, Integer orderId) {
+        // todo 删除缓存：待支付订单完成支付等
+        return orderMapper.getDetailVo(userId, orderId);
     }
 
     @Override

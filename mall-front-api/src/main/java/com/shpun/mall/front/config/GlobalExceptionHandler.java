@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -63,8 +64,6 @@ public class GlobalExceptionHandler {
         if (!set.isEmpty()) {
             set.forEach(error -> {
                 ConstraintViolation constraintViolation = (ConstraintViolation) error;
-                Path path = constraintViolation.getPropertyPath();
-
                 stringBuilder.append(constraintViolation.getMessage()).append(",");
             });
             message = stringBuilder.toString().substring(0, stringBuilder.lastIndexOf(","));
@@ -87,9 +86,10 @@ public class GlobalExceptionHandler {
 
         String message = "";
         if (bindingResult.hasErrors()) {
-            List<ObjectError> errorList = bindingResult.getAllErrors();
-            errorList.forEach(error -> {
-                stringBuilder.append(error.getDefaultMessage()).append(",");
+            List<FieldError> fieldErrorList = bindingResult.getFieldErrors();
+            fieldErrorList.forEach(error -> {
+                stringBuilder.append(error.getField()).append("：")
+                        .append(error.getDefaultMessage()).append(",");
             });
             message = stringBuilder.toString().substring(0, stringBuilder.lastIndexOf(","));
         }

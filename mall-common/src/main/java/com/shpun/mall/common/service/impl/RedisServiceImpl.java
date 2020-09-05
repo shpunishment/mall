@@ -6,9 +6,7 @@ import com.shpun.mall.common.service.RedisService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import sun.java2d.cmm.Profile;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

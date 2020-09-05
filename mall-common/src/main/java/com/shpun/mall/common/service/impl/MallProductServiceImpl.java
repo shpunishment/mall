@@ -303,16 +303,4 @@ public class MallProductServiceImpl implements MallProductService {
         return new PageInfo<>(this.getVoListByFilterProductId(productIdList, inStock, priceSort));
     }
 
-    @Override
-    public List<MallProduct> getByCartIdList(List<Integer> cartIdList) {
-        List<MallProduct> productList = new ArrayList<>(cartIdList.size());
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
-        for(MallCart cart : cartList) {
-            Integer productId = cart.getProductId();
-            Integer quantity = cart.getQuantity();
-            MallProduct product = this.checkProduct(productId, quantity);
-            productList.add(product);
-        }
-        return productList;
-    }
 }

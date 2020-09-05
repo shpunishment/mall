@@ -3,6 +3,8 @@ package com.shpun.mall.common.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
+import com.shpun.mall.common.exception.MallError;
+import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallCartMapper;
 import com.shpun.mall.common.model.MallCart;
 import com.shpun.mall.common.model.vo.MallCartVo;
@@ -65,13 +67,34 @@ public class MallCartServiceImpl implements MallCartService {
     }
 
     @Override
+    public void addOrUpdate(MallCart cart) {
+        Integer cartId = cart.getCartId();
+        if (cartId != null) {
+            MallCart isExist = cartMapper.getByUserIdAndCartId(cart.getUserId(), cartId);
+            if (isExist == null) {
+                throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+            }
+            this.updateByPrimaryKeySelective(cart);
+        } else {
+            MallCart isExist = cartMapper.getByUserIdAndProductId(cart.getUserId(), cart.getProductId());
+            if (isExist == null) {
+                this.insertSelective(cart);
+            } else {
+                cart.setCartId(isExist.getCartId());
+                this.updateByPrimaryKeySelective(cart);
+            }
+        }
+    }
+
+    @Override
     public void deleteAllByUserId(Integer userId) {
         cartMapper.deleteAllByUserId(userId);
     }
 
+    @RedisCache
     @Override
-    public List<MallCart> getByCartIdList(List<Integer> cartIdList) {
-        return cartMapper.getByCartIdList(cartIdList);
+    public List<MallCart> getByUserIdAndCartIdList(Integer userId, List<Integer> cartIdList) {
+        return cartMapper.getByUserIdAndCartIdList(userId, cartIdList);
     }
 
     @Override
@@ -99,6 +122,7 @@ public class MallCartServiceImpl implements MallCartService {
 
     @Override
     public void deleteCache(Integer userId) {
+        redisService.deleteByPrefix(MallCartServiceImpl.class, "getByUserIdAndCartIdList", userId);
         redisService.deleteByPrefix(MallCartServiceImpl.class, "getVoByUserIdAndProductId", userId);
         redisService.deleteByPrefix(MallCartServiceImpl.class, "getVoPageByUserId", userId);
     }

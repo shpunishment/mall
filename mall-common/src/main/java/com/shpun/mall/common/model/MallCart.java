@@ -3,6 +3,9 @@ package com.shpun.mall.common.model;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +17,9 @@ import java.util.Date;
 @ApiModel
 public class MallCart implements Serializable {
 
+    @NotNull(groups = Update.class)
+    @Min(value = 1, groups = Update.class)
+    @Max(value = 2147483647, groups = Update.class)
     @ApiModelProperty("购物车id")
     private Integer cartId;
 
@@ -26,9 +32,15 @@ public class MallCart implements Serializable {
     @ApiModelProperty("用户id")
     private Integer userId;
 
+    @NotNull(groups = { Add.class, Update.class })
+    @Min(value = 1, groups = { Add.class, Update.class })
+    @Max(value = 2147483647, groups = { Add.class, Update.class })
     @ApiModelProperty("商品id")
     private Integer productId;
 
+    @NotNull(groups = { Add.class, Update.class })
+    @Min(value = 1, groups = { Add.class, Update.class })
+    @Max(value = 2147483647, groups = { Add.class, Update.class })
     @ApiModelProperty("数量")
     private Integer quantity;
 
@@ -110,4 +122,17 @@ public class MallCart implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
+    /**
+     * 购物车新增校验分组
+     */
+    public interface Add {
+    }
+
+    /**
+     * 购物车更新校验分组
+     */
+    public interface Update {
+    }
+
 }

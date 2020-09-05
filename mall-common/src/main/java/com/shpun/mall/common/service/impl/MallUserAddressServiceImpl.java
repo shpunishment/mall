@@ -3,6 +3,8 @@ package com.shpun.mall.common.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
+import com.shpun.mall.common.exception.MallError;
+import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallUserAddressMapper;
 import com.shpun.mall.common.model.MallUserAddress;
 import com.shpun.mall.common.model.vo.MallUserAddressVo;
@@ -46,6 +48,11 @@ public class MallUserAddressServiceImpl implements MallUserAddressService {
 
     @Override
     public void updateByPrimaryKeySelective(MallUserAddress record) {
+        MallUserAddress isExist = userAddressMapper.getByUserIdAndAddressId(record.getUserId(), record.getAddressId());
+        if (isExist == null) {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+
         record.setUpdateTime(new Date());
         userAddressMapper.updateByPrimaryKeySelective(record);
     }
@@ -75,5 +82,10 @@ public class MallUserAddressServiceImpl implements MallUserAddressService {
     @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserAddressServiceImpl.class, "getVoPageByUserId", userId);
+    }
+
+    @Override
+    public MallUserAddress getByUserIdAndAddressId(Integer userId, Integer addressId) {
+        return userAddressMapper.getByUserIdAndAddressId(userId, addressId);
     }
 }

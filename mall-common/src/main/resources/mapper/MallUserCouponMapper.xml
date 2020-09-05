@@ -132,12 +132,9 @@
       <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="useTime != null">
-        use_time = #{useTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="orderId != null">
-        order_id = #{orderId,jdbcType=INTEGER},
-      </if>
+      <!--取消订单时，需要设null值-->
+      use_time = #{useTime,jdbcType=TIMESTAMP},
+      order_id = #{orderId,jdbcType=INTEGER}
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>

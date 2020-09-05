@@ -12,8 +12,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 @Api(tags = "优惠券控制器")
 @RequestMapping("/api/coupon")
 @RestController
+@Validated
 public class MallCouponController {
 
     @Autowired
@@ -39,8 +43,8 @@ public class MallCouponController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallCouponVo> page(@RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                       @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+    public PageInfo<MallCouponVo> page(@RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                       @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallCouponVo> couponVoPageInfo = couponService.getVoPage(offset, limit);
 

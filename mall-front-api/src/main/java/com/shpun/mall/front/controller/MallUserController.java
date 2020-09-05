@@ -15,10 +15,13 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -45,7 +48,7 @@ public class MallUserController {
 
     @ApiOperation("注册")
     @PostMapping("/register")
-    public void register(@RequestBody MallUser user) {
+    public void register(@RequestBody@Validated(MallUser.Register.class) MallUser user) {
         if (userService.isExist(user.getUsername())) {
             throw new MallException(MallError.MallErrorEnum.USERNAME_EXIST.format(user.getUsername()));
         }
@@ -76,6 +79,7 @@ public class MallUserController {
     @ApiOperation("更新用户信息")
     @GetMapping("/update")
     public void update(@RequestBody MallUser user) {
+        // todo 是否需要分别写接口更新用户数据？
         user.setUserId(SecurityUserUtils.getUserId());
         userService.updateByPrimaryKeySelective(user);
 
@@ -89,7 +93,8 @@ public class MallUserController {
             @ApiImplicitParam(name = "newPassword", value = "新密码", dataType = "String")
     })
     @PostMapping("/changePassword")
-    public void changePassword(@RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword) {
+    public void changePassword(@RequestParam("oldPassword") @NotBlank @Length(min = 16, max = 32) String oldPassword,
+                               @RequestParam("newPassword") @NotBlank @Length(min = 16, max = 32) String newPassword) {
         MallUser user = userService.selectByPrimaryKey(SecurityUserUtils.getUserId());
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));

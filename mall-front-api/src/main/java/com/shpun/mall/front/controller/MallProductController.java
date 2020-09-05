@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
@@ -31,6 +32,7 @@ import java.util.List;
 @Api(tags = "商品控制器")
 @RequestMapping("/api/product")
 @RestController
+@Validated
 public class MallProductController {
 
     @Autowired
@@ -52,10 +54,10 @@ public class MallProductController {
     })
     @GetMapping("/getByClassifyId/{classifyId}")
     public PageInfo<MallProductVo> getByClassifyId(@PathVariable("classifyId") @Min(1) @Max(2147483647) Integer classifyId,
-                                                   @RequestParam(value = "inStock", defaultValue = "0") Integer inStock,
-                                                   @RequestParam(value = "priceSort", defaultValue = "1") Integer priceSort,
-                                                   @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                                   @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+                                                   @RequestParam(value = "inStock", defaultValue = "0") @Min(0) @Max(1) Integer inStock,
+                                                   @RequestParam(value = "priceSort", defaultValue = "1") @Min(1) @Max(2) Integer priceSort,
+                                                   @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                                   @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallProductVo> productVoPageInfo = productService.getVoPageByFilter(classifyId, inStock, priceSort, offset, limit);
 
@@ -76,10 +78,12 @@ public class MallProductController {
         }
 
         // 添加用户足迹
-        MallUserFootprint userFootprint = new MallUserFootprint();
-        userFootprint.setUserId(SecurityUserUtils.getUserId());
-        userFootprint.setProductId(productId);
-        userFootprintService.insertSelective(userFootprint);
+        if (SecurityUserUtils.getUserId() != null) {
+            MallUserFootprint userFootprint = new MallUserFootprint();
+            userFootprint.setUserId(SecurityUserUtils.getUserId());
+            userFootprint.setProductId(productId);
+            userFootprintService.insertSelective(userFootprint);
+        }
 
         // 检查商品是否在限时抢购，在用户购物车中，是否收藏
         productService.additionalVo(productVo, SecurityUserUtils.getUserId(), true, true);
@@ -96,10 +100,10 @@ public class MallProductController {
     })
     @GetMapping("/getByCouponId/{couponId}")
     public PageInfo<MallProductVo> getProductVoByCouponId(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId,
-                                                          @RequestParam(value = "inStock", defaultValue = "0") Integer inStock,
-                                                          @RequestParam(value = "priceSort", defaultValue = "1") Integer priceSort,
-                                                          @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                                          @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+                                                          @RequestParam(value = "inStock", defaultValue = "0") @Min(0) @Max(1) Integer inStock,
+                                                          @RequestParam(value = "priceSort", defaultValue = "1") @Min(1) @Max(2) Integer priceSort,
+                                                          @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                                          @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         // 判断优惠券id是否可用
         MallCoupon coupon = couponService.getAvailable(couponId);

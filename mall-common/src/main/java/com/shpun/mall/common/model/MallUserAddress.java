@@ -2,7 +2,12 @@ package com.shpun.mall.common.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +19,9 @@ import java.util.Date;
 @ApiModel
 public class MallUserAddress implements Serializable {
 
+    @NotNull(groups = Update.class)
+    @Min(value = 1, groups = Update.class)
+    @Max(value = 2147483647, groups = Update.class)
     @ApiModelProperty("收货地址id")
     private Integer addressId;
 
@@ -26,18 +34,28 @@ public class MallUserAddress implements Serializable {
     @ApiModelProperty("用户id")
     private Integer userId;
 
+    @NotBlank(groups = { Add.class, Update.class })
+    @Length(min = 4, max = 20, groups = { Add.class, Update.class })
     @ApiModelProperty("收货人")
     private String name;
 
+    @Min(value = 1, groups = { Add.class, Update.class })
+    @Max(value = 2, groups = { Add.class, Update.class })
     @ApiModelProperty("性别，0无，1先生，2女士")
     private Integer sex;
 
+    @NotBlank(groups = { Add.class, Update.class })
+    @Length(min = 8, max = 15, groups = { Add.class, Update.class })
     @ApiModelProperty("收货电话")
     private String phone;
 
+    @NotBlank(groups = { Add.class, Update.class })
+    @Length(min = 5, max = 100, groups = { Add.class, Update.class })
     @ApiModelProperty("收货地址")
     private String address;
 
+    @Min(value = 1, groups = { Add.class, Update.class })
+    @Max(value = 5, groups = { Add.class, Update.class })
     @ApiModelProperty("地址类型，0未选择，1家，2父母家，3朋友家，4公司，5学校")
     private Integer type;
 
@@ -146,4 +164,17 @@ public class MallUserAddress implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
+    /**
+     * 用户地址新增校验分组
+     */
+    public interface Add {
+    }
+
+    /**
+     * 用户地址更新校验分组
+     */
+    public interface Update {
+    }
+
 }
