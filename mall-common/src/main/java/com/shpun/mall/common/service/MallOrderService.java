@@ -26,18 +26,20 @@ public interface MallOrderService {
 
     /**
      * 计算订单价格
+     * @param userId
      * @param cartIdList
      * @return
      */
-    MallOrder calculatePrice(List<Integer> cartIdList);
+    MallOrder calculatePrice(Integer userId, List<Integer> cartIdList);
 
     /**
      * 根据优惠券计算价格
+     * @param userId
      * @param cartIdList
      * @param couponId
      * @return
      */
-    MallOrder calculatePrice(List<Integer> cartIdList, Integer couponId);
+    MallOrder calculatePrice(Integer userId, List<Integer> cartIdList, Integer couponId);
 
     /**
      * 生成订单
@@ -83,7 +85,7 @@ public interface MallOrderService {
 
     PageInfo<MallOrderVo> getVoPageByFilter(Integer userId, Integer status, Integer offset, Integer limit);
 
-    MallOrderVo getDetailVo(Integer orderId);
+    MallOrderVo getDetailVo(Integer userId, Integer orderId);
 
     List<MallOrderVo> getVoByProductName(Integer userId, String productName);
 

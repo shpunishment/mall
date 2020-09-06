@@ -26,22 +26,22 @@ public class MallFlashServiceTest {
 
     @Test
     public void insert() throws ParseException {
-        MallFlash flash1 = buildMallFlash(dateFormat.parse("2020-08-29 18:00:00"));
+        MallFlash flash1 = buildMallFlash(dateFormat.parse("2020-09-04 18:00:00"));
         flashService.insertSelective(flash1);
 
-        MallFlash flash2 = buildMallFlash(dateFormat.parse("2020-08-30 09:00:00"));
+        MallFlash flash2 = buildMallFlash(dateFormat.parse("2020-09-05 09:00:00"));
         flashService.insertSelective(flash2);
 
-        MallFlash flash3 = buildMallFlash(dateFormat.parse("2020-08-30 11:00:00"));
+        MallFlash flash3 = buildMallFlash(dateFormat.parse("2020-09-05 11:00:00"));
         flashService.insertSelective(flash3);
 
-        MallFlash flash4 = buildMallFlash(dateFormat.parse("2020-08-30 14:00:00"));
+        MallFlash flash4 = buildMallFlash(dateFormat.parse("2020-09-05 14:00:00"));
         flashService.insertSelective(flash4);
 
-        MallFlash flash5 = buildMallFlash(dateFormat.parse("2020-08-30 16:00:00"));
+        MallFlash flash5 = buildMallFlash(dateFormat.parse("2020-09-05 16:00:00"));
         flashService.insertSelective(flash5);
 
-        MallFlash flash6 = buildMallFlash(dateFormat.parse("2020-08-30 18:00:00"));
+        MallFlash flash6 = buildMallFlash(dateFormat.parse("2020-09-05 18:00:00"));
         flashService.insertSelective(flash6);
     }
 

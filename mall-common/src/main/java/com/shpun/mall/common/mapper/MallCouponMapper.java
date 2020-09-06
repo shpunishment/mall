@@ -30,4 +30,6 @@ public interface MallCouponMapper {
 
     MallCoupon getForOrder(Integer couponId);
 
+    List<Integer> getNewUserCouponId();
+
 }

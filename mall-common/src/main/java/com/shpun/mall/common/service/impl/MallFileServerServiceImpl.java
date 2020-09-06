@@ -2,6 +2,7 @@ package com.shpun.mall.common.service.impl;
 
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallFileServerMapper;
 import com.shpun.mall.common.model.MallFileServer;
@@ -64,7 +65,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
             }
             fileBytes = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new MallException("添加图片失败！");
+            throw new MallException(MallError.MallErrorEnum.ADD_FILE_ERROR);
         }
 
         MallFileServer fileServer = new MallFileServer();
@@ -80,7 +81,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
         MallFileServer file = this.selectByPrimaryKey(fileId);
 
         if (file == null) {
-            throw new MallException("文件不存在");
+            throw new MallException(MallError.MallErrorEnum.FILE_NOT_FOUND.format(fileId));
         }
 
         response.setContentType("image/png");
@@ -95,7 +96,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
                 servletOutputStream.write(buffer,0, len);
             }
         } catch (IOException e){
-            throw new MallException("获取图片失败！");
+            throw new MallException(MallError.MallErrorEnum.GET_FILE_ERROR);
         }
     }
 
@@ -107,7 +108,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
         try {
             fileServer.setFile(file.getBytes());
         } catch (IOException e) {
-            throw new MallException("上传图片失败！");
+            throw new MallException(MallError.MallErrorEnum.UPLOAD_FILE_ERROR);
         }
 
         this.insertSelective(fileServer);

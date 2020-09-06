@@ -13,7 +13,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * @Description:
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "购物车控制器")
 @RequestMapping("/api/cart")
 @RestController
+@Validated
 public class MallCartController {
 
     @Autowired
@@ -37,8 +42,8 @@ public class MallCartController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallCartVo> page(@RequestParam(value = "offset",defaultValue = "0") Integer offset,
-                                     @RequestParam(value = "limit",defaultValue = "10") Integer limit) {
+    public PageInfo<MallCartVo> page(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                     @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallCartVo> cartVoPageInfo = cartService.getVoPageByUserId(SecurityUserUtils.getUserId(), offset, limit);
 
@@ -52,15 +57,15 @@ public class MallCartController {
 
     @ApiOperation("添加商品到购物车")
     @PostMapping("/add")
-    public void add(@RequestBody MallCart cart){
+    public void add(@RequestBody @Validated(MallCart.Add.class) MallCart cart){
         cart.setUserId(SecurityUserUtils.getUserId());
-        cartService.insertSelective(cart);
+        cartService.addOrUpdate(cart);
     }
 
     @ApiOperation("更新购物车商品")
     @PostMapping("/update")
-    public void update(@RequestBody MallCart cart) {
-        cartService.updateByPrimaryKeySelective(cart);
+    public void update(@RequestBody @Validated(MallCart.Update.class) MallCart cart) {
+        cartService.addOrUpdate(cart);
     }
 
 }

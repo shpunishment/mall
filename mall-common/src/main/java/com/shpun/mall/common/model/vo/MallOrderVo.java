@@ -1,8 +1,14 @@
 package com.shpun.mall.common.model.vo;
 
+import com.shpun.mall.common.model.MallCart;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -34,6 +40,9 @@ public class MallOrderVo implements Serializable {
     @ApiModelProperty("优惠券id")
     private Integer couponId;
 
+    @NotNull(groups = Generate.class)
+    @Min(value = 1, groups = Generate.class)
+    @Max(value = 2147483647, groups = Generate.class)
     @ApiModelProperty("收货地址id")
     private Integer addressId;
 
@@ -64,9 +73,14 @@ public class MallOrderVo implements Serializable {
     @ApiModelProperty("订单备注")
     private String remark;
 
+    @NotBlank(groups = Generate.class)
+    @Length(min = 4, max = 20, groups = Generate.class)
     @ApiModelProperty("期望送达时间，如尽快送达，X月X日 14:00~15:00")
     private String expectTime;
 
+    @NotNull(groups = Generate.class)
+    @Min(value = 1, groups = Generate.class)
+    @Max(value = 2, groups = Generate.class)
     @ApiModelProperty("支付方式，0未支付，1支付宝，2微信")
     private Integer payType;
 
@@ -303,4 +317,11 @@ public class MallOrderVo implements Serializable {
     public void setCartIdList(List<Integer> cartIdList) {
         this.cartIdList = cartIdList;
     }
+
+    /**
+     * 下单校验分组
+     */
+    public interface Generate {
+    }
+
 }

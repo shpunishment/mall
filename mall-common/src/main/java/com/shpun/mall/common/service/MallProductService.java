@@ -121,6 +121,4 @@ public interface MallProductService {
 
     PageInfo<MallProductVo> getVoPageByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
 
-    List<MallProduct> getByCartIdList(List<Integer> cartIdList);
-
 }

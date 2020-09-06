@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallProductMapper;
 import com.shpun.mall.common.model.MallCart;
@@ -126,12 +127,13 @@ public class MallProductServiceImpl implements MallProductService {
             productVo.setCurrentPrice(flashItem.getPrice());
             productVo.setLimit(flashItem.getLimit());
 
-            // 计算库存剩余百分比
-            BigDecimal stock = new BigDecimal(productVo.getStock());
-            BigDecimal sales = new BigDecimal(productVo.getSales());
+            // 计算限时抢购商品库存剩余百分比
+            BigDecimal stock = new BigDecimal(flashItem.getStock());
+            BigDecimal sales = new BigDecimal(flashItem.getSales());
             BigDecimal total = stock.add(sales);
             BigDecimal remainStockRatio = stock.divide(total, 2, RoundingMode.HALF_UP);
-            productVo.setRemainStockPercent(remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toString());
+            String remainStockPercent = remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString();
+            productVo.setRemainStockPercent(remainStockPercent);
         } else {
             productVo.setFlashing(false);
         }
@@ -152,16 +154,16 @@ public class MallProductServiceImpl implements MallProductService {
             limit = product.getLimit();
 
             if (stock < quantity) {
-                throw new MallException(product.getProductName() + " 库存不足");
+                throw new MallException(MallError.MallErrorEnum.STOCK_NULL.format(product.getProductName()));
             } else {
                 if (limit >= quantity) {
                     return product;
                 } else {
-                    throw new MallException(product.getProductName() + " 限购数 " + limit);
+                    throw new MallException(MallError.MallErrorEnum.LIMIT_ERROR.format(product.getProductName(), limit));
                 }
             }
         } else {
-            throw new MallException(product.getProductName() + " 已下架");
+            throw new MallException(MallError.MallErrorEnum.OFF_SHELF.format(product.getProductName()));
         }
     }
 
@@ -243,14 +245,18 @@ public class MallProductServiceImpl implements MallProductService {
 
         // 赋值库存标识
         Integer stock = productVo.getStock();
-        productVo.setHasStock(stock > 0);
+        if (stock != null) {
+            productVo.setHasStock(stock > 0);
+            productVo.setStock(null);
+        }
+
 
         // 赋值打折数
         BigDecimal originalPrice = productVo.getOriginalPrice();
         BigDecimal currentPrice = productVo.getCurrentPrice();
-        if (originalPrice.compareTo(currentPrice) < 0) {
+        if (currentPrice.compareTo(originalPrice) < 0) {
             BigDecimal discount = currentPrice.divide(originalPrice, 2, RoundingMode.HALF_UP);
-            productVo.setDiscountStr(discount.multiply(new BigDecimal("10")).stripTrailingZeros().toString());
+            productVo.setDiscountStr(discount.multiply(new BigDecimal("10")).stripTrailingZeros().toPlainString());
         }
     }
 
@@ -297,16 +303,4 @@ public class MallProductServiceImpl implements MallProductService {
         return new PageInfo<>(this.getVoListByFilterProductId(productIdList, inStock, priceSort));
     }
 
-    @Override
-    public List<MallProduct> getByCartIdList(List<Integer> cartIdList) {
-        List<MallProduct> productList = new ArrayList<>(cartIdList.size());
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
-        for(MallCart cart : cartList) {
-            Integer productId = cart.getProductId();
-            Integer quantity = cart.getQuantity();
-            MallProduct product = this.checkProduct(productId, quantity);
-            productList.add(product);
-        }
-        return productList;
-    }
 }

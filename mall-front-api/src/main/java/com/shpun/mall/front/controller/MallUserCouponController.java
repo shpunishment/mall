@@ -17,8 +17,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,7 @@ import java.util.Map;
 @Api(tags = "用户优惠券控制器")
 @RequestMapping("/api/user/coupon")
 @RestController
+@Validated
 public class MallUserCouponController {
 
     @Autowired
@@ -45,7 +49,7 @@ public class MallUserCouponController {
             @ApiImplicitParam(name = "couponId", value = "优惠券id", dataType = "Integer")
     })
     @GetMapping("/{couponId}")
-    public void get(@PathVariable("couponId") Integer couponId) {
+    public void get(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId) {
         MallUserCoupon userCoupon = new MallUserCoupon();
         userCoupon.setUserId(SecurityUserUtils.getUserId());
         userCoupon.setCouponId(couponId);
@@ -58,16 +62,16 @@ public class MallUserCouponController {
         userCouponService.deleteCache(SecurityUserUtils.getUserId());
     }
 
-    @ApiOperation("分页获取优惠券")
+    @ApiOperation("分页获取用户已领取的优惠券")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "status", value = "使用状态", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallUserCouponVo> page(@RequestParam(value = "status", defaultValue = "1") Integer status,
-                                           @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                                           @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
+    public PageInfo<MallUserCouponVo> page(@RequestParam(value = "status", defaultValue = "1") @Min(1) @Max(3) Integer status,
+                                           @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                           @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallUserCouponVo> userCouponVoPageInfo = userCouponService.getVoPageByFilter(SecurityUserUtils.getUserId(), status, offset, limit);
         return userCouponVoPageInfo;

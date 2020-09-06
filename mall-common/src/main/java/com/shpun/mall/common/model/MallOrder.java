@@ -1,8 +1,12 @@
 package com.shpun.mall.common.model;
 
+import com.shpun.mall.common.model.vo.MallOrderVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +19,9 @@ import java.util.Date;
 @ApiModel
 public class MallOrder implements Serializable {
 
+    @NotNull(groups = Comment.class)
+    @Min(value = 1, groups = Comment.class)
+    @Max(value = 2147483647, groups = Comment.class)
     @ApiModelProperty("订单id")
     private Integer orderId;
 
@@ -81,6 +88,9 @@ public class MallOrder implements Serializable {
     @ApiModelProperty("收货时间")
     private Date receiveTime;
 
+    @NotNull(groups = Comment.class)
+    @Min(value = 1, groups = Comment.class)
+    @Max(value = 5, groups = Comment.class)
     @ApiModelProperty("评分，1~5分")
     private Integer score;
 
@@ -339,4 +349,11 @@ public class MallOrder implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
+    /**
+     * 评价订单分组
+     */
+    public interface Comment {
+    }
+
 }

@@ -1,17 +1,28 @@
 package com.shpun.mall.front.controller;
 
+import com.shpun.mall.common.enums.MallUserCouponGetTypeEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallUser;
+import com.shpun.mall.common.model.MallUserCoupon;
 import com.shpun.mall.common.model.vo.MallUserVo;
+import com.shpun.mall.common.service.MallCouponService;
+import com.shpun.mall.common.service.MallUserCouponService;
 import com.shpun.mall.common.service.MallUserService;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
  * @Description:
@@ -29,15 +40,33 @@ public class MallUserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MallCouponService couponService;
+
+    @Autowired
+    private MallUserCouponService userCouponService;
+
     @ApiOperation("注册")
     @PostMapping("/register")
-    public void register(@RequestBody MallUser user) {
+    public void register(@RequestBody@Validated(MallUser.Register.class) MallUser user) {
         if (userService.isExist(user.getUsername())) {
-            throw new MallException("用户名已存在");
+            throw new MallException(MallError.MallErrorEnum.USERNAME_EXIST.format(user.getUsername()));
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.insertSelective(user);
+
+        // 注册成功，赠予优惠券
+        List<Integer> newUserCouponIdList = couponService.getNewUserCouponId();
+        if (CollectionUtils.isNotEmpty(newUserCouponIdList)) {
+            newUserCouponIdList.forEach(couponId -> {
+                MallUserCoupon userCoupon = new MallUserCoupon();
+                userCoupon.setUserId(user.getUserId());
+                userCoupon.setCouponId(couponId);
+                userCoupon.setGetType(MallUserCouponGetTypeEnums.BACKSTAGE.getValue());
+                userCouponService.insertSelective(userCoupon);
+            });
+        }
     }
 
     @ApiOperation("获取用户信息")
@@ -50,6 +79,7 @@ public class MallUserController {
     @ApiOperation("更新用户信息")
     @GetMapping("/update")
     public void update(@RequestBody MallUser user) {
+        // todo 是否需要分别写接口更新用户数据？
         user.setUserId(SecurityUserUtils.getUserId());
         userService.updateByPrimaryKeySelective(user);
 
@@ -63,14 +93,14 @@ public class MallUserController {
             @ApiImplicitParam(name = "newPassword", value = "新密码", dataType = "String")
     })
     @PostMapping("/changePassword")
-    public void changePassword(@RequestParam("oldPassword") String oldPassword,
-                               @RequestParam("newPassword") String newPassword) {
+    public void changePassword(@RequestParam("oldPassword") @NotBlank @Length(min = 16, max = 32) String oldPassword,
+                               @RequestParam("newPassword") @NotBlank @Length(min = 16, max = 32) String newPassword) {
         MallUser user = userService.selectByPrimaryKey(SecurityUserUtils.getUserId());
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.updateByPrimaryKeySelective(user);
         } else {
-            throw new MallException("原密码错误");
+            throw new MallException(MallError.MallErrorEnum.OLD_PASSWORD_ERROR);
         }
     }
 

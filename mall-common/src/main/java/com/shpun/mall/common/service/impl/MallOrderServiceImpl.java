@@ -8,6 +8,7 @@ import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.enums.MallOrderStatusEnums;
 import com.shpun.mall.common.enums.MallUserAddressSexEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallOrderMapper;
 import com.shpun.mall.common.model.*;
@@ -85,9 +86,9 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public MallOrder calculatePrice(List<Integer> cartIdList) {
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
+    public MallOrder calculatePrice(Integer userId, List<Integer> cartIdList) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
+            List<MallCart> cartList = cartService.getByUserIdAndCartIdList(userId, cartIdList);
             BigDecimal productPrice = new BigDecimal("0.00");
 
             for(MallCart cart : cartList) {
@@ -100,17 +101,17 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
 
             MallOrder order = new MallOrder();
-            this.setPrice(order, productPrice, null);
+            this.setPrice(order, productPrice, new BigDecimal("0.00"));
             return order;
         } else {
-            throw new MallException("购物车为空");
+            throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
     }
 
     @Override
-    public MallOrder calculatePrice(List<Integer> cartIdList, Integer couponId) {
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
+    public MallOrder calculatePrice(Integer userId, List<Integer> cartIdList, Integer couponId) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
+            List<MallCart> cartList = cartService.getByUserIdAndCartIdList(userId, cartIdList);
             BigDecimal productPrice = new BigDecimal("0.00");
 
             // 获取优惠券中规定的分类id、商品id
@@ -168,15 +169,18 @@ public class MallOrderServiceImpl implements MallOrderService {
             this.setPrice(order, productPrice, discount);
             return order;
         } else {
-            throw new MallException("购物车为空");
+            throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
     }
 
     @Transactional
     @Override
     public void generateOrder(MallOrder order, List<Integer> cartIdList) {
-        List<MallCart> cartList = cartService.getByCartIdList(cartIdList);
-        if (CollectionUtils.isNotEmpty(cartList)) {
+        if (CollectionUtils.isNotEmpty(cartIdList)) {
+            // 订单地址
+            this.setAddress(order);
+
+            List<MallCart> cartList = cartService.getByUserIdAndCartIdList(order.getUserId(), cartIdList);
             List<MallProduct> productList = new ArrayList<>(cartList.size());
             List<MallFlashItem> flashItemList = new ArrayList<>(cartList.size());
             List<MallOrderItem> orderItemList = new ArrayList<>(cartList.size());
@@ -214,7 +218,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 MallProduct product = productService.lockStock(productId);
                 if (product.getPublishStatus() == 1) {
                     Integer stock;
-                    BigDecimal price;
+                    BigDecimal unitPrice;
 
                     // 判断当前商品是否限时抢购
                     boolean flashing = false;
@@ -225,14 +229,14 @@ public class MallOrderServiceImpl implements MallOrderService {
                         // 锁定限时抢购商品库存
                         flashItem = flashItemService.lockStock(flashItemTemp.getFlashItemId());
                         stock = flashItem.getStock();
-                        price = flashItem.getPrice();
+                        unitPrice = flashItem.getPrice();
                     } else {
                         stock = product.getStock();
-                        price = product.getCurrentPrice();
+                        unitPrice = product.getCurrentPrice();
                     }
 
                     if (stock < quantity) {
-                        throw new MallException("库存不足");
+                        throw new MallException(MallError.MallErrorEnum.STOCK_NULL.format(product.getProductName()));
                     } else {
                         // 减库存，加销量
                         if (flashing) {
@@ -246,7 +250,8 @@ public class MallOrderServiceImpl implements MallOrderService {
                         }
 
                         // 计算价格
-                        productPrice = productPrice.add(price.multiply(new BigDecimal(quantity)));
+                        BigDecimal price = unitPrice.multiply(new BigDecimal(quantity));
+                        productPrice = productPrice.add(price);
 
                         // 优惠券不为空，并且商品非限时抢购
                         if (canUseCoupon && coupon != null && useType != null && meetIdSet != null && !flashing) {
@@ -272,13 +277,13 @@ public class MallOrderServiceImpl implements MallOrderService {
                         orderItem.setProductId(productId);
                         orderItem.setProductName(product.getProductName());
                         orderItem.setPic(product.getPic());
-                        orderItem.setPrice(price);
+                        orderItem.setPrice(unitPrice);
                         orderItem.setQuantity(quantity);
                         orderItem.setFlashItemId(flashing ? flashItem.getFlashItemId() : Const.DEFAULT_NO_FLASH_ITEM_ID);
                         orderItemList.add(orderItem);
                     }
                 } else {
-                    throw new MallException("已下架");
+                    throw new MallException(MallError.MallErrorEnum.OFF_SHELF.format(product.getProductName()));
                 }
             }
 
@@ -304,18 +309,6 @@ public class MallOrderServiceImpl implements MallOrderService {
             String orderNumber = new Date().getTime() + "" + new Random().nextInt(1000);
             order.setOrderNumber(orderNumber);
             order.setOrderTime(new Date());
-
-            // 订单地址
-            MallUserAddress userAddress = userAddressService.selectByPrimaryKey(order.getAddressId());
-            StringBuilder receiveNameSb = new StringBuilder(userAddress.getName());
-            if (!userAddress.getSex().equals(MallUserAddressSexEnums.NO.getValue())) {
-                receiveNameSb.append("(")
-                        .append(MallUserAddressSexEnums.getEnum(userAddress.getSex()).getName())
-                        .append(")");
-            }
-            order.setReceiveName(receiveNameSb.toString());
-            order.setReceivePhone(userAddress.getPhone());
-            order.setReceiveAddress(userAddress.getAddress());
             orderMapper.insertSelective(order);
 
             // 用户优惠券更新
@@ -333,13 +326,8 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
             orderItemService.insertBatch(orderItemList);
         } else {
-            throw new MallException("购物车为空");
+            throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
-    }
-
-    @Override
-    public List<MallOrder> getByUserId(Integer userId) {
-        return orderMapper.getByUserId(userId);
     }
 
     /**
@@ -360,13 +348,37 @@ public class MallOrderServiceImpl implements MallOrderService {
         }
     }
 
+    /**
+     * 设值订单地址
+     * @param order
+     */
+    private void setAddress(MallOrder order) {
+        MallUserAddress userAddress = userAddressService.getByUserIdAndAddressId(order.getUserId(), order.getAddressId());
+        if (userAddress == null) {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+
+        StringBuilder receiveNameSb = new StringBuilder(userAddress.getName());
+        if (!userAddress.getSex().equals(MallUserAddressSexEnums.NO.getValue())) {
+            receiveNameSb.append("(").append(MallUserAddressSexEnums.getEnum(userAddress.getSex()).getName()).append(")");
+        }
+        order.setReceiveName(receiveNameSb.toString());
+        order.setReceivePhone(userAddress.getPhone());
+        order.setReceiveAddress(userAddress.getAddress());
+    }
+
+    @Override
+    public List<MallOrder> getByUserId(Integer userId) {
+        return orderMapper.getByUserId(userId);
+    }
+
     @Transactional
     @Override
     public void closeOrder(Integer orderId, Integer userId) {
         // 查找订单是否存在
         MallOrder order = this.selectByPrimaryKey(orderId);
         if (!order.getUserId().equals(userId)) {
-            throw new MallException("内部错误");
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
 
         order.setStatus(MallOrderStatusEnums.CLOSE.getValue());
@@ -461,8 +473,9 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @RedisCache
     @Override
-    public MallOrderVo getDetailVo(Integer orderId) {
-        return orderMapper.getDetailVo(orderId);
+    public MallOrderVo getDetailVo(Integer userId, Integer orderId) {
+        // todo 删除缓存：待支付订单完成支付等
+        return orderMapper.getDetailVo(userId, orderId);
     }
 
     @Override

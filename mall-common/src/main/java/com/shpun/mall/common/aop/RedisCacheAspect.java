@@ -2,6 +2,7 @@ package com.shpun.mall.common.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.service.RedisService;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -21,6 +23,7 @@ import java.util.Random;
  */
 @Aspect
 @Component
+@Profile("prod")
 public class RedisCacheAspect {
 
     @Autowired
@@ -61,7 +64,7 @@ public class RedisCacheAspect {
             try {
                 result = joinPoint.proceed();
             } catch (Throwable e) {
-                throw new MallException("内部错误");
+                throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
             }
 
             RedisCache redisCache = signature.getMethod().getAnnotation(RedisCache.class);

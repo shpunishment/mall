@@ -6,6 +6,7 @@ import com.shpun.mall.common.mapper.MallFlashMapper;
 import com.shpun.mall.common.model.MallFlash;
 import com.shpun.mall.common.model.vo.MallFlashVo;
 import com.shpun.mall.common.service.MallFlashService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +69,14 @@ public class MallFlashServiceImpl implements MallFlashService {
     @RedisCache
     @Override
     public List<MallFlashVo> getTodayVoList() {
-        return flashMapper.getTodayVoList();
+        List<MallFlashVo> flashVoList = flashMapper.getTodayVoList();
+        if (CollectionUtils.isNotEmpty(flashVoList)) {
+            for (MallFlashVo flashVo : flashVoList) {
+                Date startTime = flashVo.getStartTime();
+                flashVo.setEndTime(new Date(startTime.getTime() + Const.DEFAULT_FLASH_LIMIT_MINS * 60 * 1000));
+            }
+        }
+        return flashVoList;
     }
 
     @Override

@@ -132,12 +132,9 @@
       <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="useTime != null">
-        use_time = #{useTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="orderId != null">
-        order_id = #{orderId,jdbcType=INTEGER},
-      </if>
+      <!--取消订单时，需要设null值-->
+      use_time = #{useTime,jdbcType=TIMESTAMP},
+      order_id = #{orderId,jdbcType=INTEGER}
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -159,7 +156,16 @@
     WHERE c.deleted = 0
 	  AND c.`status` = 1
 	  AND uc.user_id = #{userId,jdbcType=INTEGER}
-	  AND uc.`status` = #{status,jdbcType=INTEGER}
+	  <if test="status != null and status == 1">
+        AND uc.`status` = #{status,jdbcType=INTEGER}
+        AND uc.end_time <![CDATA[>=]]> now( )
+      </if>
+      <if test="status != null and status == 2">
+        AND uc.`status` = #{status,jdbcType=INTEGER}
+      </if>
+      <if test="status != null and status == 3">
+        AND uc.`status` != 2 AND ( uc.`status` = #{status,jdbcType=INTEGER} OR uc.end_time <![CDATA[<]]> now( ) )
+      </if>
   </select>
 
   <select id="getReceivedCouponId" resultType="java.lang.Integer">
@@ -186,6 +192,39 @@
     where user_id = #{userId,jdbcType=INTEGER}
       and `status` = 2
       and to_days(start_time) = to_days(now())
+  </select>
+
+  <select id="canUse" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_coupon
+    where user_id = #{userId,jdbcType=INTEGER}
+      and coupon_id = #{couponId,jdbcType=INTEGER}
+      and `status` = 1
+      and start_time <![CDATA[<=]]> now( )
+      and end_time <![CDATA[>=]]> now( )
+  </select>
+
+  <select id="getAvailableVoList" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    SELECT
+      c.`name` as c_name,
+	  c.`desc` as c_desc,
+	  c.min_price as c_min_price,
+	  c.discount as c_discount,
+      uc.create_time,
+      uc.coupon_id,
+      uc.`status`,
+      uc.start_time,
+      uc.end_time
+    FROM
+      mall_coupon AS c
+      LEFT JOIN mall_user_coupon AS uc ON uc.coupon_id = c.coupon_id
+    WHERE c.deleted = 0
+      AND c.`status` = 1
+      AND uc.user_id = #{userId,jdbcType=INTEGER}
+      AND uc.`status` = 1
+      AND uc.start_time <![CDATA[<=]]> now( )
+      AND uc.end_time <![CDATA[>=]]> now( )
   </select>
 
 </mapper>

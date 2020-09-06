@@ -36,4 +36,6 @@ public interface MallUserAddressService {
      */
     void deleteCache(Integer userId);
 
+    MallUserAddress getByUserIdAndAddressId(Integer userId, Integer addressId);
+
 }

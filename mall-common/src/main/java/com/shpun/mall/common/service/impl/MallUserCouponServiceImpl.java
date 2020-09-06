@@ -6,8 +6,10 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallCouponTimeTypeEnums;
+import com.shpun.mall.common.enums.MallCouponTypeEnums;
 import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
+import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallUserCouponMapper;
 import com.shpun.mall.common.model.MallCoupon;
@@ -55,9 +57,15 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         Integer couponId = record.getCouponId();
         MallCoupon coupon = couponService.lockCoupon(couponId);
         if (coupon == null) {
-            throw new MallException("优惠券领取失败！");
+            throw new MallException(MallError.MallErrorEnum.COUPON_GET_ERROR);
         }
 
+        MallUserCoupon isExist = this.getByUserIdAndCouponId(record.getUserId(), couponId);
+        if (isExist != null) {
+            throw new MallException(MallError.MallErrorEnum.COUPON_REPEAT_ERROR);
+        }
+
+        // 根据时间类型计算券使用期限
         if (MallCouponTimeTypeEnums.DAY.getValue().equals(coupon.getTimeType())) {
             Integer days = coupon.getDays();
             record.setStartTime(new Date());
@@ -70,9 +78,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         record.setCreateTime(new Date());
         userCouponMapper.insertSelective(record);
 
-        // 优惠券减数量
-        coupon.setTotal(coupon.getTotal() - 1);
-        couponService.update(coupon);
+        // 通用券减数量
+        if (MallCouponTypeEnums.UNIVERSAL.equals(coupon.getType())) {
+            coupon.setTotal(coupon.getTotal() - 1);
+            couponService.update(coupon);
+        }
     }
 
     /**
@@ -92,7 +102,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         try {
             result = datetimeFormat.parse(date + " 23:59:59");
         } catch (ParseException e) {
-            throw new MallException("系统内部异常");
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
         return result;
     }
@@ -129,6 +139,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         return userCouponMapper.getByUserIdAndCouponId(userId, couponId);
     }
 
+    @RedisCache
     @Override
     public Integer getTodayUseCount(Integer userId) {
         return userCouponMapper.getTodayUseCount(userId);
@@ -138,8 +149,8 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     public MallUserCoupon canUse(Integer userId, Integer couponId) {
         Integer todayUseCount = this.getTodayUseCount(userId);
         if (todayUseCount < Const.TODAY_USE_COUPON_COUNT) {
-            MallUserCoupon userCoupon = this.getByUserIdAndCouponId(userId, couponId);
-            if (userCoupon != null && MallUserCouponStatusEnums.UNUSED.getValue().equals(userCoupon.getStatus())) {
+            MallUserCoupon userCoupon = userCouponMapper.canUse(userId, couponId);
+            if (userCoupon != null) {
                 return userCoupon;
             }
         }
@@ -149,5 +160,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
+        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);
+    }
+
+    @Override
+    public List<MallUserCouponVo> getAvailableVoList(Integer userId) {
+        return userCouponMapper.getAvailableVoList(userId);
     }
 }

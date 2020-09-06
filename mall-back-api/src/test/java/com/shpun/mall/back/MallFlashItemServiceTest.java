@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * @Description:
@@ -23,38 +24,38 @@ public class MallFlashItemServiceTest {
     @Test
     public void insert() {
         // 2020-08-29 18:00:00
-        MallFlashItem flashItem1 = buildMallFlashItem(1, 1, 20, new BigDecimal("7.99"), 2);
-        MallFlashItem flashItem2 = buildMallFlashItem(1, 2, 10, new BigDecimal("5.99"), 1);
+        MallFlashItem flashItem1 = buildMallFlashItem(7, 1, 20, new BigDecimal("7.99"), 2);
+        MallFlashItem flashItem2 = buildMallFlashItem(7, 2, 10, new BigDecimal("5.99"), 1);
         flashItemService.insertSelective(flashItem1);
         flashItemService.insertSelective(flashItem2);
 
         // 2020-08-30 09:00:00
-        MallFlashItem flashItem3 = buildMallFlashItem(2, 1, 20, new BigDecimal("7.99"), 2);
-        MallFlashItem flashItem4 = buildMallFlashItem(2, 2, 10, new BigDecimal("5.99"), 1);
+        MallFlashItem flashItem3 = buildMallFlashItem(8, 1, 20, new BigDecimal("7.99"), 2);
+        MallFlashItem flashItem4 = buildMallFlashItem(8, 2, 10, new BigDecimal("5.99"), 1);
         flashItemService.insertSelective(flashItem3);
         flashItemService.insertSelective(flashItem4);
 
         // 2020-08-30 11:00:00
-        MallFlashItem flashItem5 = buildMallFlashItem(3, 1, 20, new BigDecimal("7.99"), 2);
-        MallFlashItem flashItem6 = buildMallFlashItem(3, 2, 10, new BigDecimal("5.99"), 1);
+        MallFlashItem flashItem5 = buildMallFlashItem(9, 1, 20, new BigDecimal("7.99"), 2);
+        MallFlashItem flashItem6 = buildMallFlashItem(9, 2, 10, new BigDecimal("5.99"), 1);
         flashItemService.insertSelective(flashItem5);
         flashItemService.insertSelective(flashItem6);
 
         // 2020-08-30 14:00:00
-        MallFlashItem flashItem7 = buildMallFlashItem(4, 1, 20, new BigDecimal("7.99"), 2);
-        MallFlashItem flashItem8 = buildMallFlashItem(4, 2, 10, new BigDecimal("5.99"), 1);
+        MallFlashItem flashItem7 = buildMallFlashItem(10, 1, 20, new BigDecimal("7.99"), 2);
+        MallFlashItem flashItem8 = buildMallFlashItem(10, 2, 10, new BigDecimal("5.99"), 1);
         flashItemService.insertSelective(flashItem7);
         flashItemService.insertSelective(flashItem8);
 
         // 2020-08-30 16:00:00
-        MallFlashItem flashItem9 = buildMallFlashItem(5, 1, 20, new BigDecimal("7.99"), 2);
-        MallFlashItem flashItem10 = buildMallFlashItem(5, 2, 10, new BigDecimal("5.99"), 1);
+        MallFlashItem flashItem9 = buildMallFlashItem(11, 1, 20, new BigDecimal("7.99"), 2);
+        MallFlashItem flashItem10 = buildMallFlashItem(11, 2, 10, new BigDecimal("5.99"), 1);
         flashItemService.insertSelective(flashItem9);
         flashItemService.insertSelective(flashItem10);
 
         // 2020-08-30 18:00:00
-        MallFlashItem flashItem11 = buildMallFlashItem(6, 1, 20, new BigDecimal("7.99"), 2);
-        MallFlashItem flashItem12 = buildMallFlashItem(6, 2, 10, new BigDecimal("5.99"), 1);
+        MallFlashItem flashItem11 = buildMallFlashItem(12, 1, 20, new BigDecimal("7.99"), 2);
+        MallFlashItem flashItem12 = buildMallFlashItem(12, 2, 10, new BigDecimal("5.99"), 1);
         flashItemService.insertSelective(flashItem11);
         flashItemService.insertSelective(flashItem12);
 
@@ -69,6 +70,15 @@ public class MallFlashItemServiceTest {
         flashItem.setPrice(price);
         flashItem.setLimit(limit);
         return flashItem;
+    }
+
+    @Test
+    public void getFlashByProductId() {
+        BigDecimal stock = new BigDecimal(18);
+        BigDecimal sales = new BigDecimal(2);
+        BigDecimal total = stock.add(sales);
+        BigDecimal remainStockRatio = stock.divide(total, 2, RoundingMode.HALF_UP);
+        System.out.println(remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString());
     }
 
 }

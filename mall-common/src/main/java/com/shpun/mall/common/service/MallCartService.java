@@ -21,9 +21,11 @@ public interface MallCartService {
 
     void updateByPrimaryKeySelective(MallCart record);
 
+    void addOrUpdate(MallCart cart);
+
     void deleteAllByUserId(Integer userId);
 
-    List<MallCart> getByCartIdList(List<Integer> cartIdList);
+    List<MallCart> getByUserIdAndCartIdList(Integer userId, List<Integer> cartIdList);
 
     void deleteBatch(List<Integer> cartIdList);
 

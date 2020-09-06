@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Description:
@@ -82,6 +83,9 @@ public class MallProductVo implements Serializable {
 
     @ApiModelProperty("限时抢购商品剩余库存百分比")
     private String remainStockPercent;
+
+    @ApiModelProperty("限时抢购结束时间")
+    private Date flashEndTime;
 
     @ApiModelProperty("收藏id")
     private Integer favoriteId;
@@ -273,6 +277,15 @@ public class MallProductVo implements Serializable {
 
     public void setRemainStockPercent(String remainStockPercent) {
         this.remainStockPercent = remainStockPercent;
+    }
+
+
+    public Date getFlashEndTime() {
+        return flashEndTime;
+    }
+
+    public void setFlashEndTime(Date flashEndTime) {
+        this.flashEndTime = flashEndTime;
     }
 
     public Integer getFavoriteId() {

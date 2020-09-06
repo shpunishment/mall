@@ -313,7 +313,7 @@
     FROM
       mall_product
     WHERE
-      product_name like concat(#{productName,jdbcType=VARCHAR}, '%')
+      product_name like concat('%', #{productName,jdbcType=VARCHAR}, '%')
     AND deleted = 0 AND publish_status = 1
       <if test="inStock == 1">
         and stock > 0

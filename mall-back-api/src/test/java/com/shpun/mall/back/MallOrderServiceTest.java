@@ -26,7 +26,7 @@ public class MallOrderServiceTest {
     public void calculatePrice() {
         List<Integer> cartIdList = Stream.of(4,5,6).collect(Collectors.toList());
 
-        MallOrder order = orderService.calculatePrice(cartIdList);
+        MallOrder order = orderService.calculatePrice(1, cartIdList);
 
         System.out.println(order);
     }

@@ -43,9 +43,14 @@ public class Const {
     public static final Integer API_RETURN_CODE_SUCCESS = 200;
 
     /**
+     * api请求错误code
+     */
+    public static final Integer API_RETURN_CODE_BAD_REQUEST = 400;
+
+    /**
      * api返回错误code
      */
-    public static final Integer API_RETURN_CODE_ERROR = 500;
+    public static final Integer API_RETURN_CODE_INTERNAL_SERVER_ERROR = 500;
 
     /**
      * api返回登录失败code
@@ -121,5 +126,15 @@ public class Const {
      * 今日可用优惠券数
      */
     public static final Integer TODAY_USE_COUPON_COUNT = 2;
+
+    /**
+     * 当前环境，开发
+     */
+    public static final String PROFILE_DEV = "dev";
+
+    /**
+     * 当前环境，生产
+     */
+    public static final String PROFILE_PROD = "prod";
 
 }

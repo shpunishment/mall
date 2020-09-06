@@ -7,11 +7,11 @@ package com.shpun.mall.common.enums;
  */
 public enum MallCouponUseTypeEnums {
 
-    ALL(-1, "全场"),
+    ALL(1, "全场"),
 
-    CLASSIFY(1, "指定分类"),
+    CLASSIFY(2, "指定分类"),
 
-    PRODUCT(2,"指定商品"),
+    PRODUCT(3,"指定商品"),
 
     ;
 

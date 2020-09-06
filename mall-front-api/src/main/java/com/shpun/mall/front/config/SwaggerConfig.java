@@ -67,9 +67,10 @@ public class SwaggerConfig {
      */
     private List<SecurityContext> securityContexts() {
         List<SecurityContext> result = new ArrayList<>();
-        result.add(getContextByPath("/api/cart/.*"));
-        result.add(getContextByPath("/api/order/.*"));
-        result.add(getContextByPath("/api/user/.*"));
+        result.add(getContextByPath("/api/.*"));
+//        result.add(getContextByPath("/api/cart/.*"));
+//        result.add(getContextByPath("/api/order/.*"));
+//        result.add(getContextByPath("/api/user/.*"));
         return result;
     }
 
