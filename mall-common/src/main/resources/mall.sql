@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 06/09/2020 00:45:48
+ Date: 06/09/2020 16:30:50
 */
 
 SET NAMES utf8mb4;
@@ -22,17 +22,16 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_activity`;
 CREATE TABLE `mall_activity`  (
-  `activity_id` int(11) NOT NULL AUTO_INCREMENT,
+  `activity_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '活动id',
   `create_time` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
   `create_id` int(11) NULL DEFAULT NULL COMMENT '创建管理员id',
   `update_time` timestamp(0) NULL DEFAULT NULL COMMENT '更新时间',
   `update_id` int(11) NULL DEFAULT NULL COMMENT '更新管理员id',
-  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '名称',
-  `desc` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '描述',
+  `name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '名称',
   `pic` int(11) NULL DEFAULT NULL COMMENT '活动图，为文件id',
   `start_time` timestamp(0) NULL DEFAULT NULL COMMENT '开始时间',
   `end_time` timestamp(0) NULL DEFAULT NULL COMMENT '结束时间',
-  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态，0启用，1禁用',
+  `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态，0禁用，1启用',
   `sn` int(11) NOT NULL COMMENT '排序号',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`activity_id`) USING BTREE
@@ -275,7 +274,7 @@ CREATE TABLE `mall_order`  (
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`order_id`) USING BTREE,
   INDEX `order_index_user_id_deleted`(`user_id`, `deleted`) USING BTREE COMMENT '订单表用户id和删除标识索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_order_item
