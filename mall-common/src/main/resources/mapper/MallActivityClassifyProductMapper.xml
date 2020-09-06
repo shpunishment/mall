@@ -1,38 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shpun.mapper.MallActivityClassifyProductMapper">
-  <resultMap id="BaseResultMap" type="com.shpun.model.MallActivityClassifyProduct">
+<mapper namespace="com.shpun.mall.common.mapper.MallActivityClassifyProductMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallActivityClassifyProduct">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_id" jdbcType="INTEGER" property="createId" />
     <result column="classify_id" jdbcType="INTEGER" property="classifyId" />
     <result column="product_id" jdbcType="INTEGER" property="productId" />
   </resultMap>
+
   <sql id="Base_Column_List">
     id, create_time, create_id, classify_id, product_id
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from mall_activity_classify_product
     where id = #{id,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mall_activity_classify_product
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.shpun.model.MallActivityClassifyProduct">
-    insert into mall_activity_classify_product (id, create_time, create_id, 
-      classify_id, product_id)
-    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, 
-      #{classifyId,jdbcType=INTEGER}, #{productId,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="com.shpun.model.MallActivityClassifyProduct">
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.shpun.mall.common.model.MallActivityClassifyProduct">
     insert into mall_activity_classify_product
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -47,9 +43,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -64,7 +57,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.model.MallActivityClassifyProduct">
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallActivityClassifyProduct">
     update mall_activity_classify_product
     <set>
       <if test="createTime != null">
@@ -82,12 +76,5 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shpun.model.MallActivityClassifyProduct">
-    update mall_activity_classify_product
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_id = #{createId,jdbcType=INTEGER},
-      classify_id = #{classifyId,jdbcType=INTEGER},
-      product_id = #{productId,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+
 </mapper>

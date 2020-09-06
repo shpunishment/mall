@@ -1,11 +1,10 @@
 package com.shpun.mall.common.mapper;
 
-import com.shpun.model.MallActivityClassify;
+import com.shpun.mall.common.model.MallActivityClassify;
 
 public interface MallActivityClassifyMapper {
-    int deleteByPrimaryKey(Integer classifyId);
 
-    int insert(MallActivityClassify record);
+    int deleteByPrimaryKey(Integer classifyId);
 
     int insertSelective(MallActivityClassify record);
 
@@ -13,5 +12,4 @@ public interface MallActivityClassifyMapper {
 
     int updateByPrimaryKeySelective(MallActivityClassify record);
 
-    int updateByPrimaryKey(MallActivityClassify record);
 }

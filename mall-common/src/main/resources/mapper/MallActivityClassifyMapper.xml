@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shpun.mapper.MallActivityClassifyMapper">
-  <resultMap id="BaseResultMap" type="com.shpun.model.MallActivityClassify">
+<mapper namespace="com.shpun.mall.common.mapper.MallActivityClassifyMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallActivityClassify">
     <id column="classify_id" jdbcType="INTEGER" property="classifyId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_id" jdbcType="INTEGER" property="createId" />
@@ -12,36 +13,27 @@
     <result column="activity_id" jdbcType="INTEGER" property="activityId" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
   </resultMap>
+
   <sql id="Base_Column_List">
-    classify_id, create_time, create_id, update_time, update_id, classify_name, sn, activity_id, 
-    deleted
+    classify_id, create_time, create_id, update_time, update_id, classify_name, sn, activity_id
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from mall_activity_classify
     where classify_id = #{classifyId,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from mall_activity_classify
+    update mall_activity_classify
+    set deleted = 1
     where classify_id = #{classifyId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.shpun.model.MallActivityClassify">
-    insert into mall_activity_classify (classify_id, create_time, create_id, 
-      update_time, update_id, classify_name, 
-      sn, activity_id, deleted
-      )
-    values (#{classifyId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=INTEGER}, #{classifyName,jdbcType=VARCHAR}, 
-      #{sn,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{deleted,jdbcType=BIT}
-      )
-  </insert>
-  <insert id="insertSelective" parameterType="com.shpun.model.MallActivityClassify">
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="classifyId" parameterType="com.shpun.mall.common.model.MallActivityClassify">
     insert into mall_activity_classify
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="classifyId != null">
-        classify_id,
-      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -68,9 +60,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="classifyId != null">
-        #{classifyId,jdbcType=INTEGER},
-      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -92,12 +81,10 @@
       <if test="activityId != null">
         #{activityId,jdbcType=INTEGER},
       </if>
-      <if test="deleted != null">
-        #{deleted,jdbcType=BIT},
-      </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.model.MallActivityClassify">
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallActivityClassify">
     update mall_activity_classify
     <set>
       <if test="createTime != null">
@@ -121,22 +108,8 @@
       <if test="activityId != null">
         activity_id = #{activityId,jdbcType=INTEGER},
       </if>
-      <if test="deleted != null">
-        deleted = #{deleted,jdbcType=BIT},
-      </if>
     </set>
     where classify_id = #{classifyId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shpun.model.MallActivityClassify">
-    update mall_activity_classify
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_id = #{createId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_id = #{updateId,jdbcType=INTEGER},
-      classify_name = #{classifyName,jdbcType=VARCHAR},
-      sn = #{sn,jdbcType=INTEGER},
-      activity_id = #{activityId,jdbcType=INTEGER},
-      deleted = #{deleted,jdbcType=BIT}
-    where classify_id = #{classifyId,jdbcType=INTEGER}
-  </update>
+
 </mapper>

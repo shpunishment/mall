@@ -24,9 +24,9 @@ public interface MallClassifyMapper {
 
     List<Integer> getClassifyIdByPid(Integer pid);
 
-    MallClassify getPrev(MallClassify productClassify);
+    MallClassify getPrev(MallClassify classify);
 
-    MallClassify getNext(MallClassify productClassify);
+    MallClassify getNext(MallClassify classify);
 
     /**
      * 将[startSn,endSn)的sn都加1，向后移动一位

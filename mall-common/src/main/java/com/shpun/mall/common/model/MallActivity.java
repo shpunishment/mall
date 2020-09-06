@@ -1,9 +1,20 @@
 package com.shpun.mall.common.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @Description: 活动
+ * @Author: sun
+ * @Date: 2020/9/6 15:53
+ */
+@ApiModel
 public class MallActivity implements Serializable {
+
+    @ApiModelProperty("活动id")
     private Integer activityId;
 
     @ApiModelProperty("创建时间")
@@ -30,7 +41,7 @@ public class MallActivity implements Serializable {
     @ApiModelProperty("结束时间")
     private Date endTime;
 
-    @ApiModelProperty("状态，0启用，1禁用")
+    @ApiModelProperty("状态，0禁用，1启用")
     private Boolean status;
 
     @ApiModelProperty("排序号")

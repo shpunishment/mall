@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.shpun.mapper.MallActivityMapper">
-  <resultMap id="BaseResultMap" type="com.shpun.model.MallActivity">
+<mapper namespace="com.shpun.mall.common.mapper.MallActivityMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallActivity">
     <id column="activity_id" jdbcType="INTEGER" property="activityId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_id" jdbcType="INTEGER" property="createId" />
@@ -15,36 +16,28 @@
     <result column="sn" jdbcType="INTEGER" property="sn" />
     <result column="deleted" jdbcType="BIT" property="deleted" />
   </resultMap>
+
   <sql id="Base_Column_List">
-    activity_id, create_time, create_id, update_time, update_id, name, pic, start_time, 
-    end_time, status, sn, deleted
+    activity_id, create_time, create_id, update_time, update_id, `name`, pic, start_time,
+    end_time, status, sn
   </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from mall_activity
     where activity_id = #{activityId,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from mall_activity
+    update mall_activity
+    set deleted = 1
     where activity_id = #{activityId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.shpun.model.MallActivity">
-    insert into mall_activity (activity_id, create_time, create_id, 
-      update_time, update_id, name, 
-      pic, start_time, end_time, 
-      status, sn, deleted)
-    values (#{activityId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createId,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{pic,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
-      #{status,jdbcType=BIT}, #{sn,jdbcType=INTEGER}, #{deleted,jdbcType=BIT})
-  </insert>
-  <insert id="insertSelective" parameterType="com.shpun.model.MallActivity">
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="activityId" parameterType="com.shpun.mall.common.model.MallActivity">
     insert into mall_activity
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="activityId != null">
-        activity_id,
-      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -58,7 +51,7 @@
         update_id,
       </if>
       <if test="name != null">
-        name,
+        `name`,
       </if>
       <if test="pic != null">
         pic,
@@ -80,9 +73,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="activityId != null">
-        #{activityId,jdbcType=INTEGER},
-      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -118,7 +108,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.model.MallActivity">
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallActivity">
     update mall_activity
     <set>
       <if test="createTime != null">
@@ -134,7 +125,7 @@
         update_id = #{updateId,jdbcType=INTEGER},
       </if>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        `name` = #{name,jdbcType=VARCHAR},
       </if>
       <if test="pic != null">
         pic = #{pic,jdbcType=INTEGER},
@@ -157,19 +148,41 @@
     </set>
     where activity_id = #{activityId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shpun.model.MallActivity">
+
+  <select id="getMaxSn" resultType="java.lang.Integer">
+    select max(sn)
+    from mall_activity
+    where deleted = 0
+  </select>
+
+  <select id="getMinSn" resultType="java.lang.Integer">
+    select min(sn)
+    from mall_activity
+    where deleted = 0
+  </select>
+
+  <select id="getPrev" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
+    select activity_id, sn
+    from mall_activity
+	where sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	order by sn desc
+	limit 1
+  </select>
+
+  <select id="getNext" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
+    select activity_id, sn
+    from mall_activity
+	where sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	order by sn desc
+	limit 1
+  </select>
+
+  <update id="goNext">
     update mall_activity
-    set create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_id = #{createId,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_id = #{updateId,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
-      pic = #{pic,jdbcType=INTEGER},
-      start_time = #{startTime,jdbcType=TIMESTAMP},
-      end_time = #{endTime,jdbcType=TIMESTAMP},
-      status = #{status,jdbcType=BIT},
-      sn = #{sn,jdbcType=INTEGER},
-      deleted = #{deleted,jdbcType=BIT}
-    where activity_id = #{activityId,jdbcType=INTEGER}
+    set sn = sn + 1
+    where deleted = 0
+      and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
+      and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
   </update>
+
 </mapper>

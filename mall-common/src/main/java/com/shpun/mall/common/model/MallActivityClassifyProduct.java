@@ -1,9 +1,19 @@
 package com.shpun.mall.common.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @Description: 活动分类商品
+ * @Author: sun
+ * @Date: 2020/9/6 15:53
+ */
+@ApiModel
 public class MallActivityClassifyProduct implements Serializable {
+
     @ApiModelProperty("活动分类与商品关联id")
     private Integer id;
 
