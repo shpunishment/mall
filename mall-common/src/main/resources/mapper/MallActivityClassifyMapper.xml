@@ -11,11 +11,21 @@
     <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
     <result column="sn" jdbcType="INTEGER" property="sn" />
     <result column="activity_id" jdbcType="INTEGER" property="activityId" />
-    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallActivityClassifyVo">
+    <id column="classify_id" jdbcType="INTEGER" property="classifyId" />
+    <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
   </resultMap>
 
   <sql id="Base_Column_List">
     classify_id, create_time, create_id, update_time, update_id, classify_name, sn, activity_id
+  </sql>
+
+  <sql id="Vo_Column_List">
+    classify_id, classify_name, activity_id
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -151,5 +161,12 @@
       and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
       and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
   </update>
+
+  <select id="getVoByActivityId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    SELECT classify_id, classify_name
+    FROM mall_activity_classify
+    WHERE activity_id = #{activityId,jdbcType=INTEGER}
+	  AND deleted = 0
+  </select>
 
 </mapper>

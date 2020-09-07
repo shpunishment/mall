@@ -3,6 +3,7 @@ package com.shpun.mall.front.controller;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
+import com.shpun.mall.common.model.MallActivity;
 import com.shpun.mall.common.model.vo.*;
 import com.shpun.mall.common.service.*;
 import com.shpun.mall.front.security.SecurityUserUtils;
@@ -42,6 +43,12 @@ public class MallHomeController {
     @Autowired
     private MallUserSearchHistoryService userSearchHistoryService;
 
+    @Autowired
+    private MallActivityService activityService;
+
+    @Autowired
+    private MallFlashItemService flashItemService;
+
     @ApiOperation("搜索商品")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "productName", value = "商品名称", dataType = "String"),
@@ -73,6 +80,12 @@ public class MallHomeController {
     @GetMapping("/getHotKeyword")
     public List<String> getHotKeyword() {
         return userSearchHistoryService.getHotByType(Const.DEFAULT_LIMIT_HOT_KEYWORD, MallUserSearchHistoryTypeEnums.PRODUCT.getValue());
+    }
+
+    @ApiOperation("获取今日活动")
+    @GetMapping("/getTodayActivity")
+    public List<MallActivityVo> getTodayActivity() {
+        return activityService.getTodayVoList();
     }
 
     @ApiOperation("获取一级分类")
@@ -114,7 +127,7 @@ public class MallHomeController {
                                                        @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
                                                        @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
-        PageInfo<MallProductVo> productVoPageInfo = productService.getVoPageByFlashId(flashId, offset, limit);
+        PageInfo<MallProductVo> productVoPageInfo = flashItemService.getVoPageByFlashId(flashId, offset, limit);
 
         // 检查商品是否在用户购物车中
         productService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), true);

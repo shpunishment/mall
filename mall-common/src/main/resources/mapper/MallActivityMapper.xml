@@ -17,9 +17,19 @@
     <result column="deleted" jdbcType="INTEGER" property="deleted" />
   </resultMap>
 
+  <resultMap id="VoResultMap" type="com.shpun.mall.common.model.vo.MallActivityVo">
+    <id column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="pic" jdbcType="INTEGER" property="pic" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     activity_id, create_time, create_id, update_time, update_id, `name`, pic, start_time,
     end_time, status, sn
+  </sql>
+
+  <sql id="Vo_Column_List">
+    activity_id, `name`, pic
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -177,5 +187,26 @@
       and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
       and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
   </update>
+
+  <select id="getTodayVoList" resultMap="VoResultMap">
+    SELECT
+    <include refid="Vo_Column_List" />
+    FROM mall_activity
+    WHERE deleted = 0
+      AND status = 1
+      AND start_time <![CDATA[<=]]> now( )
+      AND end_time <![CDATA[>=]]> now( )
+    order by sn
+  </select>
+
+  <select id="isActive" parameterType="java.lang.Integer" resultType="java.lang.Boolean">
+    SELECT count(*)
+    FROM mall_activity
+    WHERE activity_id = #{activityId,jdbcType=INTEGER}
+     AND deleted = 0
+     AND status = 1
+     AND start_time <![CDATA[<=]]> now( )
+     AND end_time <![CDATA[>=]]> now( )
+  </select>
 
 </mapper>

@@ -74,14 +74,7 @@ public interface MallProductService {
 
     PageInfo<MallProductVo> getHotVoPage(Integer offset, Integer limit);
 
-    /**
-     * 根据限时抢购id获取商品
-     * @param flashId
-     * @return
-     */
-    List<MallProductVo> getVoListByFlashId(Integer flashId);
 
-    PageInfo<MallProductVo> getVoPageByFlashId(Integer flashId, Integer offset, Integer limit);
 
     MallProductVo getDetailVo(Integer productId);
 
@@ -108,11 +101,6 @@ public interface MallProductService {
 
     List<MallProduct> getListByClassifyId(Integer classifyId);
 
-    /**
-     * 下单成功，删除缓存
-     */
-    void deleteCache();
-
     List<MallProductVo> getVoListByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort);
 
     PageInfo<MallProductVo> getVoPageByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
@@ -120,5 +108,10 @@ public interface MallProductService {
     List<MallProductVo> getVoListByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort);
 
     PageInfo<MallProductVo> getVoPageByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+
+    /**
+     * 下单成功，删除缓存
+     */
+    void deleteCache();
 
 }

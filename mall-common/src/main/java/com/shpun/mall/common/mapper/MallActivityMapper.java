@@ -1,7 +1,10 @@
 package com.shpun.mall.common.mapper;
 
 import com.shpun.mall.common.model.MallActivity;
+import com.shpun.mall.common.model.vo.MallActivityVo;
 import io.lettuce.core.dynamic.annotation.Param;
+
+import java.util.List;
 
 public interface MallActivityMapper {
 
@@ -27,5 +30,9 @@ public interface MallActivityMapper {
      * @param endSn
      */
     void goNext(@Param("startSn") Integer startSn, @Param("endSn") Integer endSn);
+
+    List<MallActivityVo> getTodayVoList();
+
+    Boolean isActive(Integer activityId);
 
 }

@@ -336,26 +336,6 @@
     order by sales desc
   </select>
 
-  <select id="getVoListByFlashId" parameterType="java.lang.Integer" resultMap="VoResultMap">
-    SELECT
-	  p.product_id,
-	  p.product_name,
-	  p.`desc`,
-	  p.pic,
-	  p.original_price,
-	  p.new_status,
-	  p.label,
-	  fi.price as current_price,
-	  fi.stock,
-	  fi.`limit`
-    FROM
-	  mall_flash_item AS fi
-	  LEFT JOIN mall_product AS p ON p.product_id = fi.product_id
-    WHERE
-	  fi.flash_id = #{flashId,jdbcType=INTEGER} AND fi.deleted = 0
-	  AND p.deleted = 0 AND p.publish_status = 1
-  </select>
-
   <select id="getDetailVo" resultMap="VoResultMap">
     SELECT
       <include refid="Vo_Detail_Column_List" />

@@ -2,12 +2,14 @@ package com.shpun.mall.common.service.impl;
 
 import com.shpun.mall.common.mapper.MallActivityMapper;
 import com.shpun.mall.common.model.MallActivity;
+import com.shpun.mall.common.model.vo.MallActivityVo;
 import com.shpun.mall.common.service.MallActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:
@@ -89,4 +91,13 @@ public class MallActivityServiceImpl implements MallActivityService {
         this.updateByPrimaryKeySelective(newActivity);
     }
 
+    @Override
+    public List<MallActivityVo> getTodayVoList() {
+        return activityMapper.getTodayVoList();
+    }
+
+    @Override
+    public Boolean isActive(Integer activityId) {
+        return activityMapper.isActive(activityId);
+    }
 }

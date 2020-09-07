@@ -1,9 +1,12 @@
 package com.shpun.mall.common.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.mapper.MallFlashItemMapper;
 import com.shpun.mall.common.model.MallFlashItem;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallFlashItemService;
 import com.shpun.mall.common.service.RedisService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -75,7 +78,20 @@ public class MallFlashItemServiceImpl implements MallFlashItemService {
     }
 
     @Override
+    public List<MallProductVo> getVoListByFlashId(Integer flashId) {
+        return flashItemMapper.getVoListByFlashId(flashId);
+    }
+
+    @RedisCache(expire = 60)
+    @Override
+    public PageInfo<MallProductVo> getVoPageByFlashId(Integer flashId, Integer offset, Integer limit) {
+        PageHelper.offsetPage(offset, limit);
+        return new PageInfo<>(this.getVoListByFlashId(flashId));
+    }
+
+    @Override
     public void deleteCache() {
         redisService.deleteByPrefix(MallFlashItemServiceImpl.class, null);
     }
+
 }

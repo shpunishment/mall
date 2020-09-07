@@ -1,6 +1,7 @@
 package com.shpun.mall.common.mapper;
 
 import com.shpun.mall.common.model.MallFlashItem;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
@@ -27,5 +28,7 @@ public interface MallFlashItemMapper {
     MallFlashItem lockStock(Integer flashItemId);
 
     List<MallFlashItem> getByFlashId(Integer flashId);
+
+    List<MallProductVo> getVoListByFlashId(Integer flashId);
 
 }

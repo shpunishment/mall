@@ -31,8 +31,6 @@ public interface MallProductMapper {
 
     List<MallProductVo> getHotVoList();
 
-    List<MallProductVo> getVoListByFlashId(Integer flashId);
-
     MallProductVo getDetailVo(Integer productId);
 
     List<MallProduct> getListByClassifyId(Integer classifyId);

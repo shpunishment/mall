@@ -2,12 +2,14 @@ package com.shpun.mall.common.service.impl;
 
 import com.shpun.mall.common.mapper.MallActivityClassifyProductMapper;
 import com.shpun.mall.common.model.MallActivityClassifyProduct;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallActivityClassifyProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:
@@ -88,4 +90,8 @@ public class MallActivityClassifyProductServiceImpl implements MallActivityClass
         this.updateByPrimaryKeySelective(newActivityClassifyProduct);
     }
 
+    @Override
+    public List<MallProductVo> getVoListByClassifyId(Integer classifyId) {
+        return activityClassifyProductMapper.getVoListByClassifyId(classifyId);
+    }
 }

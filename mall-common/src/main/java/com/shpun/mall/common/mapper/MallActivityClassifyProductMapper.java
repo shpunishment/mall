@@ -1,7 +1,10 @@
 package com.shpun.mall.common.mapper;
 
 import com.shpun.mall.common.model.MallActivityClassifyProduct;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import io.lettuce.core.dynamic.annotation.Param;
+
+import java.util.List;
 
 public interface MallActivityClassifyProductMapper {
 
@@ -28,5 +31,7 @@ public interface MallActivityClassifyProductMapper {
      * @param endSn
      */
     void goNext(@Param("classifyId") Integer classifyId, @Param("startSn") Integer startSn, @Param("endSn") Integer endSn);
+
+    List<MallProductVo> getVoListByClassifyId(Integer classifyId);
 
 }

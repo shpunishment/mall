@@ -1,13 +1,16 @@
 package com.shpun.mall.common.service.impl;
 
+import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.mapper.MallActivityClassifyMapper;
 import com.shpun.mall.common.model.MallActivityClassify;
+import com.shpun.mall.common.model.vo.MallActivityClassifyVo;
 import com.shpun.mall.common.service.MallActivityClassifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:
@@ -87,6 +90,12 @@ public class MallActivityClassifyServiceImpl implements MallActivityClassifyServ
 
         this.updateByPrimaryKeySelective(oldActivityClassify);
         this.updateByPrimaryKeySelective(newActivityClassify);
+    }
+
+    @RedisCache
+    @Override
+    public List<MallActivityClassifyVo> getVoByActivityId(Integer activityId) {
+        return activityClassifyMapper.getVoByActivityId(activityId);
     }
 
 }

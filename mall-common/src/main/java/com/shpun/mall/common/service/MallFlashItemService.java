@@ -1,6 +1,8 @@
 package com.shpun.mall.common.service;
 
+import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallFlashItem;
+import com.shpun.mall.common.model.vo.MallProductVo;
 
 import java.util.List;
 
@@ -31,6 +33,15 @@ public interface MallFlashItemService {
     void updateBatch(List<MallFlashItem> flashItemList);
 
     List<MallFlashItem> getByFlashId(Integer flashId);
+
+    /**
+     * 根据限时抢购id获取商品
+     * @param flashId
+     * @return
+     */
+    List<MallProductVo> getVoListByFlashId(Integer flashId);
+
+    PageInfo<MallProductVo> getVoPageByFlashId(Integer flashId, Integer offset, Integer limit);
 
     /**
      * 下单成功，删除缓存

@@ -39,7 +39,7 @@ public class MallActivityClassify implements Serializable {
     private Integer activityId;
 
     @ApiModelProperty("删除标识，0未删除，1删除")
-    private Boolean deleted;
+    private Integer deleted;
 
     private static final long serialVersionUID = 1L;
 
@@ -107,11 +107,11 @@ public class MallActivityClassify implements Serializable {
         this.activityId = activityId;
     }
 
-    public Boolean getDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
 

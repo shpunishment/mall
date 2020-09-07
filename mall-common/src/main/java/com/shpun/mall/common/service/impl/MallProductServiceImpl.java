@@ -209,18 +209,6 @@ public class MallProductServiceImpl implements MallProductService {
         return new PageInfo<>(this.getHotVoList());
     }
 
-    @Override
-    public List<MallProductVo> getVoListByFlashId(Integer flashId) {
-        return productMapper.getVoListByFlashId(flashId);
-    }
-
-    @RedisCache(expire = 60)
-    @Override
-    public PageInfo<MallProductVo> getVoPageByFlashId(Integer flashId, Integer offset, Integer limit) {
-        PageHelper.offsetPage(offset, limit);
-        return new PageInfo<>(this.getVoListByFlashId(flashId));
-    }
-
     @RedisCache
     @Override
     public MallProductVo getDetailVo(Integer productId) {
@@ -275,11 +263,6 @@ public class MallProductServiceImpl implements MallProductService {
     }
 
     @Override
-    public void deleteCache() {
-        redisService.deleteByPrefix(MallProductServiceImpl.class, null);
-    }
-
-    @Override
     public List<MallProductVo> getVoListByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort) {
         return productMapper.getVoListFilterByClassifyIdList(classifyIdList, inStock, priceSort);
     }
@@ -301,6 +284,11 @@ public class MallProductServiceImpl implements MallProductService {
     public PageInfo<MallProductVo> getVoPageByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
         return new PageInfo<>(this.getVoListByFilterProductId(productIdList, inStock, priceSort));
+    }
+
+    @Override
+    public void deleteCache() {
+        redisService.deleteByPrefix(MallProductServiceImpl.class, null);
     }
 
 }

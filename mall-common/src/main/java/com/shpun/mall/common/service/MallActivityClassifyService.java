@@ -1,6 +1,9 @@
 package com.shpun.mall.common.service;
 
 import com.shpun.mall.common.model.MallActivityClassify;
+import com.shpun.mall.common.model.vo.MallActivityClassifyVo;
+
+import java.util.List;
 
 /**
  * @Description:
@@ -34,5 +37,7 @@ public interface MallActivityClassifyService {
      * @param classifyId
      */
     void top(Integer classifyId);
+
+    List<MallActivityClassifyVo> getVoByActivityId(Integer activityId);
 
 }

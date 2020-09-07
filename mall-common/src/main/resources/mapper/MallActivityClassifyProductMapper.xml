@@ -132,4 +132,23 @@
       and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
   </update>
 
+  <select id="getVoListByClassifyId" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
+    SELECT
+	  p.product_id,
+	  p.product_name,
+	  p.`desc`,
+	  p.pic,
+	  p.original_price,
+	  p.current_price,
+	  p.stock,
+	  p.`limit`,
+	  p.new_status,
+	  p.label
+    FROM  mall_activity_classify_product AS acc
+    LEFT JOIN mall_product AS p ON acc.product_id = p.product_id
+    WHERE acc.classify_id = #{classifyId,jdbcType=INTEGER}
+	  AND acc.deleted = 0
+	  AND p.deleted = 0
+  </select>
+
 </mapper>

@@ -23,7 +23,8 @@ public class MallError {
         PRODUCT_NOT_FOUND(1013, "商品id %s 不存在！"),
         COUPON_ERROR(1014, "优惠券异常！"),
         USERNAME_EXIST(1015, "用户名 %s 已存在！"),
-        OLD_PASSWORD_ERROR(1016, "原密码错误！")
+        OLD_PASSWORD_ERROR(1016, "原密码错误！"),
+        ACTIVITY_NOT_FOUND(1017, "活动不存在！")
         ;
 
         private Integer code;
