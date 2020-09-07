@@ -32,7 +32,7 @@ public class MallUserSearchHistoryServiceImpl implements MallUserSearchHistorySe
         return userSearchHistoryMapper.selectByPrimaryKey(historyId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void insertOrUpdate(Integer userId, String keyword, Integer type) {
         MallUserSearchHistory userSearchHistory = userSearchHistoryMapper.getByUserIdAndKeywordAndType(userId, keyword, type);

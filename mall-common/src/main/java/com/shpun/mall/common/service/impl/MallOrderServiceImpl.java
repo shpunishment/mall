@@ -218,7 +218,7 @@ public class MallOrderServiceImpl implements MallOrderService {
         return resultMap;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void generateOrder(MallOrder order, List<Integer> cartIdList) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
@@ -417,7 +417,7 @@ public class MallOrderServiceImpl implements MallOrderService {
         return orderMapper.getByUserId(userId);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void closeOrder(Integer orderId, Integer userId) {
         // 查找订单是否存在
@@ -538,6 +538,11 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public List<MallOrder> getList() {
         return orderMapper.getList();
+    }
+
+    @Override
+    public void payOrder(MallOrder order) {
+        // todo 根据支付方式支付订单
     }
 
     @Override

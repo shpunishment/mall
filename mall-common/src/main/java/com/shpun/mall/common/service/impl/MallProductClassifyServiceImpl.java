@@ -59,7 +59,7 @@ public class MallProductClassifyServiceImpl implements MallProductClassifyServic
         productClassifyMapper.insertBatch(productClassifyList);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateBatch(List<Integer> newClassifyIdList, Integer productId) {
         List<Integer> oldClassifyIdList = this.getClassifyIdByProductId(productId);

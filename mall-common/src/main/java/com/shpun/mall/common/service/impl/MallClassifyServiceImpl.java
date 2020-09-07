@@ -57,7 +57,7 @@ public class MallClassifyServiceImpl implements MallClassifyService {
         classifyMapper.updateByPrimaryKeySelective(record);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void up(Integer classifyId) {
         MallClassify classify = selectByPrimaryKey(classifyId);
@@ -67,7 +67,7 @@ public class MallClassifyServiceImpl implements MallClassifyService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void down(Integer classifyId) {
         MallClassify classify = selectByPrimaryKey(classifyId);
@@ -77,7 +77,7 @@ public class MallClassifyServiceImpl implements MallClassifyService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void top(Integer classifyId) {
         MallClassify classify = selectByPrimaryKey(classifyId);

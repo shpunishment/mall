@@ -51,7 +51,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         userCouponMapper.deleteByPrimaryKey(id);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void insertSelective(MallUserCoupon record) {
         Integer couponId = record.getCouponId();

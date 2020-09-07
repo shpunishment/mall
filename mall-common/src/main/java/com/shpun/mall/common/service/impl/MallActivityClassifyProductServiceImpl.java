@@ -45,7 +45,7 @@ public class MallActivityClassifyProductServiceImpl implements MallActivityClass
         activityClassifyProductMapper.updateByPrimaryKeySelective(record);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void up(Integer id) {
         MallActivityClassifyProduct activityClassifyProduct = this.selectByPrimaryKey(id);
@@ -55,7 +55,7 @@ public class MallActivityClassifyProductServiceImpl implements MallActivityClass
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void down(Integer id) {
         MallActivityClassifyProduct activityClassifyProduct = this.selectByPrimaryKey(id);
@@ -65,7 +65,7 @@ public class MallActivityClassifyProductServiceImpl implements MallActivityClass
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void top(Integer id) {
         MallActivityClassifyProduct activityClassifyProduct = this.selectByPrimaryKey(id);

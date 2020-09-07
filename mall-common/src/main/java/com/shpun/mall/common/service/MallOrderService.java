@@ -103,6 +103,12 @@ public interface MallOrderService {
     List<MallOrder> getList();
 
     /**
+     * 待支付订单，选择支付订单
+     * @param order 包括支付方式
+     */
+    void payOrder(MallOrder order);
+
+    /**
      * 下单成功，取消订单，评价订单，根据用户id删除缓存
      * @param userId
      */

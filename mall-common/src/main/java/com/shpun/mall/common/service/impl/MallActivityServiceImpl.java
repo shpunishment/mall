@@ -46,7 +46,7 @@ public class MallActivityServiceImpl implements MallActivityService {
         activityMapper.updateByPrimaryKeySelective(record);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void up(Integer activityId) {
         MallActivity activity = this.selectByPrimaryKey(activityId);
@@ -56,7 +56,7 @@ public class MallActivityServiceImpl implements MallActivityService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void down(Integer activityId) {
         MallActivity activity = this.selectByPrimaryKey(activityId);
@@ -66,7 +66,7 @@ public class MallActivityServiceImpl implements MallActivityService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void top(Integer activityId) {
         MallActivity activity = this.selectByPrimaryKey(activityId);

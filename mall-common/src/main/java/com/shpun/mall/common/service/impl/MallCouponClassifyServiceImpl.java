@@ -60,7 +60,7 @@ public class MallCouponClassifyServiceImpl implements MallCouponClassifyService 
         couponClassifyMapper.insertBatch(couponClassifyList);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateBatch(List<Integer> newClassifyIdList, Integer couponId) {
         List<Integer> oldClassifyIdList = couponClassifyMapper.getClassifyIdByCouponId(couponId);
