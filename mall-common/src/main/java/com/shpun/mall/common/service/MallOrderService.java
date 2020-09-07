@@ -8,6 +8,7 @@ import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description:
@@ -40,6 +41,14 @@ public interface MallOrderService {
      * @return
      */
     MallOrder calculatePrice(Integer userId, List<Integer> cartIdList, Integer couponId);
+
+    /**
+     * 根据优惠券计算价格
+     * @param useId
+     * @param cartIdList
+     * @return
+     */
+    Map<String, List<MallUserCouponVo>> calculateWithCoupon(Integer useId, List<Integer> cartIdList);
 
     /**
      * 生成订单

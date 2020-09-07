@@ -74,47 +74,7 @@ public class MallOrderController {
     })
     @PostMapping("/calculateWithCoupon")
     public Map<String, List<MallUserCouponVo>> calculateWithCoupon(@RequestParam("cartIdList") List<Integer> cartIdList) {
-
-        // 获取用户所有未使用的优惠券
-        List<MallUserCouponVo> userCouponVoList = userCouponService.getVoListByFilter(SecurityUserUtils.getUserId(), MallUserCouponStatusEnums.UNUSED.getValue());
-
-        Map<String, List<MallUserCouponVo>> resultMap = null;
-        if (CollectionUtils.isNotEmpty(userCouponVoList)) {
-            resultMap = new HashMap<>(2);
-            resultMap.put("can", new ArrayList<>(userCouponVoList.size()));
-            resultMap.put("cannot", new ArrayList<>(userCouponVoList.size()));
-
-            // 今日是否可用优惠券
-            boolean canTodayUse = userCouponService.getTodayUseCount(SecurityUserUtils.getUserId()) < Const.TODAY_USE_COUPON_COUNT;
-            for (MallUserCouponVo userCouponVo : userCouponVoList) {
-                if (canTodayUse) {
-                    // 判断优惠券使用时间，是否可用
-                    Date startTime = userCouponVo.getStartTime();
-                    Date endTime = userCouponVo.getEndTime();
-                    Date now = new Date();
-                    if (startTime.compareTo(now) <= 0 && endTime.compareTo(now) >= 0) {
-                        MallOrder order = orderService.calculatePrice(SecurityUserUtils.getUserId(), cartIdList, userCouponVo.getCouponId());
-                        if (order.getCouponId() != null) {
-                            MallOrderVo orderVo = new MallOrderVo();
-                            BeanUtils.copyProperties(order, orderVo);
-                            userCouponVo.setOrderVo(orderVo);
-                            List<MallUserCouponVo> canUseList = resultMap.get("can");
-                            canUseList.add(userCouponVo);
-                        } else {
-                            List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                            cannotUseList.add(userCouponVo);
-                        }
-                    } else {
-                        List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                        cannotUseList.add(userCouponVo);
-                    }
-                } else {
-                    List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                    cannotUseList.add(userCouponVo);
-                }
-            }
-        }
-        return resultMap;
+        return orderService.calculateWithCoupon(SecurityUserUtils.getUserId(), cartIdList);
     }
 
     @ApiOperation("生成订单")

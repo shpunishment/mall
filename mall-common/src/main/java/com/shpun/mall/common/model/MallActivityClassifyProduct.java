@@ -29,6 +29,12 @@ public class MallActivityClassifyProduct implements Serializable {
     @ApiModelProperty("商品id")
     private Integer productId;
 
+    @ApiModelProperty("排序号")
+    private Integer sn;
+
+    @ApiModelProperty("删除标识，0未删除，1删除")
+    private Boolean deleted;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -71,6 +77,22 @@ public class MallActivityClassifyProduct implements Serializable {
         this.productId = productId;
     }
 
+    public Integer getSn() {
+        return sn;
+    }
+
+    public void setSn(Integer sn) {
+        this.sn = sn;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -82,6 +104,8 @@ public class MallActivityClassifyProduct implements Serializable {
         sb.append(", createId=").append(createId);
         sb.append(", classifyId=").append(classifyId);
         sb.append(", productId=").append(productId);
+        sb.append(", sn=").append(sn);
+        sb.append(", deleted=").append(deleted);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

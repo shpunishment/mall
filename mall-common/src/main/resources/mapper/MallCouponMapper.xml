@@ -291,7 +291,7 @@
 
   <select id="lockCoupon" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     SELECT
-      coupon_id, total, time_type, days, start_time, end_time
+      coupon_id, total, `type`, time_type, days, start_time, end_time
     FROM mall_coupon
     WHERE coupon_id = #{couponId,jdbcType=INTEGER}
       AND deleted = 0

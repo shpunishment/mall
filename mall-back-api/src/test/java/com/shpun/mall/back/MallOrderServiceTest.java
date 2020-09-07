@@ -1,13 +1,14 @@
 package com.shpun.mall.back;
 
 import com.shpun.mall.common.model.MallOrder;
+import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.MallOrderService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,7 +25,7 @@ public class MallOrderServiceTest {
 
     @Test
     public void calculatePrice() {
-        List<Integer> cartIdList = Stream.of(4,5,6).collect(Collectors.toList());
+        List<Integer> cartIdList = Stream.of(1,2,3).collect(Collectors.toList());
 
         MallOrder order = orderService.calculatePrice(1, cartIdList);
 
@@ -32,15 +33,25 @@ public class MallOrderServiceTest {
     }
 
     @Test
+    public void calculateWithCoupon() {
+        List<Integer> cartIdList = Stream.of(1,2,3).collect(Collectors.toList());
+
+        Map<String, List<MallUserCouponVo>> map = orderService.calculateWithCoupon(1, cartIdList);
+
+        System.out.println(map);
+    }
+
+    @Test
     public void generateOrder() {
         MallOrder order = new MallOrder();
         order.setUserId(1);
+        order.setCouponId(7);
         order.setAddressId(1);
         order.setRemark("订单备注");
         order.setExpectTime("尽快送达");
         order.setPayType(1);
 
-        List<Integer> cartIdList = Stream.of(7,8,9).collect(Collectors.toList());
+        List<Integer> cartIdList = Stream.of(1,2,3).collect(Collectors.toList());
 
         orderService.generateOrder(order, cartIdList);
     }

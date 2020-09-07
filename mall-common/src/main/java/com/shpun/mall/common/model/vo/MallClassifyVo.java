@@ -26,9 +26,6 @@ public class MallClassifyVo implements Serializable {
     @ApiModelProperty("父分类id")
     private Integer pid;
 
-    @ApiModelProperty("排序号")
-    private Integer sn;
-
     @ApiModelProperty("子分类")
     private List<MallClassifyVo> children;
 
@@ -64,14 +61,6 @@ public class MallClassifyVo implements Serializable {
 
     public void setPid(Integer pid) {
         this.pid = pid;
-    }
-
-    public Integer getSn() {
-        return sn;
-    }
-
-    public void setSn(Integer sn) {
-        this.sn = sn;
     }
 
     public List<MallClassifyVo> getChildren() {

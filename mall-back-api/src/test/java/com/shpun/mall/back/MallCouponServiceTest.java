@@ -39,7 +39,7 @@ public class MallCouponServiceTest {
         couponService.insertSelective(coupon2);
 
         MallCoupon coupon3 = buildMallCoupon("全品类通用券3", "全品类通用券（全场，除限时抢购商品）", new BigDecimal("50.00"), new BigDecimal("10.00"),
-                10, 1,1,2,null, dateFormat.parse("2020-09-03 00:00:00"), dateFormat.parse("2020-09-07 23:59:59"));
+                10, 1,1,2,null, dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-20 23:59:59"));
         couponService.insertSelective(coupon3);
 
         // 新人
@@ -63,7 +63,7 @@ public class MallCouponServiceTest {
 
         // 通用
         MallCoupon coupon1 = buildMallCoupon("水果类通用券1", "水果类通用券", new BigDecimal("20.00"), new BigDecimal("5.00"),
-                10, 1,2,2,null, dateFormat.parse("2020-09-03 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
+                10, 1,2,2,null, dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
         couponService.insertWithClassifyIdList(coupon1, classifyIdList);
 
         // 新人
@@ -74,11 +74,11 @@ public class MallCouponServiceTest {
 
     @Test
     public void insertWithProductIdList() throws Exception {
-        List<Integer> productIdList = Stream.of(3,4).collect(Collectors.toList());
+        List<Integer> productIdList = Stream.of(3).collect(Collectors.toList());
 
         // 通用
         MallCoupon coupon1 = buildMallCoupon("XX芒果专享券1", "XX芒果专享券", new BigDecimal("20.00"), new BigDecimal("2.00"),
-                10, 1,3,2, null, dateFormat.parse("2020-09-03 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
+                10, 1,3,2, null, dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
         couponService.insertWithProductIdList(coupon1, productIdList);
 
         // 新人

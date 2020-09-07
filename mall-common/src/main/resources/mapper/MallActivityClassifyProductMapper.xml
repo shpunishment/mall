@@ -8,10 +8,12 @@
     <result column="create_id" jdbcType="INTEGER" property="createId" />
     <result column="classify_id" jdbcType="INTEGER" property="classifyId" />
     <result column="product_id" jdbcType="INTEGER" property="productId" />
+    <result column="sn" jdbcType="INTEGER" property="sn" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, create_time, create_id, classify_id, product_id
+    id, create_time, create_id, classify_id, product_id, sn
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -22,7 +24,8 @@
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from mall_activity_classify_product
+    update mall_activity_classify_product
+    set deleted = 1
     where id = #{id,jdbcType=INTEGER}
   </delete>
 
@@ -41,6 +44,9 @@
       <if test="productId != null">
         product_id,
       </if>
+      <if test="sn != null">
+        sn,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="createTime != null">
@@ -55,10 +61,13 @@
       <if test="productId != null">
         #{productId,jdbcType=INTEGER},
       </if>
+      <if test="sn != null">
+        #{sn,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
 
-  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallActivityClassifyProduct">
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.model.MallActivityClassifyProduct">
     update mall_activity_classify_product
     <set>
       <if test="createTime != null">
@@ -72,6 +81,9 @@
       </if>
       <if test="productId != null">
         product_id = #{productId,jdbcType=INTEGER},
+      </if>
+      <if test="sn != null">
+        sn = #{sn,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}

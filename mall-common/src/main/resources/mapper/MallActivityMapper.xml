@@ -12,9 +12,9 @@
     <result column="pic" jdbcType="INTEGER" property="pic" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
-    <result column="status" jdbcType="BIT" property="status" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="sn" jdbcType="INTEGER" property="sn" />
-    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -68,9 +68,6 @@
       <if test="sn != null">
         sn,
       </if>
-      <if test="deleted != null">
-        deleted,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="createTime != null">
@@ -98,13 +95,10 @@
         #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null">
-        #{status,jdbcType=BIT},
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="sn != null">
         #{sn,jdbcType=INTEGER},
-      </if>
-      <if test="deleted != null">
-        #{deleted,jdbcType=BIT},
       </if>
     </trim>
   </insert>
@@ -137,13 +131,10 @@
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null">
-        status = #{status,jdbcType=BIT},
+        status = #{status,jdbcType=INTEGER},
       </if>
       <if test="sn != null">
         sn = #{sn,jdbcType=INTEGER},
-      </if>
-      <if test="deleted != null">
-        deleted = #{deleted,jdbcType=BIT},
       </if>
     </set>
     where activity_id = #{activityId,jdbcType=INTEGER}
@@ -164,7 +155,8 @@
   <select id="getPrev" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
     select activity_id, sn
     from mall_activity
-	where sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	where deleted = 0
+	  and sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
 	order by sn desc
 	limit 1
   </select>
@@ -172,7 +164,8 @@
   <select id="getNext" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
     select activity_id, sn
     from mall_activity
-	where sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	where deleted = 0
+	  and sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
 	order by sn desc
 	limit 1
   </select>

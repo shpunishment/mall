@@ -42,13 +42,13 @@ public class MallActivity implements Serializable {
     private Date endTime;
 
     @ApiModelProperty("状态，0禁用，1启用")
-    private Boolean status;
+    private Integer status;
 
     @ApiModelProperty("排序号")
     private Integer sn;
 
     @ApiModelProperty("删除标识，0未删除，1删除")
-    private Boolean deleted;
+    private Integer deleted;
 
     private static final long serialVersionUID = 1L;
 
@@ -124,11 +124,11 @@ public class MallActivity implements Serializable {
         this.endTime = endTime;
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -140,11 +140,11 @@ public class MallActivity implements Serializable {
         this.sn = sn;
     }
 
-    public Boolean getDeleted() {
+    public Integer getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Boolean deleted) {
+    public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
 

@@ -22,9 +22,14 @@ public class MallUserCouponServiceTest {
 
     @Test
     public void insert() {
-        MallUserCoupon userCoupon = buildMallUserCoupon(1, 1);
+        MallUserCoupon userCoupon1 = buildMallUserCoupon(1, 1);
+        userCouponService.insertSelective(userCoupon1);
 
-        userCouponService.insertSelective(userCoupon);
+        MallUserCoupon userCoupon2 = buildMallUserCoupon(1, 7);
+        userCouponService.insertSelective(userCoupon2);
+
+        MallUserCoupon userCoupon3 = buildMallUserCoupon(1, 9);
+        userCouponService.insertSelective(userCoupon3);
     }
 
     private MallUserCoupon buildMallUserCoupon(Integer userId, Integer couponId) {

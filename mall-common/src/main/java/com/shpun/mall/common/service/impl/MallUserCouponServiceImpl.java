@@ -79,7 +79,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         userCouponMapper.insertSelective(record);
 
         // 通用券减数量
-        if (MallCouponTypeEnums.UNIVERSAL.equals(coupon.getType())) {
+        if (MallCouponTypeEnums.UNIVERSAL.getValue().equals(coupon.getType())) {
             coupon.setTotal(coupon.getTotal() - 1);
             couponService.update(coupon);
         }

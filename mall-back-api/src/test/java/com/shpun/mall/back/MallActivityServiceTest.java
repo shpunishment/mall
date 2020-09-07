@@ -24,16 +24,16 @@ public class MallActivityServiceTest {
 
     @Test
     public void insert() throws Exception {
-        MallActivity activity1 = buildMallActivity("活动1", dateFormat.parse("2020-09-06 00:00:00"), dateFormat.parse("2020-09-06 23:59:59"));
+        MallActivity activity1 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
         activityService.insertSelective(activity1);
 
-        MallActivity activity2 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-08 23:59:59"));
+        MallActivity activity2 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-10 23:59:59"));
         activityService.insertSelective(activity2);
 
         MallActivity activity3 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-10 23:59:59"));
         activityService.insertSelective(activity3);
 
-        MallActivity activity4 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-11 23:59:59"));
+        MallActivity activity4 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-12 23:59:59"));
         activityService.insertSelective(activity4);
 
     }

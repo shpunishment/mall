@@ -20,7 +20,6 @@
     <result column="pic" jdbcType="INTEGER" property="pic" />
     <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
     <result column="pid" jdbcType="INTEGER" property="pid" />
-    <result column="sn" jdbcType="INTEGER" property="sn" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -29,7 +28,7 @@
   </sql>
 
   <sql id="Vo_Column_List">
-    classify_id, pic, classify_name, pid, sn
+    classify_id, pic, classify_name, pid
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -144,25 +143,30 @@
   <select id="getMaxSnByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select max(sn)
     from mall_classify
-    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    where pid = #{pid,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getMinSnByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select min(sn)
     from mall_classify
-    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    where pid = #{pid,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getClassifyIdByPid" parameterType="java.lang.Integer" resultType="java.lang.Integer">
     select classify_id
     from mall_classify
-    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    where pid = #{pid,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getPrev" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
     select classify_id,sn
     from mall_classify
-	where pid = #{pid,jdbcType=INTEGER} and sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	where pid = #{pid,jdbcType=INTEGER}
+	  and deleted = 0
+	  and sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
 	order by sn desc
 	limit 1
   </select>
@@ -170,7 +174,9 @@
   <select id="getNext" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
     select classify_id,sn
     from mall_classify
-	where pid = #{pid,jdbcType=INTEGER} and sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	where pid = #{pid,jdbcType=INTEGER}
+	  and deleted = 0
+	  and sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
 	order by sn desc
 	limit 1
   </select>
@@ -178,15 +184,18 @@
   <update id="goNext">
     update mall_classify
     set sn = sn + 1
-    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
-    and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER} and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
+    where pid = #{pid,jdbcType=INTEGER}
+      and deleted = 0
+      and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
+      and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
   </update>
 
   <select id="getByPid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from mall_classify
-    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    where pid = #{pid,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getAllVo" resultMap="VoResultMap">
@@ -201,7 +210,8 @@
     select
     <include refid="Vo_Column_List" />
     from mall_classify
-    where pid = #{pid,jdbcType=INTEGER} and deleted = 0
+    where pid = #{pid,jdbcType=INTEGER}
+      and deleted = 0
     order by sn
   </select>
 

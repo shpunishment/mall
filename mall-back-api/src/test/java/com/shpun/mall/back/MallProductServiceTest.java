@@ -33,6 +33,8 @@ public class MallProductServiceTest {
                 new BigDecimal("6.98"),80, 20, "", "750g-800g/份", "0-4度","建宁",2);
         MallProduct product3 = buildMallProduct("芒果", "清甜多汁 肉脆爽口", 1, new BigDecimal("8.99"),
                 new BigDecimal("5.99"),90, 10, "", "750g-800g/份", "0-4度","台湾",2);
+        MallProduct product4 = buildMallProduct("芒果-1", "清甜多汁 肉脆爽口", 1, new BigDecimal("8.99"),
+                new BigDecimal("5.99"),90, 10, "", "750g-800g/份", "0-4度","台湾",2);
 
         List<Integer> product1ClassifyIdList = new ArrayList<>();
         // 热带
