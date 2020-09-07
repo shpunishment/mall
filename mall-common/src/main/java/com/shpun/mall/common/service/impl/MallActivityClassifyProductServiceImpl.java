@@ -5,6 +5,7 @@ import com.shpun.mall.common.model.MallActivityClassifyProduct;
 import com.shpun.mall.common.service.MallActivityClassifyProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -27,6 +28,8 @@ public class MallActivityClassifyProductServiceImpl implements MallActivityClass
     @Override
     public void insertSelective(MallActivityClassifyProduct record) {
         record.setCreateTime(new Date());
+        Integer maxSn = activityClassifyProductMapper.getMaxSnByClassifyId(record.getClassifyId());
+        record.setSn(maxSn == null ? 1 : maxSn + 1);
         activityClassifyProductMapper.insertSelective(record);
     }
 
@@ -39,4 +42,50 @@ public class MallActivityClassifyProductServiceImpl implements MallActivityClass
     public void updateByPrimaryKeySelective(MallActivityClassifyProduct record) {
         activityClassifyProductMapper.updateByPrimaryKeySelective(record);
     }
+
+    @Transactional
+    @Override
+    public void up(Integer id) {
+        MallActivityClassifyProduct activityClassifyProduct = this.selectByPrimaryKey(id);
+        MallActivityClassifyProduct prev = activityClassifyProductMapper.getPrev(activityClassifyProduct);
+        if (prev != null) {
+            this.exchangeSn(prev, activityClassifyProduct);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void down(Integer id) {
+        MallActivityClassifyProduct activityClassifyProduct = this.selectByPrimaryKey(id);
+        MallActivityClassifyProduct next = activityClassifyProductMapper.getNext(activityClassifyProduct);
+        if (next != null) {
+            this.exchangeSn(next, activityClassifyProduct);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void top(Integer id) {
+        MallActivityClassifyProduct activityClassifyProduct = this.selectByPrimaryKey(id);
+        Integer topSn = activityClassifyProductMapper.getMinSnByClassifyId(activityClassifyProduct.getClassifyId());
+        activityClassifyProductMapper.goNext(activityClassifyProduct.getClassifyId(), topSn, activityClassifyProduct.getSn());
+
+        activityClassifyProduct.setSn(topSn);
+        this.updateByPrimaryKeySelective(activityClassifyProduct);
+    }
+
+    /**
+     * 交换两个分类的排序号
+     * @param oldActivityClassifyProduct
+     * @param newActivityClassifyProduct
+     */
+    private void exchangeSn(MallActivityClassifyProduct oldActivityClassifyProduct, MallActivityClassifyProduct newActivityClassifyProduct) {
+        Integer tempSn = oldActivityClassifyProduct.getSn();
+        oldActivityClassifyProduct.setSn(newActivityClassifyProduct.getSn());
+        newActivityClassifyProduct.setSn(tempSn);
+
+        this.updateByPrimaryKeySelective(oldActivityClassifyProduct);
+        this.updateByPrimaryKeySelective(newActivityClassifyProduct);
+    }
+
 }

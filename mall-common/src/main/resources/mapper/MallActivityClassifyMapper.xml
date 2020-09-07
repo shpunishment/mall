@@ -55,9 +55,6 @@
       <if test="activityId != null">
         activity_id,
       </if>
-      <if test="deleted != null">
-        deleted,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="createTime != null">
@@ -110,6 +107,49 @@
       </if>
     </set>
     where classify_id = #{classifyId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getMaxSnByActivityId" resultType="java.lang.Integer">
+    select max(sn)
+    from mall_activity_classify
+    where activity_id = #{activityId,jdbcType=INTEGER}
+      and deleted = 0
+  </select>
+
+  <select id="getMinSnByActivityId" resultType="java.lang.Integer">
+    select min(sn)
+    from mall_activity_classify
+    where activity_id = #{activityId,jdbcType=INTEGER}
+      and deleted = 0
+  </select>
+
+  <select id="getPrev" parameterType="com.shpun.mall.common.model.MallActivityClassify" resultMap="BaseResultMap">
+    select classify_id, sn
+    from mall_activity_classify
+	where activity_id = #{activityId,jdbcType=INTEGER}
+	  and deleted = 0
+	  and sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	order by sn desc
+	limit 1
+  </select>
+
+  <select id="getNext" parameterType="com.shpun.mall.common.model.MallActivityClassify" resultMap="BaseResultMap">
+    select classify_id, sn
+    from mall_activity_classify
+	where activity_id = #{activityId,jdbcType=INTEGER}
+	  and deleted = 0
+	  and sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	order by sn desc
+	limit 1
+  </select>
+
+  <update id="goNext">
+    update mall_activity_classify
+    set sn = sn + 1
+    where activity_id = #{activityId,jdbcType=INTEGER}
+      and deleted = 0
+      and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
+      and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
   </update>
 
 </mapper>

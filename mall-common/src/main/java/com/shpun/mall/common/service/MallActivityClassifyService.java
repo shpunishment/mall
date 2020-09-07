@@ -17,4 +17,22 @@ public interface MallActivityClassifyService {
 
     void updateByPrimaryKeySelective(MallActivityClassify record);
 
+    /**
+     * 上移
+     * @param classifyId
+     */
+    void up(Integer classifyId);
+
+    /**
+     * 下移
+     * @param classifyId
+     */
+    void down(Integer classifyId);
+
+    /**
+     * 置顶
+     * @param classifyId
+     */
+    void top(Integer classifyId);
+
 }
