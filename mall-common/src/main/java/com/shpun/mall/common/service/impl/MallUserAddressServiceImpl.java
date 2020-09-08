@@ -10,6 +10,7 @@ import com.shpun.mall.common.model.MallUserAddress;
 import com.shpun.mall.common.model.vo.MallUserAddressVo;
 import com.shpun.mall.common.service.MallUserAddressService;
 import com.shpun.mall.common.service.RedisService;
+import org.apache.catalina.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

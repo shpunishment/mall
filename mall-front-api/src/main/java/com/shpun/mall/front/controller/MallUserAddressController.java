@@ -71,6 +71,7 @@ public class MallUserAddressController {
     @ApiOperation("更新用户地址")
     @PostMapping("/update")
     public void update(@RequestBody @Validated(MallUserAddress.Update.class) MallUserAddress userAddress) {
+        userAddress.setUserId(SecurityUserUtils.getUserId());
         userAddressService.updateByPrimaryKeySelective(userAddress);
 
         // 删除用户地址缓存
