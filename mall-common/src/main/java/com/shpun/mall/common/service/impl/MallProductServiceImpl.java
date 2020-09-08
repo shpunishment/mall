@@ -236,6 +236,8 @@ public class MallProductServiceImpl implements MallProductService {
         if (stock != null) {
             productVo.setHasStock(stock > 0);
             productVo.setStock(null);
+        } else {
+            productVo.setHasStock(false);
         }
 
 

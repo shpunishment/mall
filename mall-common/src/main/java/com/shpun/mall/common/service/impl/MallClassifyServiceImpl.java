@@ -121,6 +121,8 @@ public class MallClassifyServiceImpl implements MallClassifyService {
         allVoList.forEach(vo -> {
             // pid等于0为一级分类
             if (vo.getPid() == 0) {
+                vo.setId(vo.getClassifyId());
+                vo.setText(vo.getClassifyName());
                 classifyVoList.add(vo);
             }
         });
@@ -143,6 +145,8 @@ public class MallClassifyServiceImpl implements MallClassifyService {
         List<MallClassifyVo> childrenList = new ArrayList<>();
         for(MallClassifyVo classifyVo : allVoList){
             if(classifyVo.getPid().equals(realId)){
+                classifyVo.setId(classifyVo.getClassifyId());
+                classifyVo.setText(classifyVo.getClassifyName());
                 childrenList.add(classifyVo);
             }
         }

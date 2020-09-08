@@ -1,5 +1,6 @@
 package com.shpun.mall.common.model.vo;
 
+import com.sun.xml.internal.ws.policy.spi.PolicyAssertionValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -25,6 +26,12 @@ public class MallClassifyVo implements Serializable {
 
     @ApiModelProperty("父分类id")
     private Integer pid;
+
+    @ApiModelProperty("分类id")
+    private Integer id;
+
+    @ApiModelProperty("分类名")
+    private String text;
 
     @ApiModelProperty("子分类")
     private List<MallClassifyVo> children;
@@ -61,6 +68,22 @@ public class MallClassifyVo implements Serializable {
 
     public void setPid(Integer pid) {
         this.pid = pid;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public List<MallClassifyVo> getChildren() {
