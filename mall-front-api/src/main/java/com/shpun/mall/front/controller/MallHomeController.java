@@ -52,7 +52,7 @@ public class MallHomeController {
     @ApiOperation("搜索商品")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "productName", value = "商品名称", dataType = "String"),
-            @ApiImplicitParam(name = "inStock", value = "有货过滤", dataType = "Integer"),
+            @ApiImplicitParam(name = "inStock", value = "有货过滤，0不过滤，1过滤", dataType = "Integer"),
             @ApiImplicitParam(name = "priceSort", value = "价格排序，1顺序，2倒序", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")

@@ -47,7 +47,7 @@ public class MallProductController {
     @ApiOperation("根据商品二级分类id分页获取商品")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "classifyId", value = "商品二级分类id", dataType = "Integer"),
-            @ApiImplicitParam(name = "inStock", value = "有货过滤", dataType = "Integer"),
+            @ApiImplicitParam(name = "inStock", value = "有货过滤，0不过滤，1过滤", dataType = "Integer"),
             @ApiImplicitParam(name = "priceSort", value = "价格排序，1顺序，2倒序", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
@@ -93,7 +93,7 @@ public class MallProductController {
     @ApiOperation("根据优惠券id分页获取商品")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "couponId", value = "优惠券id", dataType = "Integer"),
-            @ApiImplicitParam(name = "inStock", value = "有货过滤", dataType = "Integer"),
+            @ApiImplicitParam(name = "inStock", value = "有货过滤，0不过滤，1过滤", dataType = "Integer"),
             @ApiImplicitParam(name = "priceSort", value = "价格排序，1顺序，2倒序", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")

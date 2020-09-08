@@ -54,8 +54,7 @@ public class MallActivityController {
 
     @ApiOperation("根据活动id获取活动分类和商品")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
-            @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
+            @ApiImplicitParam(name = "activityId", value = "活动id", dataType = "Integer")
     })
     @GetMapping("/{activityId}")
     public List<MallActivityClassifyVo> getByActivityId(@PathVariable("activityId") @Min(1) @Max(2147483647) Integer activityId) {

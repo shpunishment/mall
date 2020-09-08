@@ -99,7 +99,7 @@ public class MallOrderController {
 
     @ApiOperation("分页获取订单")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "status", value = "订单状态", dataType = "Integer"),
+            @ApiImplicitParam(name = "status", value = "订单状态，不填全部，0待付款，2待收货，3待评价", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })

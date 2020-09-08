@@ -1,4 +1,4 @@
-package com.shpun.mall.front.security;
+package com.shpun.mall.front.config;
 
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
  * @Date: 2020/9/7 15:38
  */
 @Component
-public class CorsFilter implements Filter {
+public class MallCorsFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
