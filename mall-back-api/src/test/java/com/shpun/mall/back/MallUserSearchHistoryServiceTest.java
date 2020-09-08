@@ -74,4 +74,10 @@ public class MallUserSearchHistoryServiceTest {
         System.out.println();
     }
 
+    @Test
+    public void deleteByProduct() {
+        userSearchHistoryService.deleteByUserId(1, MallUserSearchHistoryTypeEnums.PRODUCT.getValue());
+        System.out.println();
+    }
+
 }
