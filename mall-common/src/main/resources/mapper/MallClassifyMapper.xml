@@ -215,4 +215,14 @@
     order by sn
   </select>
 
+  <select id="getHomeClassify" parameterType="java.lang.Integer" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_classify
+    where pid = #{pid,jdbcType=INTEGER}
+    and deleted = 0
+    order by sn
+    limit 9
+  </select>
+
 </mapper>

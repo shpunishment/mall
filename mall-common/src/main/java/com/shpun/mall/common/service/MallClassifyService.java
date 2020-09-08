@@ -46,4 +46,6 @@ public interface MallClassifyService {
 
     List<MallClassifyVo> getVoByPid(Integer pid);
 
+    List<MallClassifyVo> getHomeClassify(Integer pid);
+
 }

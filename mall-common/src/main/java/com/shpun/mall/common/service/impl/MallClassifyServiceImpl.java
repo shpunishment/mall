@@ -153,9 +153,14 @@ public class MallClassifyServiceImpl implements MallClassifyService {
         return childrenList;
     }
 
-    @RedisCache
     @Override
     public List<MallClassifyVo> getVoByPid(Integer pid) {
         return classifyMapper.getVoByPid(pid);
+    }
+
+    @RedisCache
+    @Override
+    public List<MallClassifyVo> getHomeClassify(Integer pid) {
+        return classifyMapper.getHomeClassify(pid);
     }
 }

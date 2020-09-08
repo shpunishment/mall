@@ -42,4 +42,6 @@ public interface MallClassifyMapper {
 
     List<MallClassifyVo> getVoByPid(Integer pid);
 
+    List<MallClassifyVo> getHomeClassify(Integer pid);
+
 }

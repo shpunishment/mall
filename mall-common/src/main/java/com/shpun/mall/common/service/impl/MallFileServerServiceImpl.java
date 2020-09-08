@@ -65,7 +65,8 @@ public class MallFileServerServiceImpl implements MallFileServerService {
             }
             fileBytes = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            throw new MallException(MallError.MallErrorEnum.ADD_FILE_ERROR);
+            e.printStackTrace();
+            throw new MallException(MallError.MallErrorEnum.ADD_FILE_ERROR.format(file.getName()));
         }
 
         MallFileServer fileServer = new MallFileServer();

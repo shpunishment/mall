@@ -11,7 +11,7 @@ public class MallError {
         INTERNAL_SYSTEM_ERROR(1001, "系统内部错误！"),
         USERNAME_PASSWORD_FAIL(1002, "账号或密码错误！"),
         FILE_NOT_FOUND(1003, "文件id %s 不存在！"),
-        ADD_FILE_ERROR(1004, "添加文件失败！"),
+        ADD_FILE_ERROR(1004, "添加 %s 文件失败！"),
         GET_FILE_ERROR(1005, "获取文件失败！"),
         UPLOAD_FILE_ERROR(1006,"上传图片失败！"),
         CART_NULL(1007, "购物车为空！"),

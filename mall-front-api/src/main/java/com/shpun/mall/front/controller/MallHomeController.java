@@ -88,10 +88,10 @@ public class MallHomeController {
         return activityService.getTodayVoList();
     }
 
-    @ApiOperation("获取一级分类")
-    @GetMapping("/getFirstClassify")
-    public List<MallClassifyVo> getFirstClassify() {
-        return classifyService.getVoByPid(Const.PRODUCT_CLASSIFY_ROOT_ID);
+    @ApiOperation("获取首页分类")
+    @GetMapping("/getHomeClassify")
+    public List<MallClassifyVo> getHomeClassify() {
+        return classifyService.getHomeClassify(Const.PRODUCT_CLASSIFY_ROOT_ID);
     }
 
     @ApiOperation("分页获取热门商品")
