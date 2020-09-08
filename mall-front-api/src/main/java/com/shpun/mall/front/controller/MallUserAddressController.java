@@ -1,6 +1,8 @@
 package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.exception.MallError;
+import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallUserAddress;
 import com.shpun.mall.common.model.vo.MallUserAddressVo;
 import com.shpun.mall.common.service.MallUserAddressService;
@@ -45,7 +47,7 @@ public class MallUserAddressController {
     }
 
     @ApiOperation("新增用户地址")
-    @GetMapping("/add")
+    @PostMapping("/add")
     public void add(@RequestBody @Validated(MallUserAddress.Add.class) MallUserAddress userAddress) {
         userAddress.setUserId(SecurityUserUtils.getUserId());
         userAddressService.insertSelective(userAddress);
@@ -67,12 +69,23 @@ public class MallUserAddressController {
     }
 
     @ApiOperation("更新用户地址")
-    @GetMapping("/update")
+    @PostMapping("/update")
     public void update(@RequestBody @Validated(MallUserAddress.Update.class) MallUserAddress userAddress) {
         userAddressService.updateByPrimaryKeySelective(userAddress);
 
         // 删除用户地址缓存
         userAddressService.deleteCache(SecurityUserUtils.getUserId());
+    }
+
+    @ApiOperation("根据地址id获取用户地址")
+    @GetMapping("/{addressId}")
+    public MallUserAddressVo get(@PathVariable("addressId") @Min(1) @Max(2147483647) Integer addressId) {
+        MallUserAddress userAddress = userAddressService.selectByPrimaryKey(addressId);
+        if (!userAddress.getUserId().equals(SecurityUserUtils.getUserId())) {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+
+        return userAddressService.getVoByAddressId(addressId);
     }
 
 }

@@ -35,7 +35,7 @@ public class MallUserAddress implements Serializable {
     private Integer userId;
 
     @NotBlank(groups = { Add.class, Update.class })
-    @Length(min = 4, max = 20, groups = { Add.class, Update.class })
+    @Length(min = 1, max = 20, groups = { Add.class, Update.class })
     @ApiModelProperty("收货人")
     private String name;
 
@@ -54,7 +54,7 @@ public class MallUserAddress implements Serializable {
     @ApiModelProperty("收货地址")
     private String address;
 
-    @Min(value = 1, groups = { Add.class, Update.class })
+    @Min(value = 0, groups = { Add.class, Update.class })
     @Max(value = 5, groups = { Add.class, Update.class })
     @ApiModelProperty("地址类型，0未选择，1家，2父母家，3朋友家，4公司，5学校")
     private Integer type;
