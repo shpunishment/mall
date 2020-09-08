@@ -37,4 +37,16 @@ public class MallUserSearchHistoryController {
         return userSearchHistoryService.getTop10ByUserId(SecurityUserUtils.getUserId(), MallUserSearchHistoryTypeEnums.ORDER.getValue());
     }
 
+    @ApiOperation("清空用户商品查询历史")
+    @GetMapping("/deleteByProduct")
+    public void deleteByProduct() {
+        userSearchHistoryService.deleteByUserId(SecurityUserUtils.getUserId(), MallUserSearchHistoryTypeEnums.PRODUCT.getValue());
+    }
+
+    @ApiOperation("清空用户订单查询历史")
+    @GetMapping("/deleteByOrder")
+    public void deleteByOrder() {
+        userSearchHistoryService.deleteByUserId(SecurityUserUtils.getUserId(), MallUserSearchHistoryTypeEnums.ORDER.getValue());
+    }
+
 }

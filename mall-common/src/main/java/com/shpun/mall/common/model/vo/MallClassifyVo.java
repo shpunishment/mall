@@ -1,6 +1,5 @@
 package com.shpun.mall.common.model.vo;
 
-import com.sun.xml.internal.ws.policy.spi.PolicyAssertionValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

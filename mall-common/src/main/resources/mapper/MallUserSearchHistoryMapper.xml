@@ -126,12 +126,12 @@
 
   <update id="goNext">
     update mall_user_search_history
-    set sn = sn + 1
+    set sn = sn - 1
     where user_id = #{userId,jdbcType=INTEGER}
       and `type` = #{type,jdbcType=INTEGER}
       and deleted = 0
-      and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
-      and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
+      and sn <![CDATA[>]]> #{startSn,jdbcType=INTEGER}
+      and sn <![CDATA[<=]]> #{endSn,jdbcType=INTEGER}
   </update>
 
   <select id="getByUserId" resultMap="BaseResultMap">
@@ -156,7 +156,7 @@
     where user_id = #{userId,jdbcType=INTEGER}
       and `type` = #{type,jdbcType=INTEGER}
       and deleted = 0
-    order by sn
+    order by sn desc
     limit 10
   </select>
 

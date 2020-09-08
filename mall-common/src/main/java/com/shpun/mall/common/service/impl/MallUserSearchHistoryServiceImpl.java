@@ -37,10 +37,10 @@ public class MallUserSearchHistoryServiceImpl implements MallUserSearchHistorySe
     public void insertOrUpdate(Integer userId, String keyword, Integer type) {
         MallUserSearchHistory userSearchHistory = userSearchHistoryMapper.getByUserIdAndKeywordAndType(userId, keyword, type);
         if (userSearchHistory != null) {
-            Integer minSn = userSearchHistoryMapper.getMinSnByUserIdAndType(userId, type);
-            userSearchHistoryMapper.goNext(userId, type, minSn, userSearchHistory.getSn());
-
-            userSearchHistory.setSn(minSn);
+            // 获取最大，将 当前sn<   <=maxSn 之间的，减1
+            Integer maxSn = userSearchHistoryMapper.getMaxSnByUserIdAndType(userId, type);
+            userSearchHistoryMapper.goNext(userId, type, userSearchHistory.getSn(), maxSn);
+            userSearchHistory.setSn(maxSn);
             userSearchHistory.setUpdateTime(new Date());
             userSearchHistoryMapper.updateByPrimaryKeySelective(userSearchHistory);
         } else {
@@ -48,6 +48,7 @@ public class MallUserSearchHistoryServiceImpl implements MallUserSearchHistorySe
             record.setUserId(userId);
             record.setKeyword(keyword);
             record.setCreateTime(new Date());
+            // 新插入获取最大的sn
             Integer maxSn = userSearchHistoryMapper.getMaxSnByUserIdAndType(userId, type);
             record.setSn(maxSn == null ? 1 : maxSn + 1);
             record.setType(type);

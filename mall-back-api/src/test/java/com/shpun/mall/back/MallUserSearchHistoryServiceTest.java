@@ -1,6 +1,5 @@
 package com.shpun.mall.back;
 
-import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
 import com.shpun.mall.common.model.MallUserSearchHistory;
 import com.shpun.mall.common.service.MallUserSearchHistoryService;
@@ -57,7 +56,7 @@ public class MallUserSearchHistoryServiceTest {
 
     @Test
     public void insertOrder() {
-
+        userSearchHistoryService.insertOrUpdate(1, "菜1", MallUserSearchHistoryTypeEnums.PRODUCT.getValue());
     }
 
 
