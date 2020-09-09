@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.config.ProfileConfig;
 import com.shpun.mall.common.enums.MallOrderStatusEnums;
-import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
@@ -13,11 +12,9 @@ import com.shpun.mall.common.model.vo.MallOrderItemVo;
 import com.shpun.mall.common.model.vo.MallOrderVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.*;
+import com.shpun.mall.common.config.AlipayConfig;
 import com.shpun.mall.front.security.SecurityUserUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
@@ -25,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.*;
@@ -87,24 +85,30 @@ public class MallOrderController {
 
     @ApiOperation("生成订单")
     @PostMapping("/generate")
-    public void generateOrder(@RequestBody @Validated(MallOrderVo.Generate.class) MallOrderVo orderVo) {
+    public void generateOrder(@RequestBody @Validated(MallOrderVo.Generate.class) MallOrderVo orderVo, HttpServletResponse response) {
         MallOrder order = new MallOrder();
         BeanUtils.copyProperties(orderVo, order);
         order.setUserId(SecurityUserUtils.getUserId());
         orderService.generateOrder(order, orderVo.getCartIdList());
 
-        // 添加订单到超时订单zset中
-        if (order.getOrderId() != null && Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
-            StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
-                    .append(Const.REDIS_KEY_DELIMITER)
-                    .append(Const.REDIS_KEY_ORDER_TIMEOUT_ZSET);
-            StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
-                    .append(Const.REDIS_PARAM_DELIMITER)
-                    .append(order.getOrderId())
-                    .append(Const.REDIS_PARAM_DELIMITER)
-                    .append(SecurityUserUtils.getUserId());
 
-            redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(order.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT)));
+        if (order.getOrderId() != null) {
+            // 支付订单
+            orderService.payOrder(order, response);
+
+            // 添加订单到超时订单zset中
+            if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
+                StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
+                        .append(Const.REDIS_KEY_DELIMITER)
+                        .append(Const.REDIS_KEY_ORDER_TIMEOUT_ZSET);
+                StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
+                        .append(Const.REDIS_PARAM_DELIMITER)
+                        .append(order.getOrderId())
+                        .append(Const.REDIS_PARAM_DELIMITER)
+                        .append(SecurityUserUtils.getUserId());
+
+                redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(order.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT)));
+            }
         }
 
         // 删除购物车缓存
@@ -198,6 +202,24 @@ public class MallOrderController {
             }
         }
         return orderVoPageInfo;
+    }
+
+    @ApiModelProperty("支付订单")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "orderId", value = "订单id", dataType = "String"),
+            @ApiImplicitParam(name = "payType", value = "支付方式，1支付宝，2微信", dataType = "Integer")
+    })
+    @GetMapping("/pay/{orderId}")
+    public void payOrder(@PathVariable("orderId") @Min(0) @Max(2147483647) Integer orderId,
+                         @RequestParam("payType") @Min(1) @Max(2) Integer payType,
+                         HttpServletResponse response) {
+        MallOrder order = orderService.selectByPrimaryKey(orderId);
+        if (!SecurityUserUtils.getUserId().equals(order.getUserId())) {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
+
+        order.setPayType(payType);
+        orderService.payOrder(order, response);
     }
 
     @ApiOperation("评价订单")

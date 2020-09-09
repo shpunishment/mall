@@ -26,4 +26,6 @@ public interface MallOrderMapper {
 
     List<MallOrder> getList(Integer status);
 
+    MallOrder getByOrderNumber(String orderNumber);
+
 }

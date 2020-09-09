@@ -7,6 +7,7 @@ import com.shpun.mall.common.model.vo.MallOrderVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import org.apache.ibatis.annotations.Param;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +107,9 @@ public interface MallOrderService {
      * 待支付订单，选择支付订单
      * @param order 包括支付方式
      */
-    void payOrder(MallOrder order);
+    void payOrder(MallOrder order, HttpServletResponse response);
+
+    MallOrder getByOrderNumber(String orderNumber);
 
     /**
      * 下单成功，取消订单，评价订单，根据用户id删除缓存

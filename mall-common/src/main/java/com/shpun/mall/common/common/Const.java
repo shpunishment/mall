@@ -152,4 +152,9 @@ public class Const {
      */
     public static final long DEFAULT_ORDER_TIMEOUT = 9 * 60 * 1000;
 
+    /**
+     * 支付默认subject
+     */
+    public static final String PAY_SUBJECT = "Mall超市订单";
+
 }

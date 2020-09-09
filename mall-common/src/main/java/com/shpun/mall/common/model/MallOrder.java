@@ -76,6 +76,9 @@ public class MallOrder implements Serializable {
     @ApiModelProperty("支付方式，0未支付，1支付宝，2微信")
     private Integer payType;
 
+    @ApiModelProperty("支付编号")
+    private String payNumber;
+
     @ApiModelProperty("支付时间")
     private Date payTime;
 
@@ -249,6 +252,14 @@ public class MallOrder implements Serializable {
         this.payType = payType;
     }
 
+    public String getPayNumber() {
+        return payNumber;
+    }
+
+    public void setPayNumber(String payNumber) {
+        this.payNumber = payNumber;
+    }
+
     public Date getPayTime() {
         return payTime;
     }
@@ -337,6 +348,7 @@ public class MallOrder implements Serializable {
         sb.append(", remark=").append(remark);
         sb.append(", expectTime=").append(expectTime);
         sb.append(", payType=").append(payType);
+        sb.append(", payNumber=").append(payNumber);
         sb.append(", payTime=").append(payTime);
         sb.append(", deliveryMan=").append(deliveryMan);
         sb.append(", deliveryTime=").append(deliveryTime);

@@ -102,7 +102,7 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
         try {
             result = datetimeFormat.parse(date + " 23:59:59");
         } catch (ParseException e) {
-            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+            throw new RuntimeException(e.getMessage(), e);
         }
         return result;
     }

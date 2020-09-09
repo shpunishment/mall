@@ -65,8 +65,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
             }
             fileBytes = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new MallException(MallError.MallErrorEnum.ADD_FILE_ERROR.format(file.getName()));
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         MallFileServer fileServer = new MallFileServer();
@@ -80,7 +79,6 @@ public class MallFileServerServiceImpl implements MallFileServerService {
     @Override
     public void getImgFile(Integer fileId, HttpServletResponse response) {
         MallFileServer file = this.selectByPrimaryKey(fileId);
-
         if (file == null) {
             throw new MallException(MallError.MallErrorEnum.FILE_NOT_FOUND.format(fileId));
         }
@@ -97,7 +95,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
                 servletOutputStream.write(buffer,0, len);
             }
         } catch (IOException e){
-            throw new MallException(MallError.MallErrorEnum.GET_FILE_ERROR);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -109,7 +107,7 @@ public class MallFileServerServiceImpl implements MallFileServerService {
         try {
             fileServer.setFile(file.getBytes());
         } catch (IOException e) {
-            throw new MallException(MallError.MallErrorEnum.UPLOAD_FILE_ERROR);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         this.insertSelective(fileServer);

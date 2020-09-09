@@ -21,6 +21,7 @@
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="expect_time" jdbcType="VARCHAR" property="expectTime" />
     <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="pay_number" jdbcType="VARCHAR" property="payNumber" />
     <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
     <result column="delivery_man" jdbcType="VARCHAR" property="deliveryMan" />
     <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
@@ -60,7 +61,7 @@
   <sql id="Base_Column_List">
     order_id, order_number, order_time, end_time, user_id, coupon_id, address_id, receive_name,
     receive_phone, receive_address, product_price, delivery_price, coupon_price, total_price,
-    `status`, remark, expect_time, pay_type, pay_time, delivery_man, delivery_time, receive_time,
+    `status`, remark, expect_time, pay_type, pay_number, pay_time, delivery_man, delivery_time, receive_time,
     score, comment, comment_time
   </sql>
 
@@ -141,6 +142,9 @@
       <if test="payType != null">
         pay_type,
       </if>
+      <if test="payNumber != null">
+        pay_number,
+      </if>
       <if test="payTime != null">
         pay_time,
       </if>
@@ -214,6 +218,9 @@
       </if>
       <if test="payType != null">
         #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="payNumber != null">
+        #{payNumber,jdbcType=VARCHAR},
       </if>
       <if test="payTime != null">
         #{payTime,jdbcType=TIMESTAMP},
@@ -293,6 +300,9 @@
       <if test="payType != null">
         pay_type = #{payType,jdbcType=INTEGER},
       </if>
+      <if test="payNumber != null">
+        pay_number = #{payNumber,jdbcType=VARCHAR},
+      </if>
       <if test="payTime != null">
         pay_time = #{payTime,jdbcType=TIMESTAMP},
       </if>
@@ -364,6 +374,15 @@
       and `status` = #{status,jdbcType=INTEGER}
     </if>
     order by order_time desc
+  </select>
+
+  <select id="getByOrderNumber" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM mall_order
+    WHERE order_number = #{orderNumber,jdbcType=VARCHAR}
+      AND deleted = 0
+      AND `status` = 0
   </select>
 
 </mapper>

@@ -64,7 +64,7 @@ public class RedisCacheAspect {
             try {
                 result = joinPoint.proceed();
             } catch (Throwable e) {
-                throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+                throw new RuntimeException(e.getMessage(), e);
             }
 
             RedisCache redisCache = signature.getMethod().getAnnotation(RedisCache.class);

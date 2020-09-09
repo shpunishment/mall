@@ -1,13 +1,13 @@
 package com.shpun.mall.common.service.impl;
 
+import com.alipay.easysdk.kernel.util.ResponseChecker;
+import com.alipay.easysdk.payment.wap.models.AlipayTradeWapPayResponse;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
-import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
-import com.shpun.mall.common.enums.MallOrderStatusEnums;
-import com.shpun.mall.common.enums.MallUserAddressSexEnums;
-import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
+import com.shpun.mall.common.config.AlipayConfig;
+import com.shpun.mall.common.enums.*;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallOrderMapper;
@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +67,9 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Autowired
     private MallUserCouponService userCouponService;
+
+    @Autowired
+    private AlipayConfig alipayConfig;
 
     @Override
     public void deleteByPrimaryKey(Integer orderId) {
@@ -541,8 +546,32 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public void payOrder(MallOrder order) {
-        // todo 根据支付方式支付订单
+    public void payOrder(MallOrder order, HttpServletResponse response) {
+        if (MallOrderPayTypeEnums.ALI.getValue().equals(order.getPayType())) {
+            AlipayTradeWapPayResponse wapPayResponse = alipayConfig.pay(order.getOrderNumber(), order.getTotalPrice().toString());
+            if (ResponseChecker.success(wapPayResponse)) {
+                try {
+                    // 调用SDK生成表单
+                    String form = wapPayResponse.body;
+                    response.setContentType("text/html;charset=utf-8");
+                    //直接将完整的表单html输出到页面
+                    response.getWriter().write(form);
+                    response.getWriter().flush();
+                    response.getWriter().close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            } else {
+                throw new MallException(MallError.MallErrorEnum.TRANSACTION_ERROR);
+            }
+        } else if (MallOrderPayTypeEnums.WECHAT.getValue().equals(order.getPayType())) {
+            // todo 微信支付
+        }
+    }
+
+    @Override
+    public MallOrder getByOrderNumber(String orderNumber) {
+        return orderMapper.getByOrderNumber(orderNumber);
     }
 
     @Override
