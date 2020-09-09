@@ -110,4 +110,19 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\海鲜水产\\小鱿鱼.jpg");
     }
 
+    /**
+     * 造数据，粮油调味 商品图
+     * 53~59
+     */
+    @Test
+    public void insertFirstClassifyOil() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\香米.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\葵花籽油.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\螺蛳粉.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\芝麻油.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\沙茶酱.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\味精.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\绿豆.jpg");
+    }
+
 }
