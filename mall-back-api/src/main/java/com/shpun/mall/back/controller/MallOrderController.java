@@ -26,14 +26,16 @@ public class MallOrderController {
 
     @ApiOperation("分页获取订单")
     @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "status", value = "订单状态", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallOrder> page(@RequestParam(value = "offset", defaultValue = "0") Integer offset,
+    public PageInfo<MallOrder> page(@RequestParam(value = "status") Integer status,
+                                    @RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                     @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         PageHelper.offsetPage(offset, limit);
-        PageInfo<MallOrder> orderPageInfo = new PageInfo<>(orderService.getList());
+        PageInfo<MallOrder> orderPageInfo = new PageInfo<>(orderService.getList(status));
         return orderPageInfo;
     }
 

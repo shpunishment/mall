@@ -1,5 +1,7 @@
 package com.shpun.mall.common.service;
 
+import java.util.Set;
+
 /**
  * @Description:
  * @Author: sun
@@ -20,5 +22,11 @@ public interface RedisService {
     void deleteByPrefix(String prefix);
 
     void deleteByPrefix(Class cls, String methodName, Object...params);
+
+    void zAdd(String key, Object value, Double score);
+
+    void zRemove(String key, Object... value);
+
+    Set<Object> zRangeByScore(String key, double min, double max);
 
 }

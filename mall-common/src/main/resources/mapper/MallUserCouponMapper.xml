@@ -227,4 +227,13 @@
       AND uc.end_time <![CDATA[>=]]> now( )
   </select>
 
+  <select id="getList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from mall_user_coupon
+    <if test="status != null">
+      where `status` = #{status,jdbcType=INTEGER}
+    </if>
+  </select>
+
 </mapper>

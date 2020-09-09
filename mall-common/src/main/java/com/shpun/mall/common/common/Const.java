@@ -137,4 +137,19 @@ public class Const {
      */
     public static final String PROFILE_PROD = "prod";
 
+    /**
+     * 超时订单的redis zset key
+     */
+    public static final String REDIS_KEY_ORDER_TIMEOUT_ZSET = "ORDER_TIMEOUT_ZSET";
+
+    /**
+     * 超时订单的值前缀
+     */
+    public static final String REDIS_KEY_ORDER_PREFIX = "ORDER";
+
+    /**
+     * 默认订单未支付，超时时间九分钟
+     */
+    public static final long DEFAULT_ORDER_TIMEOUT = 9 * 60 * 1000;
+
 }

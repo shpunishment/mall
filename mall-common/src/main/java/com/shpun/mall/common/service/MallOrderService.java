@@ -100,7 +100,7 @@ public interface MallOrderService {
 
     PageInfo<MallOrderVo> getVoByProductName(Integer userId, String productName, Integer offset, Integer limit);
 
-    List<MallOrder> getList();
+    List<MallOrder> getList(Integer status);
 
     /**
      * 待支付订单，选择支付订单

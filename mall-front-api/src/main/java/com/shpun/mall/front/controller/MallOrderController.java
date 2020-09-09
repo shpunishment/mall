@@ -2,6 +2,8 @@ package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.config.ProfileConfig;
+import com.shpun.mall.common.enums.MallOrderStatusEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
 import com.shpun.mall.common.exception.MallError;
@@ -59,6 +61,12 @@ public class MallOrderController {
     @Autowired
     private MallUserCouponService userCouponService;
 
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private ProfileConfig profileConfig;
+
     @ApiOperation("计算价格")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "cartIdList", value = "购物车idList", dataType = "List<Integer>")
@@ -84,6 +92,20 @@ public class MallOrderController {
         BeanUtils.copyProperties(orderVo, order);
         order.setUserId(SecurityUserUtils.getUserId());
         orderService.generateOrder(order, orderVo.getCartIdList());
+
+        // 添加订单到超时订单zset中
+        if (order.getOrderId() != null && Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
+            StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
+                    .append(Const.REDIS_KEY_DELIMITER)
+                    .append(Const.REDIS_KEY_ORDER_TIMEOUT_ZSET);
+            StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
+                    .append(Const.REDIS_PARAM_DELIMITER)
+                    .append(order.getOrderId())
+                    .append(Const.REDIS_PARAM_DELIMITER)
+                    .append(SecurityUserUtils.getUserId());
+
+            redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(order.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT)));
+        }
 
         // 删除购物车缓存
         cartService.deleteCache(SecurityUserUtils.getUserId());
@@ -130,6 +152,10 @@ public class MallOrderController {
             throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
 
+        // 待支付订单，返回订单结束时间
+        if (MallOrderStatusEnums.WAIT2PAY.getValue().equals(orderVo.getStatus())) {
+            orderVo.setEndTime(new Date(orderVo.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT));
+        }
         List<MallOrderItemVo> orderItemVoList = orderItemService.getVoByOrderId(orderVo.getOrderId());
         orderVo.setOrderItemVoList(orderItemVoList);
         return orderVo;

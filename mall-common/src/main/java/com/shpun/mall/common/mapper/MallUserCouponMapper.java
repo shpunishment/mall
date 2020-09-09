@@ -30,4 +30,6 @@ public interface MallUserCouponMapper {
 
     List<MallUserCouponVo> getAvailableVoList(Integer userId);
 
+    List<MallUserCoupon> getList(Integer status);
+
 }

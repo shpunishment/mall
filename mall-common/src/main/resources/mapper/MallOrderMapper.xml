@@ -359,6 +359,10 @@
     select
     <include refid="Base_Column_List" />
     from mall_order
+    where deleted = 0
+    <if test="status != null">
+      and `status` = #{status,jdbcType=INTEGER}
+    </if>
     order by order_time desc
   </select>
 

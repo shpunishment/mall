@@ -5,9 +5,12 @@ import com.shpun.mall.common.config.ProfileConfig;
 import com.shpun.mall.common.service.RedisService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -83,5 +86,20 @@ public class RedisServiceImpl implements RedisService {
 
             this.deleteByPrefix(prefixSb.toString());
         }
+    }
+
+    @Override
+    public void zAdd(String key, Object value, Double score) {
+        redisTemplate.opsForZSet().add(key, value, score);
+    }
+
+    @Override
+    public void zRemove(String key, Object... values) {
+        redisTemplate.opsForZSet().remove(key, values);
+    }
+
+    @Override
+    public Set<Object> zRangeByScore(String key, double min, double max) {
+        return redisTemplate.opsForZSet().rangeByScore(key, min, max);
     }
 }

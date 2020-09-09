@@ -167,4 +167,9 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     public List<MallUserCouponVo> getAvailableVoList(Integer userId) {
         return userCouponMapper.getAvailableVoList(userId);
     }
+
+    @Override
+    public List<MallUserCoupon> getList(Integer status) {
+        return userCouponMapper.getList(status);
+    }
 }

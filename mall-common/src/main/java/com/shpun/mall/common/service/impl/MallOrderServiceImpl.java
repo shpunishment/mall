@@ -536,8 +536,8 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public List<MallOrder> getList() {
-        return orderMapper.getList();
+    public List<MallOrder> getList(Integer status) {
+        return orderMapper.getList(status);
     }
 
     @Override
