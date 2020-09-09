@@ -20,6 +20,7 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="expect_time" jdbcType="VARCHAR" property="expectTime" />
+    <result column="product_amount" jdbcType="INTEGER" property="productAmount" />
     <result column="pay_type" jdbcType="INTEGER" property="payType" />
     <result column="pay_number" jdbcType="VARCHAR" property="payNumber" />
     <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
@@ -38,6 +39,7 @@
     <result column="order_time" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
     <result column="address_id" jdbcType="INTEGER" property="addressId" />
     <result column="receive_name" jdbcType="VARCHAR" property="receiveName" />
     <result column="receive_phone" jdbcType="VARCHAR" property="receivePhone" />
@@ -49,6 +51,7 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="expect_time" jdbcType="VARCHAR" property="expectTime" />
+    <result column="product_amount" jdbcType="INTEGER" property="productAmount" />
     <result column="pay_type" jdbcType="INTEGER" property="payType" />
     <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
     <result column="delivery_man" jdbcType="VARCHAR" property="deliveryMan" />
@@ -61,17 +64,17 @@
   <sql id="Base_Column_List">
     order_id, order_number, order_time, end_time, user_id, coupon_id, address_id, receive_name,
     receive_phone, receive_address, product_price, delivery_price, coupon_price, total_price,
-    `status`, remark, expect_time, pay_type, pay_number, pay_time, delivery_man, delivery_time, receive_time,
-    score, comment, comment_time
+    `status`, remark, expect_time, product_amount, pay_type, pay_number, pay_time, delivery_man,
+    delivery_time, receive_time, score, comment, comment_time
   </sql>
 
   <sql id="Vo_Column_List">
-    order_id, order_time, total_price, `status`
+    order_id, order_time, total_price, `status`, product_amount
   </sql>
 
   <sql id="Vo_Detail_Column_List">
-    order_id, order_number, order_time, user_id, receive_name, receive_phone, receive_address,
-    product_price, delivery_price, coupon_price, total_price, `status`, remark, expect_time,
+    order_id, order_number, order_time, user_id, coupon_id, receive_name, receive_phone, receive_address,
+    product_price, delivery_price, coupon_price, total_price, `status`, remark, expect_time, product_amount,
     pay_type, pay_time, delivery_man, delivery_time, receive_time, score, comment
   </sql>
 
@@ -138,6 +141,9 @@
       </if>
       <if test="expectTime != null">
         expect_time,
+      </if>
+      <if test="productAmount != null">
+        product_amount,
       </if>
       <if test="payType != null">
         pay_type,
@@ -215,6 +221,9 @@
       </if>
       <if test="expectTime != null">
         #{expectTime,jdbcType=VARCHAR},
+      </if>
+      <if test="productAmount != null">
+        #{productAmount,jdbcType=VARCHAR},
       </if>
       <if test="payType != null">
         #{payType,jdbcType=INTEGER},
@@ -297,6 +306,9 @@
       <if test="expectTime != null">
         expect_time = #{expectTime,jdbcType=VARCHAR},
       </if>
+      <if test="productAmount != null">
+        product_amount = #{productAmount,jdbcType=VARCHAR},
+      </if>
       <if test="payType != null">
         pay_type = #{payType,jdbcType=INTEGER},
       </if>
@@ -356,7 +368,7 @@
 
   <select id="getVoByProductName" resultMap="VoResultMap">
     SELECT distinct
-	  o.order_id, o.order_time, o.total_price, o.`status`
+	  o.order_id, o.order_time, o.total_price, o.`status`, o.product_amount
     FROM
 	  mall_order AS o
 	  LEFT JOIN mall_order_item AS oi ON oi.order_id = o.order_id

@@ -73,6 +73,9 @@ public class MallOrder implements Serializable {
     @ApiModelProperty("期望送达时间，如尽快送达，X月X日 14:00~15:00")
     private String expectTime;
 
+    @ApiModelProperty("商品总数")
+    private Integer productAmount;
+
     @ApiModelProperty("支付方式，0未支付，1支付宝，2微信")
     private Integer payType;
 
@@ -244,6 +247,14 @@ public class MallOrder implements Serializable {
         this.expectTime = expectTime;
     }
 
+    public Integer getProductAmount() {
+        return productAmount;
+    }
+
+    public void setProductAmount(Integer productAmount) {
+        this.productAmount = productAmount;
+    }
+
     public Integer getPayType() {
         return payType;
     }
@@ -347,6 +358,7 @@ public class MallOrder implements Serializable {
         sb.append(", status=").append(status);
         sb.append(", remark=").append(remark);
         sb.append(", expectTime=").append(expectTime);
+        sb.append(", productAmount=").append(productAmount);
         sb.append(", payType=").append(payType);
         sb.append(", payNumber=").append(payNumber);
         sb.append(", payTime=").append(payTime);

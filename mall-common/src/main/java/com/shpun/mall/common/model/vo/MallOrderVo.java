@@ -78,6 +78,9 @@ public class MallOrderVo implements Serializable {
     @ApiModelProperty("期望送达时间，如尽快送达，X月X日 14:00~15:00")
     private String expectTime;
 
+    @ApiModelProperty("商品总数")
+    private Integer productAmount;
+
     @NotNull(groups = Generate.class)
     @Min(value = 1, groups = Generate.class)
     @Max(value = 2, groups = Generate.class)
@@ -244,6 +247,14 @@ public class MallOrderVo implements Serializable {
 
     public void setExpectTime(String expectTime) {
         this.expectTime = expectTime;
+    }
+
+    public Integer getProductAmount() {
+        return productAmount;
+    }
+
+    public void setProductAmount(Integer productAmount) {
+        this.productAmount = productAmount;
     }
 
     public Integer getPayType() {
