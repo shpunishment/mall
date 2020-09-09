@@ -1,4 +1,4 @@
-package com.shpun.mall.back;
+package com.shpun.mall.back.test;
 
 import com.shpun.mall.common.model.MallUserFootprint;
 import com.shpun.mall.common.service.MallUserFootprintService;

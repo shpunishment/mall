@@ -1,4 +1,4 @@
-package com.shpun.mall.back;
+package com.shpun.mall.back.test;
 
 import com.shpun.mall.common.model.MallActivity;
 import com.shpun.mall.common.service.MallActivityService;
@@ -22,8 +22,32 @@ public class MallActivityServiceTest {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    /**
+     * 测试
+     * @throws Exception
+     */
     @Test
     public void insert() throws Exception {
+        MallActivity activity1 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
+        activityService.insertSelective(activity1);
+
+        MallActivity activity2 = buildMallActivity("活动2", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-10 23:59:59"));
+        activityService.insertSelective(activity2);
+
+        MallActivity activity3 = buildMallActivity("活动3", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-10 23:59:59"));
+        activityService.insertSelective(activity3);
+
+        MallActivity activity4 = buildMallActivity("活动4", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-12 23:59:59"));
+        activityService.insertSelective(activity4);
+
+    }
+
+    /**
+     * 造数据
+     * @throws Exception
+     */
+    @Test
+    public void insert2() throws Exception {
         MallActivity activity1 = buildMallActivity("活动1", dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
         activityService.insertSelective(activity1);
 
