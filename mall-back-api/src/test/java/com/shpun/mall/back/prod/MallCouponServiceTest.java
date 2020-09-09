@@ -136,20 +136,26 @@ public class MallCouponServiceTest {
      * 指定商品
      * @throws Exception
      */
-    // todo 先添加商品
     @Test
     public void insertWithProductIdList() throws Exception {
-        List<Integer> productIdList = Stream.of(3).collect(Collectors.toList());
+        List<Integer> productIdList;
 
         // 通用
-        MallCoupon coupon1 = buildMallCoupon("XX芒果专享券1", "XX芒果专享券", new BigDecimal("20.00"), new BigDecimal("2.00"),
-                10, 1,3,2, null, dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-15 23:59:59"));
+        productIdList = Stream.of(1).collect(Collectors.toList());
+        MallCoupon coupon1 = buildMallCoupon("指定福建龙眼专享券", "指定福建龙眼专享券", new BigDecimal("20.00"), new BigDecimal("5.00"),
+                10, 1,3,2, null, dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         couponService.insertWithProductIdList(coupon1, productIdList);
 
-        // 新人
-        MallCoupon coupon2 = buildMallCoupon("XX芒果新人礼券1", "XX芒果新人礼券", new BigDecimal("20.00"), new BigDecimal("2.00"),
-                null, 2,3,1,7, null, null);
+        productIdList = Stream.of(16).collect(Collectors.toList());
+        MallCoupon coupon2 = buildMallCoupon("指定上海青苗专享券", "指定上海青苗专享券", new BigDecimal("10.00"), new BigDecimal("2.00"),
+                10, 1,3,2, null, dateFormat.parse("2020-09-07 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         couponService.insertWithProductIdList(coupon2, productIdList);
+
+        // 新人
+        productIdList = Stream.of(2).collect(Collectors.toList());
+        MallCoupon coupon3 = buildMallCoupon("指定泰国进口龙眼新人礼券", "指定泰国进口龙眼新人礼券", new BigDecimal("10.00"), new BigDecimal("5.00"),
+                null, 2,3,1,7, null, null);
+        couponService.insertWithProductIdList(coupon3, productIdList);
     }
 
 
@@ -163,6 +169,8 @@ public class MallCouponServiceTest {
         coupon.setDiscount(discount);
         coupon.setTotal(total);
         coupon.setType(type);
+        // 造数据，都启用
+        coupon.setStatus(1);
         coupon.setUseType(userType);
         coupon.setTimeType(timeType);
         coupon.setDays(days);

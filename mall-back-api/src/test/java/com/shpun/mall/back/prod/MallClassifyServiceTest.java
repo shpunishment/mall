@@ -116,7 +116,7 @@ public class MallClassifyServiceTest {
         classifyService.insertSelective(classify4_3);
         MallClassify classify4_4 = buildMallClassify(null,"蟹", 4);
         classifyService.insertSelective(classify4_4);
-        MallClassify classify4_5 = buildMallClassify(null,"鲜墨章鱼", 4);
+        MallClassify classify4_5 = buildMallClassify(null,"鱿墨章鱼", 4);
         classifyService.insertSelective(classify4_5);
 
         // 粮油调味
