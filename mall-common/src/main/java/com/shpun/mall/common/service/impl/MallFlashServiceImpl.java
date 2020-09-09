@@ -69,14 +69,24 @@ public class MallFlashServiceImpl implements MallFlashService {
     @RedisCache
     @Override
     public List<MallFlashVo> getTodayVoList() {
-        List<MallFlashVo> flashVoList = flashMapper.getTodayVoList();
-        if (CollectionUtils.isNotEmpty(flashVoList)) {
-            for (MallFlashVo flashVo : flashVoList) {
+        List<MallFlashVo> todayAvailableVoList = flashMapper.getTodayAvailableVoList();
+
+        // 获取明天
+        Calendar tomorrow = Calendar.getInstance();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+        List<MallFlashVo> tomorrowAvailableVoList = flashMapper.getTomorrowAvailableVoList(tomorrow.get(Calendar.YEAR),
+                tomorrow.get(Calendar.MONTH) + 1, tomorrow.get(Calendar.DAY_OF_MONTH), tomorrow.get(Calendar.HOUR_OF_DAY));
+        if (CollectionUtils.isNotEmpty(tomorrowAvailableVoList)) {
+            todayAvailableVoList.addAll(tomorrowAvailableVoList);
+        }
+
+        if (CollectionUtils.isNotEmpty(todayAvailableVoList)) {
+            for (MallFlashVo flashVo : todayAvailableVoList) {
                 Date startTime = flashVo.getStartTime();
                 flashVo.setEndTime(new Date(startTime.getTime() + Const.DEFAULT_FLASH_LIMIT_MINS * 60 * 1000));
             }
         }
-        return flashVoList;
+        return todayAvailableVoList;
     }
 
     @Override

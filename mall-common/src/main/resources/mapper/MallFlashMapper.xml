@@ -162,11 +162,26 @@
     where flash_id = #{flashId,jdbcType=INTEGER}
   </update>
 
-  <select id="getTodayVoList" resultMap="VoResultMap">
-    select
+  <select id="getTodayAvailableVoList" resultMap="VoResultMap">
+    SELECT
     <include refid="Vo_Column_List" />
-    from mall_flash
-    where `year` = YEAR ( now( ) ) AND `month` = MONTH ( now( ) ) AND `day` = DAY ( now( ) ) and deleted = 0
+    FROM mall_flash
+    WHERE `year` = YEAR ( now( ) )
+      AND `month` = MONTH ( now( ) )
+      AND `day` = DAY ( now( ) )
+      AND `hour` <![CDATA[>=]]> HOUR ( now( ) )
+      AND deleted = 0
+  </select>
+
+  <select id="getTomorrowAvailableVoList" resultMap="VoResultMap">
+    SELECT
+    <include refid="Vo_Column_List" />
+    FROM mall_flash
+    WHERE `year` = #{year,jdbcType=INTEGER}
+    AND `month` = #{month,jdbcType=INTEGER}
+    AND `day` = #{day,jdbcType=INTEGER}
+    AND `hour` <![CDATA[<]]> #{hour,jdbcType=INTEGER}
+    AND deleted = 0
   </select>
 
   <select id="isFlashing" parameterType="java.lang.Integer" resultType="java.lang.Boolean">

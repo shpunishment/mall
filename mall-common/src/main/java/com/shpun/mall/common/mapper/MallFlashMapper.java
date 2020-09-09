@@ -16,7 +16,12 @@ public interface MallFlashMapper {
 
     int updateByPrimaryKeySelective(MallFlash record);
 
-    List<MallFlashVo> getTodayVoList();
+    List<MallFlashVo> getTodayAvailableVoList();
+
+    List<MallFlashVo> getTomorrowAvailableVoList(@Param("year") Integer year,
+                                                 @Param("month") Integer month,
+                                                 @Param("day") Integer day,
+                                                 @Param("hour") Integer hour);
 
     boolean isFlashing(@Param("flashId") Integer flashId, @Param("flashLimitMins") Integer flashLimitMins);
 
