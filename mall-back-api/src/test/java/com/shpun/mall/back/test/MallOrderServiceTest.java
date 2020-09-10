@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class MallOrderServiceTest {
     public void calculateWithCoupon() {
         List<Integer> cartIdList = Stream.of(1,2,3).collect(Collectors.toList());
 
-        Map<String, List<MallUserCouponVo>> map = orderService.calculateWithCoupon(1, cartIdList);
+        Map<String, List<MallUserCouponVo>> map = orderService.calculateWithUserCouponVo(1, cartIdList);
 
         System.out.println(map);
     }
@@ -76,7 +77,7 @@ public class MallOrderServiceTest {
      */
     @Test
     public void paySuccess() {
-        orderService.paySuccess(8);
+        orderService.paySuccess(8, "11", new Date());
     }
 
     /**

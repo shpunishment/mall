@@ -1,5 +1,6 @@
 package com.shpun.mall.front.controller;
 
+import com.shpun.mall.common.enums.MallOrderStatusEnums;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.service.MallOrderService;
 import io.swagger.annotations.Api;
@@ -30,11 +31,12 @@ public class MallOpenController {
     public String payCallback(@RequestParam("out_trade_no") String orderNumber,
                               @RequestParam("trade_no") String payNumber,
                               @RequestParam("timestamp") Date payTime) {
-        MallOrder order = orderService.getByOrderNumber(orderNumber);
+        MallOrder order = orderService.getByFilter(orderNumber, MallOrderStatusEnums.WAIT2PAY.getValue());
         if (order != null) {
-            order.setPayNumber(payNumber);
-            order.setPayTime(payTime);
-            orderService.updateByPrimaryKeySelective(order);
+            orderService.paySuccess(order.getOrderId(), payNumber, payTime);
+
+            // 删除订单缓存
+            orderService.deleteCache(order.getUserId());
         }
         return "redirect: /";
     }

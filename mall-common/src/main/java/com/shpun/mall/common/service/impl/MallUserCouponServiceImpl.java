@@ -14,6 +14,7 @@ import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallUserCouponMapper;
 import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserCoupon;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.MallCouponService;
 import com.shpun.mall.common.service.MallUserCouponService;
@@ -118,11 +119,22 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     }
 
     @Override
+    public List<MallCouponVo> getCouponVoListByFilter(Integer userId, Integer status) {
+        return userCouponMapper.getCouponVoListByFilter(userId, status);
+    }
+
+    @RedisCache
+    @Override
+    public PageInfo<MallCouponVo> getCouponVoPageByFilter(Integer userId, Integer status, Integer offset, Integer limit) {
+        PageHelper.offsetPage(offset, limit);
+        return new PageInfo<>(this.getCouponVoListByFilter(userId, status));
+    }
+
+    @Override
     public List<MallUserCouponVo> getVoListByFilter(Integer userId, Integer status) {
         return userCouponMapper.getVoListByFilter(userId, status);
     }
 
-    @RedisCache
     @Override
     public PageInfo<MallUserCouponVo> getVoPageByFilter(Integer userId, Integer status, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
@@ -158,12 +170,6 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     }
 
     @Override
-    public void deleteCache(Integer userId) {
-        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
-        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);
-    }
-
-    @Override
     public List<MallUserCouponVo> getAvailableVoList(Integer userId) {
         return userCouponMapper.getAvailableVoList(userId);
     }
@@ -172,4 +178,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     public List<MallUserCoupon> getList(Integer status) {
         return userCouponMapper.getList(status);
     }
+
+    @Override
+    public void deleteCache(Integer userId) {
+        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
+        redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);
+    }
+
 }

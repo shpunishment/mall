@@ -32,7 +32,7 @@ public class MallUserCouponVo implements Serializable {
     @ApiModelProperty("有效期限，结束时间")
     private Date endTime;
 
-    @ApiModelProperty("订单信息")
+    @ApiModelProperty("订单信息，只包含价格")
     private MallOrderVo orderVo;
 
     private static final long serialVersionUID = 1L;

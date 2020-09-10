@@ -388,13 +388,19 @@
     order by order_time desc
   </select>
 
-  <select id="getByOrderNumber" resultMap="BaseResultMap">
+  <select id="getByFilter" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
     FROM mall_order
-    WHERE order_number = #{orderNumber,jdbcType=VARCHAR}
-      AND deleted = 0
-      AND `status` = 0
+    <where>
+      <if test="orderNumber != null">
+        and order_number = #{orderNumber,jdbcType=VARCHAR}
+      </if>
+        and deleted = 0
+      <if test="status != null">
+        and `status` = #{status,jdbcType=INTEGER}
+      </if>
+    </where>
   </select>
 
 </mapper>

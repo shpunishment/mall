@@ -25,10 +25,10 @@ public class MallUserCouponServiceTest {
         MallUserCoupon userCoupon1 = buildMallUserCoupon(1, 1);
         userCouponService.insertSelective(userCoupon1);
 
-        MallUserCoupon userCoupon2 = buildMallUserCoupon(1, 7);
+        MallUserCoupon userCoupon2 = buildMallUserCoupon(1, 2);
         userCouponService.insertSelective(userCoupon2);
 
-        MallUserCoupon userCoupon3 = buildMallUserCoupon(1, 9);
+        MallUserCoupon userCoupon3 = buildMallUserCoupon(1, 3);
         userCouponService.insertSelective(userCoupon3);
     }
 

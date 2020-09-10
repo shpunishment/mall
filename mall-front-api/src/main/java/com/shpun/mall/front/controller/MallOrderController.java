@@ -8,11 +8,11 @@ import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallOrder;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallOrderItemVo;
 import com.shpun.mall.common.model.vo.MallOrderVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.*;
-import com.shpun.mall.common.config.AlipayConfig;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -60,9 +60,6 @@ public class MallOrderController {
     private MallUserCouponService userCouponService;
 
     @Autowired
-    private RedisService redisService;
-
-    @Autowired
     private ProfileConfig profileConfig;
 
     @ApiOperation("计算价格")
@@ -79,8 +76,8 @@ public class MallOrderController {
             @ApiImplicitParam(name = "cartIdList", value = "购物车idList", dataType = "List<Integer>")
     })
     @PostMapping("/calculateWithCoupon")
-    public Map<String, List<MallUserCouponVo>> calculateWithCoupon(@RequestParam("cartIdList") List<Integer> cartIdList) {
-        return orderService.calculateWithCoupon(SecurityUserUtils.getUserId(), cartIdList);
+    public Map<String, List<MallCouponVo>> calculateWithCoupon(@RequestParam("cartIdList") List<Integer> cartIdList) {
+        return orderService.calculateWithCouponVo(SecurityUserUtils.getUserId(), cartIdList);
     }
 
     @ApiOperation("生成订单")
@@ -91,23 +88,12 @@ public class MallOrderController {
         order.setUserId(SecurityUserUtils.getUserId());
         orderService.generateOrder(order, orderVo.getCartIdList());
 
-
         if (order.getOrderId() != null) {
             // 支付订单
             orderService.payOrder(order, response);
-
             // 添加订单到超时订单zset中
             if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
-                StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
-                        .append(Const.REDIS_KEY_DELIMITER)
-                        .append(Const.REDIS_KEY_ORDER_TIMEOUT_ZSET);
-                StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
-                        .append(Const.REDIS_PARAM_DELIMITER)
-                        .append(order.getOrderId())
-                        .append(Const.REDIS_PARAM_DELIMITER)
-                        .append(SecurityUserUtils.getUserId());
-
-                redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(order.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT)));
+                orderService.zAddOrderTimeout(SecurityUserUtils.getUserId(), order.getOrderId(), order.getOrderTime());
             }
         }
 
@@ -138,6 +124,9 @@ public class MallOrderController {
 
         if (CollectionUtils.isNotEmpty(orderVoPageInfo.getList())) {
             orderVoPageInfo.getList().forEach(orderVo -> {
+                // 价格改为文本
+                orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
+
                 List<MallOrderItemVo> orderItemVoList = orderItemService.getLimitVoListByOrderId(orderVo.getOrderId());
                 orderVo.setOrderItemVoList(orderItemVoList);
             });
@@ -160,6 +149,13 @@ public class MallOrderController {
         if (MallOrderStatusEnums.WAIT2PAY.getValue().equals(orderVo.getStatus())) {
             orderVo.setEndTime(new Date(orderVo.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT));
         }
+        // 价格改为文本
+        orderVo.setProductPriceStr(orderVo.getProductPrice().toString());
+        orderVo.setDeliveryPriceStr(orderVo.getDeliveryPrice().toString());
+        if (orderVo.getCouponPrice() != null) {
+            orderVo.setCouponPriceStr(orderVo.getCouponPrice().toString());
+        }
+        orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
         List<MallOrderItemVo> orderItemVoList = orderItemService.getVoByOrderId(orderVo.getOrderId());
         orderVo.setOrderItemVoList(orderItemVoList);
         return orderVo;

@@ -6,6 +6,7 @@ import com.shpun.mall.common.enums.MallUserCouponGetTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.MallUserCoupon;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.MallCouponService;
 import com.shpun.mall.common.service.MallOrderService;
@@ -69,12 +70,12 @@ public class MallUserCouponController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallUserCouponVo> page(@RequestParam(value = "status", defaultValue = "1") @Min(1) @Max(3) Integer status,
-                                           @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
-                                           @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
+    public PageInfo<MallCouponVo> page(@RequestParam(value = "status", defaultValue = "1") @Min(1) @Max(3) Integer status,
+                                       @RequestParam(value = "offset", defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+                                       @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
-        PageInfo<MallUserCouponVo> userCouponVoPageInfo = userCouponService.getVoPageByFilter(SecurityUserUtils.getUserId(), status, offset, limit);
-        return userCouponVoPageInfo;
+        PageInfo<MallCouponVo> couponVoPageInfo = userCouponService.getCouponVoPageByFilter(SecurityUserUtils.getUserId(), status, offset, limit);
+        return couponVoPageInfo;
     }
 
     @ApiOperation("今日是否能使用优惠券")

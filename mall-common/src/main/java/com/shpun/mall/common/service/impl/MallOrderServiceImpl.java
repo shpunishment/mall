@@ -12,6 +12,7 @@ import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallOrderMapper;
 import com.shpun.mall.common.model.*;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallOrderVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.*;
@@ -180,9 +181,9 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public Map<String, List<MallUserCouponVo>> calculateWithCoupon(Integer useId, List<Integer> cartIdList) {
+    public Map<String, List<MallUserCouponVo>> calculateWithUserCouponVo(Integer userId, List<Integer> cartIdList) {
         // 获取用户所有未使用的优惠券
-        List<MallUserCouponVo> userCouponVoList = userCouponService.getVoListByFilter(useId, MallUserCouponStatusEnums.UNUSED.getValue());
+        List<MallUserCouponVo> userCouponVoList = userCouponService.getVoListByFilter(userId, MallUserCouponStatusEnums.UNUSED.getValue());
 
         Map<String, List<MallUserCouponVo>> resultMap = null;
         if (CollectionUtils.isNotEmpty(userCouponVoList)) {
@@ -191,7 +192,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             resultMap.put("cannot", new ArrayList<>(userCouponVoList.size()));
 
             // 今日是否可用优惠券
-            boolean canTodayUse = userCouponService.getTodayUseCount(useId) < Const.TODAY_USE_COUPON_COUNT;
+            boolean canTodayUse = userCouponService.getTodayUseCount(userId) < Const.TODAY_USE_COUPON_COUNT;
             for (MallUserCouponVo userCouponVo : userCouponVoList) {
                 if (canTodayUse) {
                     // 判断优惠券使用时间，是否可用
@@ -199,24 +200,60 @@ public class MallOrderServiceImpl implements MallOrderService {
                     Date endTime = userCouponVo.getEndTime();
                     Date now = new Date();
                     if (startTime.compareTo(now) <= 0 && endTime.compareTo(now) >= 0) {
-                        MallOrder order = this.calculatePrice(useId, cartIdList, userCouponVo.getCouponId());
+                        MallOrder order = this.calculatePrice(userId, cartIdList, userCouponVo.getCouponId());
                         if (order.getCouponId() != null) {
                             MallOrderVo orderVo = new MallOrderVo();
                             BeanUtils.copyProperties(order, orderVo);
                             userCouponVo.setOrderVo(orderVo);
-                            List<MallUserCouponVo> canUseList = resultMap.get("can");
-                            canUseList.add(userCouponVo);
+                            resultMap.get("can").add(userCouponVo);
                         } else {
-                            List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                            cannotUseList.add(userCouponVo);
+                            resultMap.get("cannot").add(userCouponVo);
                         }
                     } else {
-                        List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                        cannotUseList.add(userCouponVo);
+                        resultMap.get("cannot").add(userCouponVo);
                     }
                 } else {
-                    List<MallUserCouponVo> cannotUseList = resultMap.get("cannot");
-                    cannotUseList.add(userCouponVo);
+                    resultMap.get("cannot").add(userCouponVo);
+                }
+            }
+        }
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, List<MallCouponVo>> calculateWithCouponVo(Integer userId, List<Integer> cartIdList) {
+        // 获取用户所有未使用的优惠券
+        List<MallCouponVo> couponVoList = userCouponService.getCouponVoListByFilter(userId, MallUserCouponStatusEnums.UNUSED.getValue());
+
+        Map<String, List<MallCouponVo>> resultMap = null;
+        if (CollectionUtils.isNotEmpty(couponVoList)) {
+            resultMap = new HashMap<>(2);
+            resultMap.put("can", new ArrayList<>(couponVoList.size()));
+            resultMap.put("cannot", new ArrayList<>(couponVoList.size()));
+
+            // 今日是否可用优惠券
+            boolean canTodayUse = userCouponService.getTodayUseCount(userId) < Const.TODAY_USE_COUPON_COUNT;
+            for (MallCouponVo couponVo : couponVoList) {
+                if (canTodayUse) {
+                    // 判断优惠券使用时间，是否可用
+                    Date startTime = couponVo.getStartTime();
+                    Date endTime = couponVo.getEndTime();
+                    Date now = new Date();
+                    if (startTime.compareTo(now) <= 0 && endTime.compareTo(now) >= 0) {
+                        MallOrder order = this.calculatePrice(userId, cartIdList, couponVo.getCouponId());
+                        if (order.getCouponId() != null) {
+                            MallOrderVo orderVo = new MallOrderVo();
+                            BeanUtils.copyProperties(order, orderVo);
+                            couponVo.setOrderVo(orderVo);
+                            resultMap.get("can").add(couponVo);
+                        } else {
+                            resultMap.get("cannot").add(couponVo);
+                        }
+                    } else {
+                        resultMap.get("cannot").add(couponVo);
+                    }
+                } else {
+                    resultMap.get("cannot").add(couponVo);
                 }
             }
         }
@@ -478,11 +515,12 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public void paySuccess(Integer orderId) {
+    public void paySuccess(Integer orderId, String payNumber, Date payTime) {
         MallOrder order = new MallOrder();
         order.setOrderId(orderId);
         order.setStatus(MallOrderStatusEnums.PAID.getValue());
-        order.setPayTime(new Date());
+        order.setPayNumber(payNumber);
+        order.setPayTime(payTime);
         this.updateByPrimaryKeySelective(order);
     }
 
@@ -524,7 +562,6 @@ public class MallOrderServiceImpl implements MallOrderService {
     @RedisCache
     @Override
     public MallOrderVo getDetailVo(Integer userId, Integer orderId) {
-        // todo 待支付订单完成支付后删除缓存
         return orderMapper.getDetailVo(userId, orderId);
     }
 
@@ -570,8 +607,21 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public MallOrder getByOrderNumber(String orderNumber) {
-        return orderMapper.getByOrderNumber(orderNumber);
+    public MallOrder getByFilter(String orderNumber, Integer status) {
+        return orderMapper.getByFilter(orderNumber, status);
+    }
+
+    @Override
+    public void zAddOrderTimeout(Integer userId, Integer orderId, Date orderTime) {
+        StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
+                .append(Const.REDIS_KEY_DELIMITER)
+                .append(Const.REDIS_KEY_ORDER_TIMEOUT_ZSET);
+        StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
+                .append(Const.REDIS_PARAM_DELIMITER)
+                .append(orderId)
+                .append(Const.REDIS_PARAM_DELIMITER)
+                .append(userId);
+        redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(orderTime.getTime() + Const.DEFAULT_ORDER_TIMEOUT)));
     }
 
     @Override

@@ -139,6 +139,34 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
+  <select id="getCouponVoListByFilter" resultMap="com.shpun.mall.common.mapper.MallCouponMapper.VoResultMap">
+    SELECT
+      c.coupon_id,
+      c.`name`,
+      c.`desc`,
+      c.min_price,
+      c.discount,
+      uc.create_time as user_received_time,
+      uc.`status` as user_received_status,
+      uc.start_time,
+      uc.end_time
+    FROM mall_coupon AS c
+      LEFT JOIN mall_user_coupon AS uc ON uc.coupon_id = c.coupon_id
+    WHERE uc.user_id = #{userId,jdbcType=INTEGER}
+      AND c.deleted = 0
+      AND c.`status` = 1
+    <if test="status != null and status == 1">
+      AND uc.`status` = #{status,jdbcType=INTEGER}
+      AND uc.end_time <![CDATA[>=]]> now( )
+    </if>
+    <if test="status != null and status == 2">
+      AND uc.`status` = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="status != null and status == 3">
+      AND uc.`status` != 2 AND ( uc.`status` = #{status,jdbcType=INTEGER} OR uc.end_time <![CDATA[<]]> now( ) )
+    </if>
+  </select>
+
   <select id="getVoListByFilter" resultMap="VoResultMap">
     SELECT
 	  c.`name` as c_name,

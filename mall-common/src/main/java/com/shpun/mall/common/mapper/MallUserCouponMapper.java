@@ -1,6 +1,7 @@
 package com.shpun.mall.common.mapper;
 
 import com.shpun.mall.common.model.MallUserCoupon;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,11 +17,11 @@ public interface MallUserCouponMapper {
 
     int updateByPrimaryKeySelective(MallUserCoupon record);
 
-    List<MallUserCouponVo> getVoListByFilter(@Param("userId") Integer userId,
-                                             @Param("status") Integer status);
+    List<MallCouponVo> getCouponVoListByFilter(@Param("userId") Integer userId, @Param("status") Integer status);
 
-    List<Integer> getReceivedCouponId(@Param("userId") Integer userId,
-                                      @Param("couponIdList") List<Integer> couponIdList);
+    List<MallUserCouponVo> getVoListByFilter(@Param("userId") Integer userId, @Param("status") Integer status);
+
+    List<Integer> getReceivedCouponId(@Param("userId") Integer userId, @Param("couponIdList") List<Integer> couponIdList);
 
     MallUserCoupon getByUserIdAndCouponId(@Param("userId") Integer userId, @Param("couponId") Integer couponId);
 

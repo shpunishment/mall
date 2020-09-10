@@ -59,6 +59,10 @@ public class MallCouponController {
                 } else {
                     couponVo.setReceived(false);
                 }
+
+                // 数量标识
+                couponVo.setTotal(null);
+                couponVo.setHasTotal(true);
             }
         }
         return couponVoPageInfo;

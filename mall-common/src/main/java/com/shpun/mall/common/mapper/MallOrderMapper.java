@@ -26,6 +26,6 @@ public interface MallOrderMapper {
 
     List<MallOrder> getList(Integer status);
 
-    MallOrder getByOrderNumber(String orderNumber);
+    MallOrder getByFilter(@Param("orderNumber") String orderNumber, @Param("status") Integer status);
 
 }

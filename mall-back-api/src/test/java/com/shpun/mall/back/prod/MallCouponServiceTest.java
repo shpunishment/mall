@@ -46,7 +46,7 @@ public class MallCouponServiceTest {
         couponService.insertSelective(coupon2);
 
         MallCoupon coupon3 = buildMallCoupon("全品类通用券", "全品类通用券（全场，除限时抢购商品）", new BigDecimal("50.00"), new BigDecimal("10.00"),
-                10, 1,1,2,null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
+                10, 1,1,1,null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         couponService.insertSelective(coupon3);
 
         // 新人

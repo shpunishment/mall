@@ -34,6 +34,12 @@
     <result column="total" jdbcType="INTEGER" property="total" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="use_type" jdbcType="INTEGER" property="useType" />
+    <result column="time_type" jdbcType="INTEGER" property="timeType" />
+    <result column="days" jdbcType="INTEGER" property="days" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="user_received_time" jdbcType="TIMESTAMP" property="userReceivedTime" />
+    <result column="user_coupon_status" jdbcType="INTEGER" property="userCouponStatus" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -42,7 +48,8 @@
   </sql>
 
   <sql id="Vo_Column_List">
-    coupon_id, `name`, `desc`, min_price, discount, `limit`, total, `type`, use_type
+    coupon_id, `name`, `desc`, min_price, discount, `limit`, total, `type`, use_type, time_type,
+    days, start_time, end_time
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

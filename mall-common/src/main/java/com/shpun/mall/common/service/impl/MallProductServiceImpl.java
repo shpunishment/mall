@@ -240,13 +240,14 @@ public class MallProductServiceImpl implements MallProductService {
             productVo.setHasStock(false);
         }
 
-
         // 赋值打折数
         BigDecimal originalPrice = productVo.getOriginalPrice();
         BigDecimal currentPrice = productVo.getCurrentPrice();
         if (currentPrice.compareTo(originalPrice) < 0) {
             BigDecimal discount = currentPrice.divide(originalPrice, 2, RoundingMode.HALF_UP);
             productVo.setDiscountStr(discount.multiply(new BigDecimal("10")).stripTrailingZeros().toPlainString());
+        } else {
+            productVo.setDiscountStr(null);
         }
     }
 

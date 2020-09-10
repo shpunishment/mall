@@ -111,6 +111,18 @@ public class MallOrderVo implements Serializable {
     @ApiModelProperty("购物车idList")
     private List<Integer> cartIdList;
 
+    @ApiModelProperty("商品费用str")
+    private String productPriceStr;
+
+    @ApiModelProperty("配送费用str")
+    private String deliveryPriceStr;
+
+    @ApiModelProperty("优惠券抵扣金额str")
+    private String couponPriceStr;
+
+    @ApiModelProperty("订单金额str")
+    private String totalPriceStr;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getOrderId() {
@@ -327,6 +339,38 @@ public class MallOrderVo implements Serializable {
 
     public void setCartIdList(List<Integer> cartIdList) {
         this.cartIdList = cartIdList;
+    }
+
+    public String getProductPriceStr() {
+        return productPriceStr;
+    }
+
+    public void setProductPriceStr(String productPriceStr) {
+        this.productPriceStr = productPriceStr;
+    }
+
+    public String getDeliveryPriceStr() {
+        return deliveryPriceStr;
+    }
+
+    public void setDeliveryPriceStr(String deliveryPriceStr) {
+        this.deliveryPriceStr = deliveryPriceStr;
+    }
+
+    public String getCouponPriceStr() {
+        return couponPriceStr;
+    }
+
+    public void setCouponPriceStr(String couponPriceStr) {
+        this.couponPriceStr = couponPriceStr;
+    }
+
+    public String getTotalPriceStr() {
+        return totalPriceStr;
+    }
+
+    public void setTotalPriceStr(String totalPriceStr) {
+        this.totalPriceStr = totalPriceStr;
     }
 
     /**

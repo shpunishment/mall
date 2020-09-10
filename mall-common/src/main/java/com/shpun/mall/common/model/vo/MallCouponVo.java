@@ -36,14 +36,38 @@ public class MallCouponVo implements Serializable {
     @ApiModelProperty("数量，-1无限制")
     private Integer total;
 
+    @ApiModelProperty("数量标识")
+    private Boolean hasTotal;
+
     @ApiModelProperty("类型，1通用券，2新人礼券")
     private Integer type;
 
     @ApiModelProperty("使用类型，1全场，2指定分类，3指定商品")
     private Integer useType;
 
+    @ApiModelProperty("生效时间类型，1天数，2时间段")
+    private Integer timeType;
+
+    @ApiModelProperty("有效期限，自领取后几天内有效，0当天")
+    private Integer days;
+
+    @ApiModelProperty("有效期限，开始时间。（亦作为用户优惠券的有效期开始时间）")
+    private Date startTime;
+
+    @ApiModelProperty("有效期限，结束时间。（亦作为用户优惠券的有效期结束时间）")
+    private Date endTime;
+
     @ApiModelProperty("已领取标识")
     private Boolean received;
+
+    @ApiModelProperty("用户领取时间")
+    private Date userReceivedTime;
+
+    @ApiModelProperty("用户优惠券状态")
+    private Integer userCouponStatus;
+
+    @ApiModelProperty("订单信息，只包含价格")
+    private MallOrderVo orderVo;
 
     private static final long serialVersionUID = 1L;
 
@@ -111,6 +135,14 @@ public class MallCouponVo implements Serializable {
         this.type = type;
     }
 
+    public Boolean getHasTotal() {
+        return hasTotal;
+    }
+
+    public void setHasTotal(Boolean hasTotal) {
+        this.hasTotal = hasTotal;
+    }
+
     public Integer getUseType() {
         return useType;
     }
@@ -119,11 +151,67 @@ public class MallCouponVo implements Serializable {
         this.useType = useType;
     }
 
+    public Integer getTimeType() {
+        return timeType;
+    }
+
+    public void setTimeType(Integer timeType) {
+        this.timeType = timeType;
+    }
+
+    public Integer getDays() {
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
     public Boolean getReceived() {
         return received;
     }
 
     public void setReceived(Boolean received) {
         this.received = received;
+    }
+
+    public Date getUserReceivedTime() {
+        return userReceivedTime;
+    }
+
+    public void setUserReceivedTime(Date userReceivedTime) {
+        this.userReceivedTime = userReceivedTime;
+    }
+
+    public Integer getUserCouponStatus() {
+        return userCouponStatus;
+    }
+
+    public void setUserCouponStatus(Integer userCouponStatus) {
+        this.userCouponStatus = userCouponStatus;
+    }
+
+    public MallOrderVo getOrderVo() {
+        return orderVo;
+    }
+
+    public void setOrderVo(MallOrderVo orderVo) {
+        this.orderVo = orderVo;
     }
 }

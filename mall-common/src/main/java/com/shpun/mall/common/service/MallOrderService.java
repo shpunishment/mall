@@ -3,11 +3,13 @@ package com.shpun.mall.common.service;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.MallProduct;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallOrderVo;
 import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,11 +47,19 @@ public interface MallOrderService {
 
     /**
      * 根据优惠券计算价格
-     * @param useId
+     * @param userId
      * @param cartIdList
      * @return
      */
-    Map<String, List<MallUserCouponVo>> calculateWithCoupon(Integer useId, List<Integer> cartIdList);
+    Map<String, List<MallUserCouponVo>> calculateWithUserCouponVo(Integer userId, List<Integer> cartIdList);
+
+    /**
+     * 适配前端修改
+     * @param userId
+     * @param cartIdList
+     * @return
+     */
+    Map<String, List<MallCouponVo>> calculateWithCouponVo(Integer userId, List<Integer> cartIdList);
 
     /**
      * 生成订单
@@ -71,7 +81,7 @@ public interface MallOrderService {
      * 支付成功
      * @param orderId
      */
-    void paySuccess(Integer orderId);
+    void paySuccess(Integer orderId, String payNumber, Date payTime);
 
     /**
      * 待收货
@@ -109,7 +119,9 @@ public interface MallOrderService {
      */
     void payOrder(MallOrder order, HttpServletResponse response);
 
-    MallOrder getByOrderNumber(String orderNumber);
+    MallOrder getByFilter(String orderNumber, Integer status);
+
+    void zAddOrderTimeout(Integer userId, Integer orderId, Date orderTime);
 
     /**
      * 下单成功，取消订单，评价订单，根据用户id删除缓存
