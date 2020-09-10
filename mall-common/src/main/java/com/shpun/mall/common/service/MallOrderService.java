@@ -85,9 +85,10 @@ public interface MallOrderService {
 
     /**
      * 待收货
-     * @param order 配送员名称
+     * @param orderId
+     * @param deliveryId
      */
-    void delivering(MallOrder order);
+    void delivering(Integer orderId, Integer deliveryId);
 
     /**
      * 收货成功
@@ -111,7 +112,12 @@ public interface MallOrderService {
 
     PageInfo<MallOrderVo> getVoByProductName(Integer userId, String productName, Integer offset, Integer limit);
 
-    List<MallOrder> getList(Integer status);
+    /**
+     * @param status
+     * @param orderTimeSort 1 顺序，2 逆序
+     * @return
+     */
+    List<MallOrder> getList(Integer status, Integer orderTimeSort);
 
     /**
      * 待支付订单，选择支付订单
@@ -121,7 +127,20 @@ public interface MallOrderService {
 
     MallOrder getByFilter(String orderNumber, Integer status);
 
+    /**
+     * 添加订单超时延迟队列
+     * @param userId
+     * @param orderId
+     * @param orderTime
+     */
     void zAddOrderTimeout(Integer userId, Integer orderId, Date orderTime);
+
+    /**
+     * 添加待配送延迟队列
+     * @param orderId
+     * @param payTime
+     */
+    void zAddWait2DeliveryOrder(Integer orderId, Date payTime);
 
     /**
      * 下单成功，取消订单，评价订单，根据用户id删除缓存

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shpun.mall.common.mapper.MallDeliveryMapper">
+
+  <resultMap id="BaseResultMap" type="com.shpun.mall.common.model.MallDelivery">
+    <id column="delivery_id" jdbcType="INTEGER" property="deliveryId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_id" jdbcType="INTEGER" property="createId" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_id" jdbcType="INTEGER" property="updateId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="deleted" jdbcType="INTEGER" property="deleted" />
+    <result column="to_delivery_amount" jdbcType="INTEGER" property="toDeliveryAmount" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    delivery_id, create_time, create_id, update_time, update_id, `name`, phone, status
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mall_delivery
+    where delivery_id = #{deliveryId,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    update mall_delivery
+    set deleted = 1
+    where delivery_id = #{deliveryId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="deliveryId" parameterType="com.shpun.mall.common.model.MallDelivery">
+    insert into mall_delivery
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createId != null">
+        create_id,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateId != null">
+        update_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null">
+        #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.shpun.mall.common.model.MallDelivery">
+    update mall_delivery
+    <set>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createId != null">
+        create_id = #{createId,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateId != null">
+        update_id = #{updateId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where delivery_id = #{deliveryId,jdbcType=INTEGER}
+  </update>
+
+  <select id="getIdleDeliveryId" resultType="java.lang.Integer">
+    SELECT A.delivery_id
+    FROM
+	( SELECT d.delivery_id, ( SELECT count( * ) FROM mall_delivery_order AS o WHERE o.delivery_id = d.delivery_id ) AS amount
+    FROM mall_delivery AS d
+    WHERE d.deleted = 0 and d.`status` = 1
+    ) A
+    ORDER BY A.amount
+    limit 1
+  </select>
+
+  <select id="getNeed2DeliveryIdList" resultType="java.lang.Integer">
+    SELECT A.delivery_id
+    FROM
+	( SELECT d.delivery_id, ( SELECT count( * ) FROM mall_delivery_order AS o WHERE o.delivery_id = d.delivery_id ) AS amount
+    FROM mall_delivery AS d
+    WHERE d.deleted = 0 and d.`status` = 1
+    ) A
+    WHERE A.amount >= #{maxOrderAmount,jdbcType=INTEGER}
+  </select>
+
+  <select id="getDeliveringIdList" resultType="java.lang.Integer">
+    SELECT delivery_id
+    FROM mall_delivery
+    WHERE deleted = 0
+	  AND `status` = 2
+  </select>
+
+</mapper>

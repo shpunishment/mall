@@ -24,7 +24,7 @@ public interface MallOrderMapper {
 
     List<MallOrderVo> getVoByProductName(@Param("userId") Integer userId, @Param("productName") String productName);
 
-    List<MallOrder> getList(Integer status);
+    List<MallOrder> getList(@Param("status") Integer status, @Param("orderTimeSort") Integer orderTimeSort);
 
     MallOrder getByFilter(@Param("orderNumber") String orderNumber, @Param("status") Integer status);
 

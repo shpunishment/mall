@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.config.AlipayConfig;
+import com.shpun.mall.common.config.ProfileConfig;
 import com.shpun.mall.common.enums.*;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
@@ -71,6 +72,9 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Autowired
     private AlipayConfig alipayConfig;
+
+    @Autowired
+    private ProfileConfig profileConfig;
 
     @Override
     public void deleteByPrimaryKey(Integer orderId) {
@@ -523,14 +527,17 @@ public class MallOrderServiceImpl implements MallOrderService {
         order.setPayTime(payTime);
         this.updateByPrimaryKeySelective(order);
 
-        // todo 配送延迟队列
+        if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
+            // 添加待配送延迟队列
+            this.zAddWait2DeliveryOrder(orderId, payTime);
+        }
     }
 
     @Override
-    public void delivering(MallOrder order) {
-        order.setStatus(MallOrderStatusEnums.WAIT2RECEIVE.getValue());
-        order.setDeliveryTime(new Date());
-        this.updateByPrimaryKeySelective(order);
+    public void delivering(Integer orderId, Integer deliveryId) {
+//        order.setStatus(MallOrderStatusEnums.WAIT2RECEIVE.getValue());
+//        order.setDeliveryTime(new Date());
+//        this.updateByPrimaryKeySelective(order);
     }
 
     @Override
@@ -580,8 +587,8 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public List<MallOrder> getList(Integer status) {
-        return orderMapper.getList(status);
+    public List<MallOrder> getList(Integer status, Integer orderTimeSort) {
+        return orderMapper.getList(status, orderTimeSort);
     }
 
     @Override
@@ -624,6 +631,17 @@ public class MallOrderServiceImpl implements MallOrderService {
                 .append(Const.REDIS_PARAM_DELIMITER)
                 .append(userId);
         redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(orderTime.getTime() + Const.DEFAULT_ORDER_TIMEOUT)));
+    }
+
+    @Override
+    public void zAddWait2DeliveryOrder(Integer orderId, Date payTime) {
+        StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
+                .append(Const.REDIS_KEY_DELIMITER)
+                .append(Const.REDIS_KEY_WAIT_2_DELIVERY_ORDER_ZSET);
+        StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
+                .append(Const.REDIS_PARAM_DELIMITER)
+                .append(orderId);
+        redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(payTime.getTime())));
     }
 
     @Override

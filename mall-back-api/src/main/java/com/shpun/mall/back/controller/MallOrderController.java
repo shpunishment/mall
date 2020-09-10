@@ -27,22 +27,18 @@ public class MallOrderController {
     @ApiOperation("分页获取订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "status", value = "订单状态", dataType = "Integer"),
+            @ApiImplicitParam(name = "orderTimeSort", value = "订单时间排序，1顺序，2逆序", dataType = "Integer"),
             @ApiImplicitParam(name = "offset", value = "偏移量", dataType = "Integer"),
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
     public PageInfo<MallOrder> page(@RequestParam(value = "status") Integer status,
+                                    @RequestParam(value = "orderTimeSort", defaultValue = "2") Integer orderTimeSort,
                                     @RequestParam(value = "offset", defaultValue = "0") Integer offset,
                                     @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
         PageHelper.offsetPage(offset, limit);
-        PageInfo<MallOrder> orderPageInfo = new PageInfo<>(orderService.getList(status));
+        PageInfo<MallOrder> orderPageInfo = new PageInfo<>(orderService.getList(status, orderTimeSort));
         return orderPageInfo;
-    }
-
-    @ApiOperation("待收货")
-    @PostMapping("/delivering")
-    public void delivering(@RequestBody MallOrder order) {
-        orderService.delivering(order);
     }
 
     @ApiOperation("收货成功")

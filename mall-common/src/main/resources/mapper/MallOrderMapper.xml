@@ -385,7 +385,15 @@
     <if test="status != null">
       and `status` = #{status,jdbcType=INTEGER}
     </if>
-    order by order_time desc
+    <if test="orderTimeSort != null">
+      <if test="orderTimeSort == 1">
+        order by order_time
+      </if>
+      <if test="orderTimeSort == 2">
+        order by order_time desc
+      </if>
+    </if>
+
   </select>
 
   <select id="getByFilter" resultMap="BaseResultMap">

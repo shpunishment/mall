@@ -91,8 +91,8 @@ public class MallOrderController {
         if (order.getOrderId() != null) {
             // 支付订单
             orderService.payOrder(order, response);
-            // 添加订单到超时订单zset中
             if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
+                // 添加订单超时延迟队列
                 orderService.zAddOrderTimeout(SecurityUserUtils.getUserId(), order.getOrderId(), order.getOrderTime());
             }
         }
