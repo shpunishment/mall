@@ -85,8 +85,8 @@ public class MallOrder implements Serializable {
     @ApiModelProperty("支付时间")
     private Date payTime;
 
-    @ApiModelProperty("配送员")
-    private String deliveryMan;
+    @ApiModelProperty("配送员id")
+    private Integer deliveryId;
 
     @ApiModelProperty("发货时间")
     private Date deliveryTime;
@@ -279,12 +279,12 @@ public class MallOrder implements Serializable {
         this.payTime = payTime;
     }
 
-    public String getDeliveryMan() {
-        return deliveryMan;
+    public Integer getDeliveryId() {
+        return deliveryId;
     }
 
-    public void setDeliveryMan(String deliveryMan) {
-        this.deliveryMan = deliveryMan;
+    public void setDeliveryId(Integer deliveryId) {
+        this.deliveryId = deliveryId;
     }
 
     public Date getDeliveryTime() {
@@ -362,7 +362,7 @@ public class MallOrder implements Serializable {
         sb.append(", payType=").append(payType);
         sb.append(", payNumber=").append(payNumber);
         sb.append(", payTime=").append(payTime);
-        sb.append(", deliveryMan=").append(deliveryMan);
+        sb.append(", deliveryId=").append(deliveryId);
         sb.append(", deliveryTime=").append(deliveryTime);
         sb.append(", receiveTime=").append(receiveTime);
         sb.append(", score=").append(score);

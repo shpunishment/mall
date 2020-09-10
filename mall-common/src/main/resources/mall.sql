@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 10/09/2020 14:24:45
+ Date: 10/09/2020 17:50:08
 */
 
 SET NAMES utf8mb4;
@@ -196,6 +196,38 @@ CREATE TABLE `mall_coupon_product`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券与商品关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for mall_delivery
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_delivery`;
+CREATE TABLE `mall_delivery`  (
+  `delivery_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '配送员id',
+  `create_time` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `create_id` int(11) NULL DEFAULT NULL COMMENT '创建管理员id',
+  `update_time` timestamp(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `update_id` int(11) NULL DEFAULT NULL COMMENT '更新管理员id',
+  `name` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '配送员名称',
+  `phone` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '电话',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '配送员状态，1待配送，2配送中',
+  `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
+  PRIMARY KEY (`delivery_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '配送员表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for mall_delivery_order
+-- ----------------------------
+DROP TABLE IF EXISTS `mall_delivery_order`;
+CREATE TABLE `mall_delivery_order`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '配送员与订单关联表id',
+  `create_time` timestamp(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `delivery_id` int(11) NOT NULL COMMENT '配送员id',
+  `order_id` int(11) NOT NULL COMMENT '订单id',
+  `receive_time` timestamp(0) NULL DEFAULT NULL COMMENT '收货时间',
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '订单状态，1待配送，2配送中，3已收货',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `delivery_order_index_delivery_id_status_order_id`(`delivery_id`, `status`, `order_id`) USING BTREE COMMENT '配送员与订单关联表配送员id、状态和订单id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '配送员与订单关联表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for mall_file_server
 -- ----------------------------
 DROP TABLE IF EXISTS `mall_file_server`;
@@ -277,7 +309,7 @@ CREATE TABLE `mall_order`  (
   `pay_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '支付方式，0未支付，1支付宝，2微信',
   `pay_number` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '支付编号',
   `pay_time` timestamp(0) NULL DEFAULT NULL COMMENT '支付时间',
-  `delivery_man` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '配送员',
+  `delivery_id` int(11) NULL DEFAULT NULL COMMENT '配送员id',
   `delivery_time` timestamp(0) NULL DEFAULT NULL COMMENT '发货时间',
   `receive_time` timestamp(0) NULL DEFAULT NULL COMMENT '收货时间',
   `score` tinyint(1) NULL DEFAULT 0 COMMENT '评分，1~5分',

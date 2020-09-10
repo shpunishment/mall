@@ -90,6 +90,9 @@ public class MallOrderVo implements Serializable {
     @ApiModelProperty("支付时间")
     private Date payTime;
 
+    @ApiModelProperty("配送员id")
+    private Integer deliveryId;
+
     @ApiModelProperty("配送员")
     private String deliveryMan;
 
@@ -283,6 +286,14 @@ public class MallOrderVo implements Serializable {
 
     public void setPayTime(Date payTime) {
         this.payTime = payTime;
+    }
+
+    public Integer getDeliveryId() {
+        return deliveryId;
+    }
+
+    public void setDeliveryId(Integer deliveryId) {
+        this.deliveryId = deliveryId;
     }
 
     public String getDeliveryMan() {

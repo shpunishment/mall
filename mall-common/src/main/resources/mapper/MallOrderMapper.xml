@@ -24,7 +24,7 @@
     <result column="pay_type" jdbcType="INTEGER" property="payType" />
     <result column="pay_number" jdbcType="VARCHAR" property="payNumber" />
     <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-    <result column="delivery_man" jdbcType="VARCHAR" property="deliveryMan" />
+    <result column="delivery_id" jdbcType="INTEGER" property="deliveryId" />
     <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
     <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
     <result column="score" jdbcType="INTEGER" property="score" />
@@ -54,7 +54,7 @@
     <result column="product_amount" jdbcType="INTEGER" property="productAmount" />
     <result column="pay_type" jdbcType="INTEGER" property="payType" />
     <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-    <result column="delivery_man" jdbcType="VARCHAR" property="deliveryMan" />
+    <result column="delivery_id" jdbcType="INTEGER" property="deliveryId" />
     <result column="receive_time" jdbcType="TIMESTAMP" property="receiveTime" />
     <result column="score" jdbcType="INTEGER" property="score" />
     <result column="comment" jdbcType="VARCHAR" property="comment" />
@@ -64,7 +64,7 @@
   <sql id="Base_Column_List">
     order_id, order_number, order_time, end_time, user_id, coupon_id, address_id, receive_name,
     receive_phone, receive_address, product_price, delivery_price, coupon_price, total_price,
-    `status`, remark, expect_time, product_amount, pay_type, pay_number, pay_time, delivery_man,
+    `status`, remark, expect_time, product_amount, pay_type, pay_number, pay_time, delivery_id,
     delivery_time, receive_time, score, comment, comment_time
   </sql>
 
@@ -75,7 +75,7 @@
   <sql id="Vo_Detail_Column_List">
     order_id, order_number, order_time, user_id, coupon_id, receive_name, receive_phone, receive_address,
     product_price, delivery_price, coupon_price, total_price, `status`, remark, expect_time, product_amount,
-    pay_type, pay_time, delivery_man, delivery_time, receive_time, score, comment
+    pay_type, pay_time, delivery_id, delivery_time, receive_time, score, comment
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -154,8 +154,8 @@
       <if test="payTime != null">
         pay_time,
       </if>
-      <if test="deliveryMan != null">
-        delivery_man,
+      <if test="deliveryId != null">
+        delivery_id,
       </if>
       <if test="deliveryTime != null">
         delivery_time,
@@ -234,8 +234,8 @@
       <if test="payTime != null">
         #{payTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deliveryMan != null">
-        #{deliveryMan,jdbcType=VARCHAR},
+      <if test="deliveryId != null">
+        #{deliveryId,jdbcType=INTEGER},
       </if>
       <if test="deliveryTime != null">
         #{deliveryTime,jdbcType=TIMESTAMP},
@@ -318,8 +318,8 @@
       <if test="payTime != null">
         pay_time = #{payTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deliveryMan != null">
-        delivery_man = #{deliveryMan,jdbcType=VARCHAR},
+      <if test="deliveryId != null">
+        delivery_id = #{deliveryId,jdbcType=INTEGER},
       </if>
       <if test="deliveryTime != null">
         delivery_time = #{deliveryTime,jdbcType=TIMESTAMP},

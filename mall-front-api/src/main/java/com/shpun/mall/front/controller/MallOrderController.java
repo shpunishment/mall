@@ -7,6 +7,7 @@ import com.shpun.mall.common.enums.MallOrderStatusEnums;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
+import com.shpun.mall.common.model.MallDelivery;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallOrderItemVo;
@@ -61,6 +62,9 @@ public class MallOrderController {
 
     @Autowired
     private ProfileConfig profileConfig;
+
+    @Autowired
+    private MallDeliveryService deliveryService;
 
     @ApiOperation("计算价格")
     @ApiImplicitParams(value = {
@@ -154,6 +158,11 @@ public class MallOrderController {
         orderVo.setDeliveryPriceStr(orderVo.getDeliveryPrice().toString());
         if (orderVo.getCouponPrice() != null) {
             orderVo.setCouponPriceStr(orderVo.getCouponPrice().toString());
+        }
+        // 添加配送员
+        if (orderVo.getDeliveryId() != null) {
+            MallDelivery delivery = deliveryService.selectByPrimaryKey(orderVo.getDeliveryId());
+            orderVo.setDeliveryMan(delivery.getName());
         }
         orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
         List<MallOrderItemVo> orderItemVoList = orderItemService.getVoByOrderId(orderVo.getOrderId());

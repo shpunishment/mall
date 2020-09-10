@@ -186,7 +186,7 @@ public class MallBackScheduler {
                     MallOrder order = new MallOrder();
                     order.setOrderId(deliveryOrder.getOrderId());
                     order.setStatus(MallOrderStatusEnums.WAIT2RECEIVE.getValue());
-                    // todo order 保存配送员id，
+                    order.setDeliveryId(deliveryId);
                     order.setDeliveryTime(new Date());
                     orderService.updateByPrimaryKeySelective(order);
                 });
