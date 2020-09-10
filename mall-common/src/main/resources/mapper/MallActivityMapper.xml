@@ -165,8 +165,8 @@
   <select id="getPrev" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
     select activity_id, sn
     from mall_activity
-	where deleted = 0
-	  and sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	where sn <![CDATA[<]]> #{sn,jdbcType=INTEGER}
+	  and deleted = 0
 	order by sn desc
 	limit 1
   </select>
@@ -174,8 +174,8 @@
   <select id="getNext" parameterType="com.shpun.mall.common.model.MallClassify" resultMap="BaseResultMap">
     select activity_id, sn
     from mall_activity
-	where deleted = 0
-	  and sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	where sn <![CDATA[>]]> #{sn,jdbcType=INTEGER}
+	  and deleted = 0
 	order by sn desc
 	limit 1
   </select>
@@ -183,9 +183,9 @@
   <update id="goNext">
     update mall_activity
     set sn = sn + 1
-    where deleted = 0
-      and sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
+    where sn <![CDATA[>=]]> #{startSn,jdbcType=INTEGER}
       and sn <![CDATA[<]]> #{endSn,jdbcType=INTEGER}
+      and deleted = 0
   </update>
 
   <select id="getTodayVoList" resultMap="VoResultMap">
@@ -193,7 +193,7 @@
     <include refid="Vo_Column_List" />
     FROM mall_activity
     WHERE deleted = 0
-      AND status = 1
+      AND `status` = 1
       AND start_time <![CDATA[<=]]> now( )
       AND end_time <![CDATA[>=]]> now( )
     order by sn
@@ -204,7 +204,7 @@
     FROM mall_activity
     WHERE activity_id = #{activityId,jdbcType=INTEGER}
      AND deleted = 0
-     AND status = 1
+     AND `status` = 1
      AND start_time <![CDATA[<=]]> now( )
      AND end_time <![CDATA[>=]]> now( )
   </select>

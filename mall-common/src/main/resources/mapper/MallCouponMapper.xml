@@ -112,9 +112,6 @@
       <if test="endTime != null">
         end_time,
       </if>
-      <if test="deleted != null">
-        deleted,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="createTime != null">
@@ -167,9 +164,6 @@
       </if>
       <if test="endTime != null">
         #{endTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="deleted != null">
-        #{deleted,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -228,9 +222,6 @@
       <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deleted != null">
-        deleted = #{deleted,jdbcType=INTEGER},
-      </if>
     </set>
     where coupon_id = #{couponId,jdbcType=INTEGER}
   </update>
@@ -260,10 +251,10 @@
     FROM
 	  mall_coupon AS c
 	  LEFT JOIN mall_coupon_classify AS cc ON cc.coupon_id = c.coupon_id
-    WHERE c.deleted = 0
-      AND `status` = 1
+    WHERE c.coupon_id = #{couponId,jdbcType=INTEGER}
+      AND c.deleted = 0
+      AND c.`status` = 1
 	  AND c.use_type = 2
-	  AND c.coupon_id = #{couponId,jdbcType=INTEGER}
   </select>
 
   <select id="getProductIdList" parameterType="java.lang.Integer" resultType="java.lang.Integer">
@@ -272,10 +263,10 @@
     FROM
 	  mall_coupon AS c
 	  LEFT JOIN mall_coupon_product AS cp ON cp.coupon_id = c.coupon_id
-    WHERE c.deleted = 0
-      AND `status` = 1
+    WHERE c.coupon_id = #{couponId,jdbcType=INTEGER}
+      AND c.deleted = 0
+      AND c.`status` = 1
 	  AND c.use_type = 3
-	  AND c.coupon_id = #{couponId,jdbcType=INTEGER}
   </select>
 
   <select id="getAvailable" parameterType="java.lang.Integer" resultMap="BaseResultMap">

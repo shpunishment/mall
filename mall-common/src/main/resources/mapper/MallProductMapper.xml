@@ -312,11 +312,11 @@
     <include refid="Vo_Column_List" />
     FROM
       mall_product
-    WHERE
-      product_name like concat('%', #{productName,jdbcType=VARCHAR}, '%')
-    AND deleted = 0 AND publish_status = 1
+    WHERE product_name like concat('%', #{productName,jdbcType=VARCHAR}, '%')
+      AND deleted = 0
+      AND publish_status = 1
       <if test="inStock == 1">
-        and stock > 0
+        AND stock > 0
       </if>
       <if test="priceSort == 1">
         order by current_price asc
@@ -331,8 +331,8 @@
     <include refid="Vo_Column_List" />
     from
       mall_product
-    where
-      deleted = 0 and publish_status = 1
+    where deleted = 0
+      and publish_status = 1
     order by sales desc
   </select>
 
@@ -341,8 +341,9 @@
       <include refid="Vo_Detail_Column_List" />
     FROM
       mall_product
-    WHERE
-      product_id = #{productId,jdbcType=INTEGER} AND deleted = 0 AND publish_status = 1
+    WHERE product_id = #{productId,jdbcType=INTEGER}
+      AND deleted = 0
+      AND publish_status = 1
   </select>
 
   <select id="getListByClassifyId" resultMap="BaseResultMap">
@@ -351,8 +352,8 @@
     FROM
       mall_product AS p
       LEFT JOIN mall_product_classify AS pc ON pc.product_id = p.product_id
-    WHERE
-      pc.classify_id = #{classifyId,jdbcType=INTEGER} AND p.deleted = 0
+    WHERE pc.classify_id = #{classifyId,jdbcType=INTEGER}
+      AND p.deleted = 0
   </select>
 
   <select id="getVoListFilterByClassifyIdList" resultMap="VoResultMap">

@@ -81,9 +81,6 @@
       <if test="minute != null">
         `minute`,
       </if>
-      <if test="deleted != null">
-        deleted,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="createTime != null">
@@ -115,9 +112,6 @@
       </if>
       <if test="minute != null">
         #{minute,jdbcType=INTEGER},
-      </if>
-      <if test="deleted != null">
-        #{deleted,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -154,9 +148,6 @@
       </if>
       <if test="minute != null">
         `minute` = #{minute,jdbcType=INTEGER},
-      </if>
-      <if test="deleted != null">
-        deleted = #{deleted,jdbcType=INTEGER},
       </if>
     </set>
     where flash_id = #{flashId,jdbcType=INTEGER}

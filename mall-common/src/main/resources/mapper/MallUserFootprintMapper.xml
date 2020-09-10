@@ -77,7 +77,8 @@
     select
     <include refid="Base_Column_List" />
     from mall_user_footprint
-    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+    where user_id = #{userId,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getVoListByFootprint" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
@@ -96,8 +97,7 @@
     FROM
       mall_user_footprint AS f
       LEFT JOIN mall_product AS p ON p.product_id = f.product_id
-    WHERE
-      f.user_id = #{userId,jdbcType=INTEGER}
+    WHERE f.user_id = #{userId,jdbcType=INTEGER}
       AND f.deleted = 0
       AND p.deleted = 0
   </select>

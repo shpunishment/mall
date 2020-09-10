@@ -136,14 +136,16 @@
     select
     <include refid="Base_Column_List" />
     from mall_user_address
-    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+    where user_id = #{userId,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getVoListByUserId" parameterType="java.lang.Integer" resultMap="VoResultMap">
     select
     <include refid="Vo_Column_List" />
     from mall_user_address
-    where user_id = #{userId,jdbcType=INTEGER} and deleted = 0
+    where user_id = #{userId,jdbcType=INTEGER}
+      and deleted = 0
   </select>
 
   <select id="getVoByAddressId" parameterType="java.lang.Integer" resultMap="VoResultMap">

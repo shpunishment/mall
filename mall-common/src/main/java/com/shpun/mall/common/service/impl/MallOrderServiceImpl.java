@@ -524,7 +524,7 @@ public class MallOrderServiceImpl implements MallOrderService {
     @RedisCache
     @Override
     public MallOrderVo getDetailVo(Integer userId, Integer orderId) {
-        // todo 删除缓存：待支付订单完成支付等
+        // todo 待支付订单完成支付后删除缓存
         return orderMapper.getDetailVo(userId, orderId);
     }
 

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : local 5.7.26
+ Source Server         : local 5.7.26 mysql
  Source Server Type    : MySQL
  Source Server Version : 50726
- Source Host           : localhost:3306
+ Source Host           : localhost:4306
  Source Schema         : mall
 
  Target Server Type    : MySQL
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 09/09/2020 23:01:28
+ Date: 10/09/2020 11:02:15
 */
 
 SET NAMES utf8mb4;
@@ -34,8 +34,9 @@ CREATE TABLE `mall_activity`  (
   `status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '状态，0禁用，1启用',
   `sn` int(11) NOT NULL COMMENT '排序号',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
-  PRIMARY KEY (`activity_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '活动表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`activity_id`) USING BTREE,
+  INDEX `activity_index_sn_deleted`(`sn`, `deleted`) USING BTREE COMMENT '活动表排序号和删除标识索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '活动表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_activity_classify
@@ -51,8 +52,9 @@ CREATE TABLE `mall_activity_classify`  (
   `sn` int(11) NOT NULL COMMENT '排序号',
   `activity_id` int(11) NOT NULL COMMENT '活动id',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
-  PRIMARY KEY (`classify_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '活动分类表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`classify_id`) USING BTREE,
+  INDEX `activity_classify_index_activity_id_deleted_sn`(`activity_id`, `deleted`, `sn`) USING BTREE COMMENT '活动分类表活动id、删除标识和排序号索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '活动分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_activity_classify_product
@@ -66,8 +68,10 @@ CREATE TABLE `mall_activity_classify_product`  (
   `product_id` int(11) NOT NULL COMMENT '商品id',
   `sn` int(11) NOT NULL COMMENT '排序号',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '活动分类与商品关联表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `activity_classify_product_index_product_id_classify_id`(`product_id`, `classify_id`) USING BTREE COMMENT '活动分类与商品关联表商品id和分类id索引',
+  INDEX `activity_classify_product_index_classify_id_product_id`(`classify_id`, `product_id`) USING BTREE COMMENT '活动分类与商品关联表分类id和商品id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '活动分类与商品关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_admin
@@ -83,7 +87,7 @@ CREATE TABLE `mall_admin`  (
   `password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码',
   `enable` tinyint(1) NOT NULL DEFAULT 1 COMMENT '可用标识，0不可用，1可用',
   PRIMARY KEY (`admin_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_brand
@@ -98,7 +102,7 @@ CREATE TABLE `mall_brand`  (
   `brand_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '品牌名称',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`brand_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '品牌表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '品牌表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_cart
@@ -113,8 +117,9 @@ CREATE TABLE `mall_cart`  (
   `quantity` int(11) NOT NULL DEFAULT 1 COMMENT '数量',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`cart_id`) USING BTREE,
-  INDEX `cart_index_user_id_deleted_product_id_quantity`(`user_id`, `deleted`, `product_id`, `quantity`) USING BTREE COMMENT '购物车表用户id，删除标识，商品id和数量索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '购物车表' ROW_FORMAT = Dynamic;
+  INDEX `cart_index_user_id_product_id`(`user_id`, `product_id`) USING BTREE COMMENT '购物车表用户id和商品id索引',
+  INDEX `cart_index_product_id_user_id`(`product_id`, `user_id`) USING BTREE COMMENT '购物车表商品id和用户id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '购物车表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_classify
@@ -132,8 +137,8 @@ CREATE TABLE `mall_classify`  (
   `sn` int(11) NOT NULL COMMENT '排序号',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`classify_id`) USING BTREE,
-  INDEX `product_classify_index_pid_deleted`(`pid`, `deleted`) USING BTREE COMMENT '商品分类表pid和删除标识索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 84 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '商品分类表' ROW_FORMAT = Dynamic;
+  INDEX `product_classify_index_pid_deleted_sn`(`pid`, `deleted`, `sn`) USING BTREE COMMENT '商品分类表pid、删除和排序号标识索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '商品分类表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_coupon
@@ -160,7 +165,7 @@ CREATE TABLE `mall_coupon`  (
   `end_time` timestamp(0) NULL DEFAULT NULL COMMENT '有效期限，结束时间',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`coupon_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_coupon_classify
@@ -172,8 +177,9 @@ CREATE TABLE `mall_coupon_classify`  (
   `create_id` int(11) NULL DEFAULT NULL COMMENT '创建管理员id',
   `coupon_id` int(11) NOT NULL COMMENT '优惠券id',
   `classify_id` int(11) NOT NULL COMMENT '分类id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券与商品分类关联表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `coupon_classify_index_coupon_id_classify_id`(`coupon_id`, `classify_id`) USING BTREE COMMENT '优惠券与商品分类关联表优惠id和分类id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券与商品分类关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_coupon_product
@@ -185,8 +191,9 @@ CREATE TABLE `mall_coupon_product`  (
   `create_id` int(11) NULL DEFAULT NULL COMMENT '创建管理员id',
   `coupon_id` int(11) NULL DEFAULT NULL COMMENT '优惠券id',
   `product_id` int(11) NULL DEFAULT NULL COMMENT '分类id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券与商品关联表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `coupon_product_index_coupon_id_product_id`(`coupon_id`, `product_id`) USING BTREE COMMENT '优惠券与商品关联表优惠券id和商品id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '优惠券与商品关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_file_server
@@ -199,7 +206,7 @@ CREATE TABLE `mall_file_server`  (
   `file_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件名称',
   `file` longblob NULL COMMENT '文件',
   PRIMARY KEY (`file_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 53 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件服务器表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件服务器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_flash
@@ -220,7 +227,7 @@ CREATE TABLE `mall_flash`  (
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`flash_id`) USING BTREE,
   INDEX `mall_flash_index_year_month_day_hour_deleted_minute`(`year`, `month`, `day`, `hour`, `deleted`, `minute`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '限时抢购表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '限时抢购表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_flash_item
@@ -240,8 +247,9 @@ CREATE TABLE `mall_flash_item`  (
   `limit` int(11) NOT NULL DEFAULT 0 COMMENT '限购数量，0不限制',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`flash_item_id`) USING BTREE,
-  INDEX `mall_flash_item_flash_id_product_id_stock_price_limit`(`flash_id`, `deleted`, `product_id`, `stock`, `price`, `limit`) USING BTREE COMMENT '限时抢购商品表抢购id、删除标识、商品id、库存、价格和限购索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '限时抢购商品表' ROW_FORMAT = Dynamic;
+  INDEX `mall_flash_item_flash_id_product_id`(`flash_id`, `product_id`) USING BTREE COMMENT '限时抢购商品表抢购id和商品id索引',
+  INDEX `mall_flash_item_product_id_flash_id`(`product_id`, `flash_id`) USING BTREE COMMENT '限时抢购商品表商品id和抢购id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '限时抢购商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_order
@@ -267,6 +275,7 @@ CREATE TABLE `mall_order`  (
   `expect_time` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '期望送达时间，如尽快送达，X月X日 14:00~15:00',
   `product_amount` int(11) NULL DEFAULT 0 COMMENT '商品总数',
   `pay_type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '支付方式，0未支付，1支付宝，2微信',
+  `pay_number` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '支付编号',
   `pay_time` timestamp(0) NULL DEFAULT NULL COMMENT '支付时间',
   `delivery_man` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '配送员',
   `delivery_time` timestamp(0) NULL DEFAULT NULL COMMENT '发货时间',
@@ -276,8 +285,9 @@ CREATE TABLE `mall_order`  (
   `comment_time` timestamp(0) NULL DEFAULT NULL COMMENT '评价时间',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`order_id`) USING BTREE,
-  INDEX `order_index_user_id_deleted`(`user_id`, `deleted`) USING BTREE COMMENT '订单表用户id和删除标识索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+  INDEX `order_index_user_id_deleted_status`(`user_id`, `deleted`, `status`) USING BTREE COMMENT '订单表用户id、删除标识和状态索引',
+  INDEX `order_index_order_number_deleted_status`(`order_number`, `deleted`, `status`) USING BTREE COMMENT '订单表订单编号、删除标识和状态索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_order_item
@@ -295,7 +305,7 @@ CREATE TABLE `mall_order_item`  (
   `flash_item_id` int(11) NOT NULL COMMENT '限时抢购商品id',
   PRIMARY KEY (`order_item_id`) USING BTREE,
   INDEX `order_item_index_order_id_deleted`(`order_id`) USING BTREE COMMENT '订单商品表order_id和删除标识索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '订单商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_product
@@ -325,7 +335,7 @@ CREATE TABLE `mall_product`  (
   `detail` int(11) NULL DEFAULT NULL COMMENT '商品详情，为文件id',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`product_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_product_classify
@@ -338,9 +348,9 @@ CREATE TABLE `mall_product_classify`  (
   `classify_id` int(11) NOT NULL COMMENT '分类id',
   `product_id` int(11) NOT NULL COMMENT '商品id',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `product_classify_associate_index_classify_id_product_id`(`classify_id`, `product_id`) USING BTREE COMMENT '商品与商品分类关联表分类id和商品id索引',
-  INDEX `product_classify_associate_index_product_id_classify_id`(`product_id`, `classify_id`) USING BTREE COMMENT '商品与商品分类关联表商品id和分类id索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '商品与商品分类关联表' ROW_FORMAT = Dynamic;
+  INDEX `product_classify_index_classify_id_product_id`(`classify_id`, `product_id`) USING BTREE COMMENT '商品与商品分类关联表分类id和商品id索引',
+  INDEX `product_classify_index_product_id_classify_id`(`product_id`, `classify_id`) USING BTREE COMMENT '商品与商品分类关联表商品id和分类id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '商品与商品分类关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_user
@@ -358,7 +368,7 @@ CREATE TABLE `mall_user`  (
   `enable` tinyint(1) NOT NULL DEFAULT 1 COMMENT '可用标识，0不可用，1可用',
   PRIMARY KEY (`user_id`) USING BTREE,
   INDEX `user_index_username`(`username`) USING BTREE COMMENT '用户表用户名索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_user_address
@@ -376,8 +386,8 @@ CREATE TABLE `mall_user_address`  (
   `type` tinyint(1) NULL DEFAULT 0 COMMENT '地址类型，0未选择，1家，2父母家，3朋友家，4公司，5学校',
   `deleted` tinyint(1) NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`address_id`) USING BTREE,
-  INDEX `user_address_index_user_id`(`user_id`) USING BTREE COMMENT '用户地址表用户id索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户收货地址表' ROW_FORMAT = Dynamic;
+  INDEX `user_address_index_user_id_deleted`(`user_id`, `deleted`) USING BTREE COMMENT '用户地址表用户id和删除标识索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户收货地址表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_user_coupon
@@ -394,8 +404,10 @@ CREATE TABLE `mall_user_coupon`  (
   `end_time` timestamp(0) NULL DEFAULT NULL COMMENT '有效期限，结束时间',
   `use_time` timestamp(0) NULL DEFAULT NULL COMMENT '使用时间',
   `order_id` int(11) NULL DEFAULT NULL COMMENT '订单id',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户和优惠券关联表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_coupon_index_user_id_coupon_id`(`user_id`, `coupon_id`) USING BTREE COMMENT '用户和优惠券关联表用户id和优惠券id索引',
+  INDEX `user_coupon_index_coupon_id_user_id`(`coupon_id`, `user_id`) USING BTREE COMMENT '用户和优惠券关联表优惠券id和用户id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户和优惠券关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_user_favorite
@@ -408,8 +420,9 @@ CREATE TABLE `mall_user_favorite`  (
   `product_id` int(11) NOT NULL COMMENT '商品id',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`favorite_id`) USING BTREE,
-  INDEX `user_favorite_user_id`(`user_id`) USING BTREE COMMENT '用户收藏表用户id索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户收藏表' ROW_FORMAT = Dynamic;
+  INDEX `user_favorite_index_user_id_product_id`(`user_id`, `product_id`) USING BTREE COMMENT '用户收藏表用户id和商品id索引',
+  INDEX `user_favorite_index_product_id_user_id`(`product_id`, `user_id`) USING BTREE COMMENT '用户收藏表商品id和用户id索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for mall_user_footprint
@@ -422,7 +435,8 @@ CREATE TABLE `mall_user_footprint`  (
   `product_id` int(11) NOT NULL COMMENT '商品id',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`footprint_id`) USING BTREE,
-  INDEX `user_footprint_index_user_id`(`user_id`) USING BTREE COMMENT '用户足迹表用户id索引'
+  INDEX `user_footprint_index_user_id_product_id`(`user_id`, `product_id`) USING BTREE COMMENT '用户足迹表用户id和商品id索引',
+  INDEX `user_footprint_index_product_id_user_id`(`product_id`, `user_id`) USING BTREE COMMENT '用户足迹表商品id和用户id索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户足迹表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -439,7 +453,7 @@ CREATE TABLE `mall_user_search_history`  (
   `type` tinyint(1) NOT NULL COMMENT '类型，1商品，2订单',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
   PRIMARY KEY (`history_id`) USING BTREE,
-  INDEX `mall_user_search_history_user_id_keword_type_deleted`(`user_id`, `keyword`, `type`, `deleted`) USING BTREE COMMENT '用户搜索历史表用户id、关键词、类型和删除标识索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 37 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户搜索历史表' ROW_FORMAT = Dynamic;
+  INDEX `user_search_history_index_user_id_type_deleted`(`user_id`, `type`, `deleted`) USING BTREE COMMENT '用户搜索历史表用户id、类型和删除标识索引'
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户搜索历史表' ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

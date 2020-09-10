@@ -175,7 +175,8 @@
 	    WHERE order_id = #{orderId,jdbcType=INTEGER}
 	      AND product_name LIKE CONCAT('%', #{productName}, '%')
         LIMIT 3
-      ) A UNION
+      ) A
+    UNION
     SELECT
       B.product_id, B.product_name, B.pic, B.price, B.quantity
     FROM
