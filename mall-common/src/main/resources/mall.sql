@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 10/09/2020 11:02:15
+ Date: 10/09/2020 14:24:45
 */
 
 SET NAMES utf8mb4;
@@ -160,7 +160,7 @@ CREATE TABLE `mall_coupon`  (
   `type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '类型，1通用券，2新人礼券',
   `use_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '使用类型，1全场，2指定分类，3指定商品',
   `time_type` tinyint(1) NOT NULL DEFAULT 1 COMMENT '生效时间类型，1天数，2时间段',
-  `days` int(11) NOT NULL DEFAULT 0 COMMENT '有效期限，自领取后几天内有效，0当天',
+  `days` int(11) NOT NULL DEFAULT -1 COMMENT '有效期限，自领取后几天内有效，0当天',
   `start_time` timestamp(0) NULL DEFAULT NULL COMMENT '有效期限，开始时间',
   `end_time` timestamp(0) NULL DEFAULT NULL COMMENT '有效期限，结束时间',
   `deleted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '删除标识，0未删除，1删除',
