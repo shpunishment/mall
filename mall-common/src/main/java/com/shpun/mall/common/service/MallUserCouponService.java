@@ -56,6 +56,8 @@ public interface MallUserCouponService {
 
     List<MallUserCoupon> getList(Integer status);
 
+    Integer getAvailableCount(Integer userId);
+
     /**
      * 领取优惠券，下单成功，根据用户id删除缓存
      * @param userId

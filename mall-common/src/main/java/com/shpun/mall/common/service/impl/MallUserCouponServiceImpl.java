@@ -188,6 +188,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     }
 
     @Override
+    public Integer getAvailableCount(Integer userId) {
+        return userCouponMapper.getAvailableCount(userId);
+    }
+
+    @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);

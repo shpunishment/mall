@@ -301,9 +301,12 @@ public class MallOrderServiceImpl implements MallOrderService {
                 }
             }
 
+            Integer productAmount = 0;
+
             for(MallCart cart : cartList) {
                 Integer productId = cart.getProductId();
                 Integer quantity = cart.getQuantity();
+                productAmount += quantity;
 
                 // 锁定商品库存
                 MallProduct product = productService.lockStock(productId);
@@ -400,6 +403,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             String orderNumber = new Date().getTime() + "" + new Random().nextInt(1000);
             order.setOrderNumber(orderNumber);
             order.setOrderTime(new Date());
+            order.setProductAmount(productAmount);
             orderMapper.insertSelective(order);
 
             // 用户优惠券更新

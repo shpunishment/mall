@@ -53,6 +53,7 @@ public class MallUserController {
             throw new MallException(MallError.MallErrorEnum.USERNAME_EXIST.format(user.getUsername()));
         }
 
+        user.setNickname(user.getUsername());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.insertSelective(user);
 
@@ -73,13 +74,16 @@ public class MallUserController {
     @GetMapping("/info")
     public MallUserVo info() {
         MallUserVo userVo = userService.getVoByUserId(SecurityUserUtils.getUserId());
+
+        // 用户可用优惠券数量
+        Integer couponCount = userCouponService.getAvailableCount(SecurityUserUtils.getUserId());
+        userVo.setCouponCount(couponCount);
         return userVo;
     }
 
     @ApiOperation("更新用户信息")
-    @GetMapping("/update")
+    @PostMapping("/update")
     public void update(@RequestBody MallUser user) {
-        // todo 是否需要分别写接口更新用户数据？
         user.setUserId(SecurityUserUtils.getUserId());
         userService.updateByPrimaryKeySelective(user);
 

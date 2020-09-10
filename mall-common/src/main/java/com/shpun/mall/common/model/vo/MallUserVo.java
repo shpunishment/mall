@@ -26,6 +26,9 @@ public class MallUserVo implements Serializable {
     @ApiModelProperty("电话")
     private String phone;
 
+    @ApiModelProperty("用户可用优惠券数量")
+    private Integer couponCount;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getAvatar() {
@@ -58,5 +61,13 @@ public class MallUserVo implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Integer getCouponCount() {
+        return couponCount;
+    }
+
+    public void setCouponCount(Integer couponCount) {
+        this.couponCount = couponCount;
     }
 }
