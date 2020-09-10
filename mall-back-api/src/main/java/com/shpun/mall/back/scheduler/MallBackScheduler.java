@@ -56,8 +56,17 @@ public class MallBackScheduler {
                     String[] orderKeys = orderKey.split(Const.REDIS_PARAM_DELIMITER);
                     Integer orderId = Integer.valueOf(orderKeys[1]);
                     Integer userId = Integer.valueOf(orderKeys[2]);
-                    orderService.closeOrder(orderId, userId);
 
+                    MallOrder order = orderService.selectByPrimaryKey(orderId);
+                    // 未支付直接关闭订单再remove
+                    if (MallOrderStatusEnums.WAIT2PAY.getValue().equals(order.getStatus())) {
+                        orderService.closeOrder(orderId, userId);
+
+                        // 删除订单缓存
+                        orderService.deleteCache(userId);
+                        // 删除用户优惠券缓存
+                        userCouponService.deleteCache(userId);
+                    }
                     redisService.zRemove(keySb.toString(), orderKey);
                 });
             }
@@ -71,6 +80,11 @@ public class MallBackScheduler {
                     Date endTime = new Date(orderTime.getTime() + Const.DEFAULT_ORDER_TIMEOUT);
                     if (endTime.before(new Date())) {
                         orderService.closeOrder(order.getOrderId(), order.getUserId());
+
+                        // 删除订单缓存
+                        orderService.deleteCache(order.getUserId());
+                        // 删除用户优惠券缓存
+                        userCouponService.deleteCache(order.getUserId());
                     }
                 });
             }

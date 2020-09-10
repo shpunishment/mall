@@ -522,6 +522,8 @@ public class MallOrderServiceImpl implements MallOrderService {
         order.setPayNumber(payNumber);
         order.setPayTime(payTime);
         this.updateByPrimaryKeySelective(order);
+
+        // todo 配送延迟队列
     }
 
     @Override
