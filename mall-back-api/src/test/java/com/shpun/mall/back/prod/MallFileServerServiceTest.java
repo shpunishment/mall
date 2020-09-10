@@ -18,6 +18,16 @@ public class MallFileServerServiceTest {
 
     private String projectPath = "E:\\IDEA-workspace\\mall";
 
+    @Test
+    public void insert() {
+        this.insertFirstClassify();
+        this.insertFirstClassifyFruit();
+        this.insertFirstClassifyVegetables();
+        this.insertFirstClassifyMeat();
+        this.insertFirstClassifySeafood();
+        this.insertFirstClassifyOil();
+    }
+
     /**
      * 造数据，一级分类图
      * 1~9
@@ -123,6 +133,54 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\沙茶酱.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\味精.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\绿豆.jpg");
+    }
+
+    /**
+     * 造数据 熟食卤味
+     * 60~67
+     */
+    @Test
+    public void insertFirstClassifyDelicatessen() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\无骨凤爪.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\红糖馒头.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\花枝丸.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\咖喱鸡肉.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\猪肚莲子汤.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\牛杂.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\鸡肉三明治.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\熟食卤味\\鸡胸肉.jpg");
+    }
+
+    /**
+     * 造数据 冰品面点
+     * 68~75
+     */
+    @Test
+    public void insertFirstClassifyIce() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\冰淇淋.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\橙汁.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\小笼包.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\韭菜蒸饺.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\花生汤圆.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\福州肉燕.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\虾饼.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\冰品面点\\蛋饺.jpg");
+    }
+
+    /**
+     * 造数据 牛奶面包
+     * 76~83
+     */
+    @Test
+    public void insertFirstClassifyMilk() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\鲜牛奶.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\风味发酵乳.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\养乐多.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\纯牛奶.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\全脂牛奶.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\吐司.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\芝士蛋糕.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\生日蛋糕.jpg");
     }
 
 }

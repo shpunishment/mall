@@ -1,5 +1,6 @@
 package com.shpun.mall.back.prod;
 
+import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.model.MallActivity;
 import com.shpun.mall.common.service.MallActivityService;
 import org.junit.jupiter.api.Test;
@@ -28,23 +29,22 @@ public class MallActivityServiceTest {
      */
     @Test
     public void insert() throws Exception {
-        MallActivity activity1 = buildMallActivity("活动1", dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
+        MallActivity activity1 = buildMallActivity("活动1", null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         activityService.insertSelective(activity1);
 
-        MallActivity activity2 = buildMallActivity("活动2", dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
+        MallActivity activity2 = buildMallActivity("活动2", null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         activityService.insertSelective(activity2);
 
-        MallActivity activity3 = buildMallActivity("活动3", dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
+        MallActivity activity3 = buildMallActivity("活动3", null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         activityService.insertSelective(activity3);
-
-        MallActivity activity4 = buildMallActivity("活动4", dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
-        activityService.insertSelective(activity4);
-
     }
 
-    private MallActivity buildMallActivity(String name, Date startTime, Date endTime) {
+    private MallActivity buildMallActivity(String name, Integer pic, Date startTime, Date endTime) {
         MallActivity activity = new MallActivity();
+        activity.setCreateId(Const.ADMIN_ID);
         activity.setName(name);
+        activity.setPic(pic);
+        activity.setStatus(1);
         activity.setStartTime(startTime);
         activity.setEndTime(endTime);
         return activity;

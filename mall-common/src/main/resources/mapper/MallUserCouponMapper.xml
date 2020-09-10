@@ -146,6 +146,7 @@
       c.`desc`,
       c.min_price,
       c.discount,
+      c.use_type,
       uc.create_time as user_received_time,
       uc.`status` as user_received_status,
       uc.start_time,

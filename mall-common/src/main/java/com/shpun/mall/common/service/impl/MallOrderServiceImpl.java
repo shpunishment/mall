@@ -76,12 +76,6 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Autowired
     private ProfileConfig profileConfig;
 
-    @Autowired
-    private MallDeliveryService deliveryService;
-
-    @Autowired
-    private MallDeliveryOrderService deliveryOrderService;
-
     @Override
     public void deleteByPrimaryKey(Integer orderId) {
         orderMapper.deleteByPrimaryKey(orderId);
@@ -155,17 +149,17 @@ public class MallOrderServiceImpl implements MallOrderService {
                 productPrice = productPrice.add(price);
 
                 // 优惠券不为空，并且商品非限时抢购
-                if (coupon != null && useType != null && meetIdSet != null && !product.getFlashing()) {
+                if (coupon != null && useType != null && !product.getFlashing()) {
                     if (MallCouponUseTypeEnums.ALL.getValue().equals(useType)) {
                         meetPrice = meetPrice.add(price);
-                    } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType)) {
+                    } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType) && meetIdSet != null) {
                         // 判断商品的分类，是否存在于优惠券的分类中
                         List<Integer> classifyIdList = productClassifyService.getClassifyIdByProductId(productId);
                         List<Integer> meetClassifyIdList = classifyIdList.stream().filter(meetIdSet::contains).collect(Collectors.toList());
                         if (CollectionUtils.isNotEmpty(meetClassifyIdList)) {
                             meetPrice = meetPrice.add(price);
                         }
-                    } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType)) {
+                    } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType) && meetIdSet != null) {
                         // 判断商品，是否存在于优惠券的商品中
                         if (meetIdSet.contains(productId)) {
                             meetPrice = meetPrice.add(price);
@@ -351,17 +345,17 @@ public class MallOrderServiceImpl implements MallOrderService {
                         productPrice = productPrice.add(price);
 
                         // 优惠券不为空，并且商品非限时抢购
-                        if (canUseCoupon && coupon != null && useType != null && meetIdSet != null && !flashing) {
+                        if (canUseCoupon && coupon != null && useType != null && !flashing) {
                             if (MallCouponUseTypeEnums.ALL.getValue().equals(useType)) {
                                 meetPrice = meetPrice.add(price);
-                            } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType)) {
+                            } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType) && meetIdSet != null) {
                                 // 判断商品的分类，是否存在于优惠券的分类中
                                 List<Integer> classifyIdList = productClassifyService.getClassifyIdByProductId(productId);
                                 List<Integer> meetClassifyIdList = classifyIdList.stream().filter(meetIdSet::contains).collect(Collectors.toList());
                                 if (CollectionUtils.isNotEmpty(meetClassifyIdList)) {
                                     meetPrice = meetPrice.add(price);
                                 }
-                            } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType)) {
+                            } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType) && meetIdSet != null) {
                                 // 判断商品，是否存在于优惠券的商品中
                                 if (meetIdSet.contains(productId)) {
                                     meetPrice = meetPrice.add(price);

@@ -7,7 +7,6 @@ import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallProductMapper;
-import com.shpun.mall.common.model.MallCart;
 import com.shpun.mall.common.model.MallFlashItem;
 import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallCartVo;
@@ -134,8 +133,6 @@ public class MallProductServiceImpl implements MallProductService {
             BigDecimal remainStockRatio = stock.divide(total, 2, RoundingMode.HALF_UP);
             String remainStockPercent = remainStockRatio.multiply(new BigDecimal("100")).stripTrailingZeros().toPlainString();
             productVo.setRemainStockPercent(remainStockPercent);
-        } else {
-            productVo.setFlashing(false);
         }
     }
 
@@ -229,6 +226,11 @@ public class MallProductServiceImpl implements MallProductService {
             if (favorite) {
                 productVo.setFavoriteId(userFavoriteService.isFavorite(userId, productVo.getProductId()));
             }
+        }
+
+        // 限时抢购标识
+        if (productVo.getFlashing() == null) {
+            productVo.setFlashing(false);
         }
 
         // 赋值库存标识

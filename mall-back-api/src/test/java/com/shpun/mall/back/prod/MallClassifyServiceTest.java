@@ -18,6 +18,12 @@ public class MallClassifyServiceTest {
     @Autowired
     private MallClassifyService classifyService;
 
+    @Test
+    public void insert() {
+        this.insertFirstClassify();
+        this.insertSecondClassify();
+    }
+
     /**
      * 造数据
      */

@@ -23,9 +23,10 @@ public class MallFlashItemServiceTest {
 
     /**
      * 造数据
+     * todo 重新选择商品id
      */
     @Test
-    public void insert2() {
+    public void insert() {
         for (int i = 1; i <= 132; i+=6) {
             insertByFlashId(i);
         }

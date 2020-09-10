@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * @Description:
  * @Author: sun
@@ -17,26 +21,90 @@ public class MallActivityClassifyProductServiceTest {
     @Autowired
     private MallActivityClassifyProductService activityClassifyProductService;
 
-    // todo 活动分类商品
     @Test
     public void insert() {
-        MallActivityClassifyProduct activityClassifyProduct1 = buildMallActivityClassifyProduct(1, 1);
-        activityClassifyProductService.insertSelective(activityClassifyProduct1);
+        this.insert1();
+        this.insert2();
+        this.insert3();
+    }
 
-        MallActivityClassifyProduct activityClassifyProduct2 = buildMallActivityClassifyProduct(1, 2);
-        activityClassifyProductService.insertSelective(activityClassifyProduct2);
+    /**
+     * 造数据
+     */
+    @Test
+    public void insert1() {
 
-        MallActivityClassifyProduct activityClassifyProduct3 = buildMallActivityClassifyProduct(2, 1);
-        activityClassifyProductService.insertSelective(activityClassifyProduct3);
+        List<Integer> productIdList;
 
-        MallActivityClassifyProduct activityClassifyProduct4 = buildMallActivityClassifyProduct(2, 2);
-        activityClassifyProductService.insertSelective(activityClassifyProduct4);
+        // 活动1-分类1
+        productIdList = Stream.of(1,2,3,4).collect(Collectors.toList());
+        this.insertBatch(1, productIdList);
 
-        MallActivityClassifyProduct activityClassifyProduct5 = buildMallActivityClassifyProduct(5, 1);
-        activityClassifyProductService.insertSelective(activityClassifyProduct5);
+        // 活动1-分类2
+        productIdList = Stream.of(5,6,7,8).collect(Collectors.toList());
+        this.insertBatch(2, productIdList);
 
-        MallActivityClassifyProduct activityClassifyProduct6 = buildMallActivityClassifyProduct(5, 2);
-        activityClassifyProductService.insertSelective(activityClassifyProduct6);
+        // 活动1-分类3
+        productIdList = Stream.of(9,10,11,12).collect(Collectors.toList());
+        this.insertBatch(3, productIdList);
+
+        // 活动1-分类4
+        productIdList = Stream.of(13,14,15,16).collect(Collectors.toList());
+        this.insertBatch(4, productIdList);
+
+    }
+
+    @Test
+    public void insert2() {
+
+        List<Integer> productIdList;
+
+        // 活动2-分类1
+        productIdList = Stream.of(17,18,19,20).collect(Collectors.toList());
+        this.insertBatch(5, productIdList);
+
+        // 活动2-分类2
+        productIdList = Stream.of(21,22,23,24).collect(Collectors.toList());
+        this.insertBatch(6, productIdList);
+
+        // 活动2-分类3
+        productIdList = Stream.of(25,26,27,28).collect(Collectors.toList());
+        this.insertBatch(7, productIdList);
+
+        // 活动2-分类4
+        productIdList = Stream.of(29,30,31,32).collect(Collectors.toList());
+        this.insertBatch(8, productIdList);
+
+    }
+
+    @Test
+    public void insert3() {
+
+        List<Integer> productIdList;
+
+        // 活动3-分类1
+        productIdList = Stream.of(33,34,35,36).collect(Collectors.toList());
+        this.insertBatch(9, productIdList);
+
+        // 活动3-分类2
+        productIdList = Stream.of(37,38,39,40).collect(Collectors.toList());
+        this.insertBatch(10, productIdList);
+
+        // 活动3-分类3
+        productIdList = Stream.of(40,41,42,44).collect(Collectors.toList());
+        this.insertBatch(11, productIdList);
+
+        // 活动3-分类4
+        productIdList = Stream.of(45,46,47,48).collect(Collectors.toList());
+        this.insertBatch(12, productIdList);
+
+    }
+
+    private void insertBatch(Integer classifyId, List<Integer> productIdList) {
+        productIdList.forEach(productId -> {
+            MallActivityClassifyProduct activityClassifyProduct = buildMallActivityClassifyProduct(classifyId, productId);
+            activityClassifyProductService.insertSelective(activityClassifyProduct);
+        });
 
     }
 

@@ -19,6 +19,7 @@ import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.MallCouponService;
 import com.shpun.mall.common.service.MallUserCouponService;
 import com.shpun.mall.common.service.RedisService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,7 +128,14 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     @Override
     public PageInfo<MallCouponVo> getCouponVoPageByFilter(Integer userId, Integer status, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
-        return new PageInfo<>(this.getCouponVoListByFilter(userId, status));
+        PageInfo<MallCouponVo> couponVoPageInfo = new PageInfo<>(this.getCouponVoListByFilter(userId, status));
+        // 适配前端
+        if (CollectionUtils.isNotEmpty(couponVoPageInfo.getList())) {
+            couponVoPageInfo.getList().forEach(couponVo -> {
+                couponVo.setReceived(true);
+            });
+        }
+        return couponVoPageInfo;
     }
 
     @Override

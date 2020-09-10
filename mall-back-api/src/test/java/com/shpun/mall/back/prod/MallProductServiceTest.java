@@ -22,6 +22,17 @@ public class MallProductServiceTest {
     @Autowired
     private MallProductService productService;
 
+    @Test
+    public void insert() {
+        this.insert1();
+        this.insert2();
+        this.insert3();
+        this.insert4();
+        this.insert5();
+        this.insert6();
+        this.insert7();
+    }
+
     /**
      * 造数据
      */
@@ -322,47 +333,149 @@ public class MallProductServiceTest {
 
     /**
      * 熟食卤味
-     * todo
      * 
      */
     @Test
     public void insert6() {
         List<Integer> classifyIdList;
 
-        classifyIdList = Stream.of(37).collect(Collectors.toList());
-        MallProduct product1 = buildMallProduct("香米", "软糯适中 干稀饭均可", 53, new BigDecimal("15.8"),
-                new BigDecimal("11.9"),50, 5, null, "1kg", null,"黑龙江牡丹江",48);
+        classifyIdList = Stream.of(44).collect(Collectors.toList());
+        MallProduct product1 = buildMallProduct("无骨凤爪", "麻辣鲜香 卤煮入味", 60, new BigDecimal("29.67"),
+                new BigDecimal("29.67"),50, 5, "0-4℃冷藏", "150g/盒", "冷藏（0-4）℃","福州",60);
         productService.insertWithClassifyIdList(product1, classifyIdList);
 
-        classifyIdList = Stream.of(38).collect(Collectors.toList());
-        MallProduct product2 = buildMallProduct("葵花籽油", "好妈妈健康之选", 54, new BigDecimal("89.9"),
-                new BigDecimal("79.5"),50, 5, null, "5L", "常温","广东深圳",54);
+        classifyIdList = Stream.of(45).collect(Collectors.toList());
+        MallProduct product2 = buildMallProduct("红糖馒头", "松软可口 甜而不腻", 61, new BigDecimal("1.71"),
+                new BigDecimal("1.71"),50, 5, "加热食用", "180g/份", "冰鲜（0-4）℃","福州",61);
         productService.insertWithClassifyIdList(product2, classifyIdList);
 
-        classifyIdList = Stream.of(39).collect(Collectors.toList());
-        MallProduct product3 = buildMallProduct("螺蛳粉", "经典柳州螺蛳粉", 55, new BigDecimal("18.9"),
-                new BigDecimal("13.9"),50, 5, null, "400g/包", "常温","广西",55);
+        classifyIdList = Stream.of(46,49).collect(Collectors.toList());
+        MallProduct product3 = buildMallProduct("花枝丸", "肉质细腻 弹牙爽口", 62, new BigDecimal("15.8"),
+                new BigDecimal("13.1"),50, 5, "0-7℃冷藏", "250g", "冷藏（0-7）℃","福州",62);
         productService.insertWithClassifyIdList(product3, classifyIdList);
 
-        classifyIdList = Stream.of(40).collect(Collectors.toList());
-        MallProduct product4 = buildMallProduct("芝麻油", "纯芝麻油 持久留香", 56, new BigDecimal("15.8"),
-                new BigDecimal("11.8"),50, 5, null, "145ml/瓶", "常温","上海",56);
+        classifyIdList = Stream.of(47).collect(Collectors.toList());
+        MallProduct product4 = buildMallProduct("咖喱鸡肉", "美味可口 微波可食用", 63, new BigDecimal("14.9"),
+                new BigDecimal("13.8"),50, 5, "-18℃冷冻", "250g/盒", "冷冻-18℃以下","武夷山",63);
         productService.insertWithClassifyIdList(product4, classifyIdList);
 
-        classifyIdList = Stream.of(41).collect(Collectors.toList());
-        MallProduct product5 = buildMallProduct("沙茶酱", "酱香浓郁 火锅蘸酱", 57, new BigDecimal("34.9"),
-                new BigDecimal("32.8"),50, 5, null, "250g/瓶", "常温","中国台湾",57);
+        classifyIdList = Stream.of(48,49).collect(Collectors.toList());
+        MallProduct product5 = buildMallProduct("猪肚莲子汤", "猪肚脆爽 汤头鲜美", 64, new BigDecimal("68"),
+                new BigDecimal("48"),50, 5, "-18℃冷冻", "750g/份", "冷冻-18℃以下","厦门",64);
         productService.insertWithClassifyIdList(product5, classifyIdList);
 
-        classifyIdList = Stream.of(42).collect(Collectors.toList());
-        MallProduct product6 = buildMallProduct("味精", "增味提鲜", 58, new BigDecimal("19.8"),
-                new BigDecimal("16.8"),50, 5, null, "908g/包", "常温","福建",58);
+        classifyIdList = Stream.of(46,49).collect(Collectors.toList());
+        MallProduct product6 = buildMallProduct("牛杂", "福州特色小吃", 65, new BigDecimal("29.9"),
+                new BigDecimal("29.8"),50, 5, null, "原料225g+100g调料/盒", "冷冻-18℃以下","福建福州",65);
         productService.insertWithClassifyIdList(product6, classifyIdList);
 
-        classifyIdList = Stream.of(43).collect(Collectors.toList());
-        MallProduct product7 = buildMallProduct("绿豆", "皮薄芯糯 易熟好豆", 59, new BigDecimal("15.8"),
-                new BigDecimal("12.8"),50, 5, null, "1000g/包", "常温","福州",59);
+        classifyIdList = Stream.of(50).collect(Collectors.toList());
+        MallProduct product7 = buildMallProduct("鸡肉三明治", "口感松软 加热即食", 66, new BigDecimal("14.9"),
+                new BigDecimal("13.8"),50, 5, "-18℃冷冻", "135g/包", "冷冻-18℃以下","安徽省六安市",66);
         productService.insertWithClassifyIdList(product7, classifyIdList);
+
+        classifyIdList = Stream.of(51).collect(Collectors.toList());
+        MallProduct product8 = buildMallProduct("鸡胸肉", "低温即食", 67, new BigDecimal("14.8"),
+                new BigDecimal("13.8"),50, 5, "0-4℃冷藏", "100g/袋", "冰鲜（0-4）℃","山东聊城",67);
+        productService.insertWithClassifyIdList(product8, classifyIdList);
+    }
+
+    /**
+     * 冰品面点
+     *
+     */
+    @Test
+    public void insert7() {
+        List<Integer> classifyIdList;
+
+        classifyIdList = Stream.of(52).collect(Collectors.toList());
+        MallProduct product1 = buildMallProduct("冰淇淋", "时尚美味", 68, new BigDecimal("13.8"),
+                new BigDecimal("10.9"),50, 5, "-18℃冷冻", "245g/杯", "冷冻-18℃以下","广东省广州",68);
+        productService.insertWithClassifyIdList(product1, classifyIdList);
+
+        classifyIdList = Stream.of(53).collect(Collectors.toList());
+        MallProduct product2 = buildMallProduct("橙汁", "橙味浓郁 酸甜平衡", 69, new BigDecimal("24.8"),
+                new BigDecimal("21.8"),50, 5, "0-4℃冷藏", "1600ml/瓶", "冰鲜（0-4）℃","杭州",69);
+        productService.insertWithClassifyIdList(product2, classifyIdList);
+
+        classifyIdList = Stream.of(54).collect(Collectors.toList());
+        MallProduct product3 = buildMallProduct("小笼包", "汁多味鲜 纯肉馅料", 70, new BigDecimal("14.8"),
+                new BigDecimal("13.8"),50, 5, "-18℃冷冻", "450g/包", "冷冻-18℃以下","郑州",70);
+        productService.insertWithClassifyIdList(product3, classifyIdList);
+
+        classifyIdList = Stream.of(55).collect(Collectors.toList());
+        MallProduct product4 = buildMallProduct("韭菜蒸饺", "适合蒸、煎、微波", 71, new BigDecimal("35.8"),
+                new BigDecimal("35.8"),50, 5, "-18℃冷冻", "920g", "冷冻-18℃以下","青岛秦皇岛",71);
+        productService.insertWithClassifyIdList(product4, classifyIdList);
+
+        classifyIdList = Stream.of(56).collect(Collectors.toList());
+        MallProduct product5 = buildMallProduct("花生汤圆", "味美鲜甜", 72, new BigDecimal("16.8"),
+                new BigDecimal("15.8"),50, 5, "-18℃冷冻", "600g/包", "冷冻-18℃以下","广东汕头",72);
+        productService.insertWithClassifyIdList(product5, classifyIdList);
+
+        classifyIdList = Stream.of(57).collect(Collectors.toList());
+        MallProduct product6 = buildMallProduct("福州肉燕", "皮脆肉香", 73, new BigDecimal("12.8"),
+                new BigDecimal("9.9"),50, 5, "冷冻", "225g/包", "冷冻-18℃以下","福建福州",73);
+        productService.insertWithClassifyIdList(product6, classifyIdList);
+
+        classifyIdList = Stream.of(58).collect(Collectors.toList());
+        MallProduct product7 = buildMallProduct("虾饼", "鲜脆爽口 口感独特", 74, new BigDecimal("12.8"),
+                new BigDecimal("12.8"),50, 5, "-18℃冷冻", "300g/包", "冷冻-18℃以下","福州",74);
+        productService.insertWithClassifyIdList(product7, classifyIdList);
+
+        classifyIdList = Stream.of(59).collect(Collectors.toList());
+        MallProduct product8 = buildMallProduct("蛋饺", "鸡蛋制皮 鲜嫩爽滑", 75, new BigDecimal("19.8"),
+                new BigDecimal("19.8"),50, 5, "-18℃冷冻", "300g/袋", "冷冻-18℃以下","广东汕头",75);
+        productService.insertWithClassifyIdList(product8, classifyIdList);
+    }
+
+    /**
+     * 牛奶面包
+     *
+     */
+    @Test
+    public void insert8() {
+        List<Integer> classifyIdList;
+
+        classifyIdList = Stream.of(60).collect(Collectors.toList());
+        MallProduct product1 = buildMallProduct("鲜牛奶", "100%鲜牛奶", 76, new BigDecimal("13.05"),
+                new BigDecimal("13.05"),50, 5, "新旧包装", "1L/盒", "冷藏（2-6）℃","福建",76);
+        productService.insertWithClassifyIdList(product1, classifyIdList);
+
+        classifyIdList = Stream.of(61).collect(Collectors.toList());
+        MallProduct product2 = buildMallProduct("风味发酵乳", "口感丝滑", 77, new BigDecimal("8.5"),
+                new BigDecimal("4.9"),50, 5, "冷藏", "215g/瓶", "冷藏（2-6）℃","广东",77);
+        productService.insertWithClassifyIdList(product2, classifyIdList);
+
+        classifyIdList = Stream.of(62).collect(Collectors.toList());
+        MallProduct product3 = buildMallProduct("养乐多", "更低含糖量 更少卡路里", 78, new BigDecimal("12.7"),
+                new BigDecimal("12.7"),50, 5, "低温，冷藏", "100ml*5/排", "冷藏（2-10）℃","苏州",78);
+        productService.insertWithClassifyIdList(product3, classifyIdList);
+
+        classifyIdList = Stream.of(63).collect(Collectors.toList());
+        MallProduct product4 = buildMallProduct("纯牛奶", "黄金奶源带", 79, new BigDecimal("68"),
+                new BigDecimal("59.8"),50, 5, "新旧包装", "200ml*12盒/箱", "常温","新疆",79);
+        productService.insertWithClassifyIdList(product4, classifyIdList);
+
+        classifyIdList = Stream.of(64).collect(Collectors.toList());
+        MallProduct product5 = buildMallProduct("全脂牛奶", "进口奶品 美好生活", 80, new BigDecimal("18.9"),
+                new BigDecimal("11.3"),50, 5, "新旧包装", "1L", "常温","德国",80);
+        productService.insertWithClassifyIdList(product5, classifyIdList);
+
+        classifyIdList = Stream.of(65).collect(Collectors.toList());
+        MallProduct product6 = buildMallProduct("吐司", "经典好吃", 81, new BigDecimal("10.24"),
+                new BigDecimal("10.24"),50, 5, null, "160g/袋", "常温","福州",81);
+        productService.insertWithClassifyIdList(product6, classifyIdList);
+
+        classifyIdList = Stream.of(66).collect(Collectors.toList());
+        MallProduct product7 = buildMallProduct("芝士蛋糕", "绵密顺滑 入口即化", 82, new BigDecimal("13.8"),
+                new BigDecimal("10.24"),50, 5, "0-4℃冷藏", "110g/包", "冰鲜（0-4）℃","福州",82);
+        productService.insertWithClassifyIdList(product7, classifyIdList);
+
+        classifyIdList = Stream.of(67).collect(Collectors.toList());
+        MallProduct product8 = buildMallProduct("生日蛋糕", "进口动物奶油", 83, new BigDecimal("238"),
+                new BigDecimal("198"),50, 5, "0-4℃冷藏", "1.5磅/份", "冷藏（0-4）℃","福州",83);
+        productService.insertWithClassifyIdList(product8, classifyIdList);
     }
 
     private MallProduct buildMallProduct(String productName, String desc, Integer pic,

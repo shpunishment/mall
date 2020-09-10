@@ -26,6 +26,13 @@ public class MallCouponServiceTest {
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    @Test
+    public void insert() throws Exception {
+        this.insertAll();
+        this.insertWithClassifyIdList();
+        this.insertWithProductIdList();
+    }
+
     /**
      * 造数据
      * @throws Exception
@@ -35,24 +42,28 @@ public class MallCouponServiceTest {
      * @throws Exception
      */
     @Test
-    public void insert() throws Exception {
+    public void insertAll() throws Exception {
         // 通用券
         MallCoupon coupon1 = buildMallCoupon("全品类通用券", "全品类通用券（全场，除限时抢购商品）", new BigDecimal("10.00"), new BigDecimal("2.00"),
                 10, 1,1,1,0, null, null);
         couponService.insertSelective(coupon1);
 
         MallCoupon coupon2 = buildMallCoupon("全品类通用券", "全品类通用券（全场，除限时抢购商品）", new BigDecimal("30.00"), new BigDecimal("5.00"),
-                10, 1,1,1,null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
+                10, 1,1,1,3, null, null);
         couponService.insertSelective(coupon2);
 
         MallCoupon coupon3 = buildMallCoupon("全品类通用券", "全品类通用券（全场，除限时抢购商品）", new BigDecimal("50.00"), new BigDecimal("10.00"),
-                10, 1,1,1,null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
+                10, 1,1,2,null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         couponService.insertSelective(coupon3);
 
-        // 新人
-        MallCoupon coupon4 = buildMallCoupon("全品类新人礼券", "全品类新人礼券（全场，除限时抢购商品）", new BigDecimal("20.00"), new BigDecimal("10.00"),
-                null, 2,1,1,7, null, null);
+        MallCoupon coupon4 = buildMallCoupon("全品类通用券", "全品类通用券（全场，除限时抢购商品）", new BigDecimal("60.00"), new BigDecimal("15.00"),
+                10, 1,1,2,null, dateFormat.parse("2020-09-09 00:00:00"), dateFormat.parse("2020-09-30 23:59:59"));
         couponService.insertSelective(coupon4);
+
+        // 新人
+        MallCoupon coupon5 = buildMallCoupon("全品类新人礼券", "全品类新人礼券（全场，除限时抢购商品）", new BigDecimal("20.00"), new BigDecimal("10.00"),
+                null, 2,1,1,7, null, null);
+        couponService.insertSelective(coupon5);
     }
 
     /**

@@ -126,6 +126,9 @@
       <if test="publishStatus != null">
         publish_status,
       </if>
+      <if test="label != null">
+        label,
+      </if>
       <if test="format != null">
         format,
       </if>
@@ -184,6 +187,9 @@
       </if>
       <if test="publishStatus != null">
         #{publishStatus,jdbcType=INTEGER},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
       </if>
       <if test="format != null">
         #{format,jdbcType=VARCHAR},
@@ -247,6 +253,9 @@
       </if>
       <if test="publishStatus != null">
         publish_status = #{publishStatus,jdbcType=INTEGER},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
       </if>
       <if test="format != null">
         format = #{format,jdbcType=VARCHAR},
