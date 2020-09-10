@@ -25,4 +25,8 @@ public interface MallDeliveryService {
 
     List<Integer> getDeliveringIdList();
 
+    List<Integer> wait2Receive(Integer deliveryId);
+
+    List<Integer> receiveSuccess(Integer deliveryId);
+
 }

@@ -76,6 +76,12 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Autowired
     private ProfileConfig profileConfig;
 
+    @Autowired
+    private MallDeliveryService deliveryService;
+
+    @Autowired
+    private MallDeliveryOrderService deliveryOrderService;
+
     @Override
     public void deleteByPrimaryKey(Integer orderId) {
         orderMapper.deleteByPrimaryKey(orderId);
@@ -534,10 +540,13 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public void delivering(Integer orderId, Integer deliveryId) {
-//        order.setStatus(MallOrderStatusEnums.WAIT2RECEIVE.getValue());
-//        order.setDeliveryTime(new Date());
-//        this.updateByPrimaryKeySelective(order);
+    public void wait2Receive(Integer orderId, Integer deliveryId) {
+        MallOrder order = new MallOrder();
+        order.setOrderId(orderId);
+        order.setStatus(MallOrderStatusEnums.WAIT2RECEIVE.getValue());
+        order.setDeliveryId(deliveryId);
+        order.setDeliveryTime(new Date());
+        this.updateByPrimaryKeySelective(order);
     }
 
     @Override
@@ -642,6 +651,11 @@ public class MallOrderServiceImpl implements MallOrderService {
                 .append(Const.REDIS_PARAM_DELIMITER)
                 .append(orderId);
         redisService.zAdd(keySb.toString(), valueSb.toString(), Double.valueOf(String.valueOf(payTime.getTime())));
+    }
+
+    @Override
+    public List<Integer> getUserIdListByOrderIdList(List<Integer> orderIdList) {
+        return orderMapper.getUserIdListByOrderIdList(orderIdList);
     }
 
     @Override

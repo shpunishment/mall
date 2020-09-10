@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Description:
@@ -88,10 +89,10 @@ public interface MallOrderService {
      * @param orderId
      * @param deliveryId
      */
-    void delivering(Integer orderId, Integer deliveryId);
+    void wait2Receive(Integer orderId, Integer deliveryId);
 
     /**
-     * 收货成功
+     * 收获成功
      * @param orderId
      */
     void receiveSuccess(Integer orderId);
@@ -141,6 +142,8 @@ public interface MallOrderService {
      * @param payTime
      */
     void zAddWait2DeliveryOrder(Integer orderId, Date payTime);
+
+    List<Integer> getUserIdListByOrderIdList(List<Integer> orderIdList);
 
     /**
      * 下单成功，取消订单，评价订单，根据用户id删除缓存

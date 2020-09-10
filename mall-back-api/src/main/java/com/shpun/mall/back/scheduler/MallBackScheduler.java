@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -172,23 +173,13 @@ public class MallBackScheduler {
         if (CollectionUtils.isNotEmpty(need2DeliveryIdList)) {
             // 更新配送员信息，配送员订单信息，订单信息
             need2DeliveryIdList.forEach(deliveryId -> {
-                MallDelivery delivery = new MallDelivery();
-                delivery.setDeliveryId(deliveryId);
-                delivery.setStatus(MallDeliveryStatusEnums.DELIVERING.getValue());
-                deliveryService.updateByPrimaryKeySelective(delivery);
+                List<Integer> orderIdList = deliveryService.wait2Receive(deliveryId);
 
-                // 获取该配送员配送的订单，将订单都更新为待收货
-                List<MallDeliveryOrder> deliveryOrderList = deliveryOrderService.getListByFilter(deliveryId, MallDeliveryOrderStatusEnums.WAIT2DELIVERY.getValue());
-                deliveryOrderList.forEach(deliveryOrder -> {
-                    deliveryOrder.setStatus(MallDeliveryOrderStatusEnums.DELIVERING.getValue());
-                    deliveryOrderService.updateByPrimaryKeySelective(deliveryOrder);
-
-                    MallOrder order = new MallOrder();
-                    order.setOrderId(deliveryOrder.getOrderId());
-                    order.setStatus(MallOrderStatusEnums.WAIT2RECEIVE.getValue());
-                    order.setDeliveryId(deliveryId);
-                    order.setDeliveryTime(new Date());
-                    orderService.updateByPrimaryKeySelective(order);
+                List<Integer> userIdList = orderService.getUserIdListByOrderIdList(orderIdList);
+                Set<Integer> userIdSet = new HashSet<>(userIdList);
+                userIdSet.forEach(userId -> {
+                    // 删除订单缓存
+                    orderService.deleteCache(userId);
                 });
             });
         }
@@ -204,23 +195,13 @@ public class MallBackScheduler {
         if (CollectionUtils.isNotEmpty(deliveringIdList)) {
             // 更新配送员信息，配送员订单信息，订单信息
             deliveringIdList.forEach(deliveryId -> {
-                MallDelivery delivery = new MallDelivery();
-                delivery.setDeliveryId(deliveryId);
-                delivery.setStatus(MallDeliveryStatusEnums.WAIT2DELIVERY.getValue());
-                deliveryService.updateByPrimaryKeySelective(delivery);
+                List<Integer> orderIdList = deliveryService.receiveSuccess(deliveryId);
 
-                // 获取该配送员配送的订单，将订单都更新为已收货
-                List<MallDeliveryOrder> deliveryOrderList = deliveryOrderService.getListByFilter(deliveryId, MallDeliveryOrderStatusEnums.DELIVERING.getValue());
-                deliveryOrderList.forEach(deliveryOrder -> {
-                    deliveryOrder.setStatus(MallDeliveryOrderStatusEnums.COMPLETED.getValue());
-                    deliveryOrder.setReceiveTime(new Date());
-                    deliveryOrderService.updateByPrimaryKeySelective(deliveryOrder);
-
-                    MallOrder order = new MallOrder();
-                    order.setOrderId(deliveryOrder.getOrderId());
-                    order.setStatus(MallOrderStatusEnums.WAIT2COMMENT.getValue());
-                    order.setReceiveTime(new Date());
-                    orderService.updateByPrimaryKeySelective(order);
+                List<Integer> userIdList = orderService.getUserIdListByOrderIdList(orderIdList);
+                Set<Integer> userIdSet = new HashSet<>(userIdList);
+                userIdSet.forEach(userId -> {
+                    // 删除订单缓存
+                    orderService.deleteCache(userId);
                 });
             });
         }

@@ -411,4 +411,13 @@
     </where>
   </select>
 
+  <select id="getUserIdListByOrderIdList" resultType="java.lang.Integer">
+    select user_id
+    from mall_order
+    where order_id in
+    <foreach item="orderId" collection="orderIdList" open="(" separator="," close=")">
+      #{orderId,jdbcType=INTEGER}
+    </foreach>
+  </select>
+
 </mapper>

@@ -28,4 +28,6 @@ public interface MallOrderMapper {
 
     MallOrder getByFilter(@Param("orderNumber") String orderNumber, @Param("status") Integer status);
 
+    List<Integer> getUserIdListByOrderIdList(@Param("orderIdList") List<Integer> orderIdList);
+
 }
