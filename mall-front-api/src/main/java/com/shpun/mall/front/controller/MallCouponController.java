@@ -48,23 +48,8 @@ public class MallCouponController {
 
         PageInfo<MallCouponVo> couponVoPageInfo = couponService.getVoPage(offset, limit);
 
-        if (CollectionUtils.isNotEmpty(couponVoPageInfo.getList()) && SecurityUserUtils.getUserId() != null) {
-            List<Integer> couponIdList = couponVoPageInfo.getList().stream().map(MallCouponVo::getCouponId).collect(Collectors.toList());
-            List<Integer> receivedList = userCouponService.getReceivedCouponId(SecurityUserUtils.getUserId(), couponIdList);
-
-            for (MallCouponVo couponVo : couponVoPageInfo.getList()) {
-                Integer couponId = couponVo.getCouponId();
-                if (receivedList.contains(couponId)) {
-                    couponVo.setReceived(true);
-                } else {
-                    couponVo.setReceived(false);
-                }
-
-                // 数量标识
-                couponVo.setTotal(null);
-                couponVo.setHasTotal(true);
-            }
-        }
+        // 添加用户领取标识，库存标识
+        userCouponService.additionalVoList(couponVoPageInfo.getList(), SecurityUserUtils.getUserId());
         return couponVoPageInfo;
     }
 

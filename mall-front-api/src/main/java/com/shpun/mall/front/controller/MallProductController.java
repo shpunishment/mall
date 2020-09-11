@@ -6,6 +6,7 @@ import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserFootprint;
+import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallFlashVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.*;
@@ -51,6 +52,9 @@ public class MallProductController {
     @Autowired
     private MallFlashItemService flashItemService;
 
+    @Autowired
+    private MallUserCouponService userCouponService;
+
     @ApiOperation("根据商品二级分类id分页获取商品")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "classifyId", value = "商品二级分类id", dataType = "Integer"),
@@ -94,6 +98,16 @@ public class MallProductController {
 
         // 检查商品是否在限时抢购，在用户购物车中，是否收藏
         productService.additionalVo(productVo, SecurityUserUtils.getUserId(), true, true);
+
+        // 非限时抢购商品，添加该商品可用优惠券
+        if (!productVo.getFlashing()) {
+            List<MallCouponVo> couponVoList = couponService.getVoListByProductId(productId);
+
+            // 添加用户领取标识，库存标识
+            userCouponService.additionalVoList(couponVoList, SecurityUserUtils.getUserId());
+            productVo.setCouponVoList(couponVoList);
+        }
+
         return productVo;
     }
 

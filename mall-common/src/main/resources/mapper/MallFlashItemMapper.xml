@@ -188,6 +188,7 @@
 	  p.original_price,
 	  p.new_status,
 	  p.label,
+	  p.label_color,
 	  fi.price as current_price,
 	  fi.stock,
 	  fi.`limit`

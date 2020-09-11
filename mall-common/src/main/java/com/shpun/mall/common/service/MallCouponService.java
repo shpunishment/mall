@@ -51,11 +51,13 @@ public interface MallCouponService {
 
     MallCoupon getForOrder(Integer couponId);
 
+    List<Integer> getNewUserCouponId();
+
+    List<MallCouponVo> getVoListByProductId(Integer productId);
+
     /**
      * 优惠券被领取，删除缓存
      */
     void deleteCache();
-
-    List<Integer> getNewUserCouponId();
 
 }

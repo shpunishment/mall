@@ -12,7 +12,6 @@ import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallOrderItemVo;
 import com.shpun.mall.common.model.vo.MallOrderVo;
-import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.*;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.*;
@@ -71,8 +70,13 @@ public class MallOrderController {
             @ApiImplicitParam(name = "cartIdList", value = "购物车idList", dataType = "List<Integer>")
     })
     @PostMapping("/calculate")
-    public MallOrder calculatePrice(@RequestParam("cartIdList") List<Integer> cartIdList) {
-        return orderService.calculatePrice(SecurityUserUtils.getUserId(), cartIdList);
+    public MallOrderVo calculatePrice(@RequestParam("cartIdList") List<Integer> cartIdList) {
+        MallOrderVo orderVo = new MallOrderVo();
+        MallOrder order = orderService.calculatePrice(SecurityUserUtils.getUserId(), cartIdList);
+        BeanUtils.copyProperties(order, orderVo);
+        // 价格改为文本
+        orderService.price2Str(orderVo);
+        return orderVo;
     }
 
     @ApiOperation("根据用户优惠券计算价格")
@@ -155,12 +159,7 @@ public class MallOrderController {
         }
 
         // 价格改为文本
-        orderVo.setProductPriceStr(orderVo.getProductPrice().toString());
-        orderVo.setDeliveryPriceStr(orderVo.getDeliveryPrice().toString());
-        if (orderVo.getCouponPrice() != null) {
-            orderVo.setCouponPriceStr(orderVo.getCouponPrice().toString());
-        }
-        orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
+        orderService.price2Str(orderVo);
 
         // 添加配送员
         if (orderVo.getDeliveryId() != null) {

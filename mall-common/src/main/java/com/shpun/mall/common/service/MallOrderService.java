@@ -145,6 +145,8 @@ public interface MallOrderService {
 
     List<Integer> getUserIdListByOrderIdList(List<Integer> orderIdList);
 
+    void price2Str(MallOrderVo orderVo);
+
     /**
      * 下单成功，取消订单，评价订单，根据用户id删除缓存
      * @param userId

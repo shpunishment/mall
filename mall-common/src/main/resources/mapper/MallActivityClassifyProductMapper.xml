@@ -143,7 +143,8 @@
 	  p.stock,
 	  p.`limit`,
 	  p.new_status,
-	  p.label
+	  p.label,
+	  p.label_color
     FROM  mall_activity_classify_product AS acc
     LEFT JOIN mall_product AS p ON acc.product_id = p.product_id
     WHERE acc.classify_id = #{classifyId,jdbcType=INTEGER}

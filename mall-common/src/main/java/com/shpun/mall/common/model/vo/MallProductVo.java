@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Description:
@@ -63,6 +64,9 @@ public class MallProductVo implements Serializable {
     @ApiModelProperty("标签")
     private String label;
 
+    @ApiModelProperty("标签颜色，blue，pink，reen")
+    private String labelColor;
+
     @ApiModelProperty("规格")
     private String format;
 
@@ -92,6 +96,9 @@ public class MallProductVo implements Serializable {
 
     @ApiModelProperty("足迹id")
     private Integer footprintId;
+
+    @ApiModelProperty("商品可用的优惠券")
+    private List<MallCouponVo> couponVoList;
 
     private static final long serialVersionUID = 1L;
 
@@ -223,6 +230,14 @@ public class MallProductVo implements Serializable {
         this.label = label;
     }
 
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
+    }
+
     public String getFormat() {
         return format;
     }
@@ -279,7 +294,6 @@ public class MallProductVo implements Serializable {
         this.remainStockPercent = remainStockPercent;
     }
 
-
     public Date getFlashEndTime() {
         return flashEndTime;
     }
@@ -302,5 +316,13 @@ public class MallProductVo implements Serializable {
 
     public void setFootprintId(Integer footprintId) {
         this.footprintId = footprintId;
+    }
+
+    public List<MallCouponVo> getCouponVoList() {
+        return couponVoList;
+    }
+
+    public void setCouponVoList(List<MallCouponVo> couponVoList) {
+        this.couponVoList = couponVoList;
     }
 }

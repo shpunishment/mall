@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +76,11 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Autowired
     private ProfileConfig profileConfig;
+
+    /**
+     * 订单编号自增后缀
+     */
+    private static final AtomicInteger ORDER_SEQ = new AtomicInteger(1000);
 
     @Override
     public void deleteByPrimaryKey(Integer orderId) {
@@ -248,6 +254,8 @@ public class MallOrderServiceImpl implements MallOrderService {
                         if (order.getCouponId() != null) {
                             MallOrderVo orderVo = new MallOrderVo();
                             BeanUtils.copyProperties(order, orderVo);
+                            // 价格改为文本
+                            this.price2Str(orderVo);
                             couponVo.setOrderVo(orderVo);
                             resultMap.get("can").add(couponVo);
                         } else {
@@ -399,8 +407,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
             this.setPrice(order, productPrice, discount);
 
-            // 生成订单号
-            String orderNumber = new Date().getTime() + "" + new Random().nextInt(1000);
+            String orderNumber = generateOrderNumber();
             order.setOrderNumber(orderNumber);
             order.setOrderTime(new Date());
             order.setProductAmount(productAmount);
@@ -460,6 +467,17 @@ public class MallOrderServiceImpl implements MallOrderService {
         order.setReceiveName(receiveNameSb.toString());
         order.setReceivePhone(userAddress.getPhone());
         order.setReceiveAddress(userAddress.getAddress());
+    }
+
+    /**
+     * 生成订单号
+     * @return
+     */
+    private String generateOrderNumber() {
+        if(ORDER_SEQ.intValue() > 9990){
+            ORDER_SEQ.getAndSet(1000);
+        }
+        return new Date().getTime() + "" + ORDER_SEQ.getAndIncrement();
     }
 
     @Override
@@ -654,6 +672,16 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public List<Integer> getUserIdListByOrderIdList(List<Integer> orderIdList) {
         return orderMapper.getUserIdListByOrderIdList(orderIdList);
+    }
+
+    @Override
+    public void price2Str(MallOrderVo orderVo) {
+        orderVo.setProductPriceStr(orderVo.getProductPrice().toString());
+        orderVo.setDeliveryPriceStr(orderVo.getDeliveryPrice().toString());
+        if (orderVo.getCouponPrice() != null) {
+            orderVo.setCouponPriceStr(orderVo.getCouponPrice().toString());
+        }
+        orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
     }
 
     @Override

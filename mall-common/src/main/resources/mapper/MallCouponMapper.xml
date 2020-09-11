@@ -52,6 +52,11 @@
     days, start_time, end_time
   </sql>
 
+  <sql id="Vo_c_Column_List">
+    c.coupon_id, c.`name`, c.`desc`, c.min_price, c.discount, c.`limit`, c.total, c.`type`, c.use_type, c.time_type,
+    c.days, c.start_time, c.end_time
+  </sql>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -317,6 +322,43 @@
     WHERE deleted = 0
 	  AND `status` = 1
 	  AND `type` = 2
+  </select>
+
+  <select id="getVoListByProductId" resultMap="VoResultMap">
+    SELECT
+    <include refid="Vo_c_Column_List" />
+    FROM mall_coupon_product AS cp
+      LEFT JOIN mall_coupon AS c ON c.coupon_id = cp.coupon_id
+    WHERE cp.product_id = #{productId,jdbcType=INTEGER}
+      AND c.deleted = 0
+      AND c.`status` = 1
+      AND ( c.total > 0 OR c.total = - 1 )
+      AND c.type = 1
+      AND c.use_type = 3
+      AND (( c.start_time IS NULL AND c.end_time IS NULL ) OR ( c.start_time <![CDATA[<=]]> now( ) AND c.end_time <![CDATA[>=]]> now( ) ))
+    UNION
+    SELECT DISTINCT
+    <include refid="Vo_c_Column_List" />
+    FROM mall_product_classify AS pc
+      LEFT JOIN mall_coupon_classify AS cc ON cc.classify_id = pc.classify_id
+      LEFT JOIN mall_coupon AS c ON c.coupon_id = cc.coupon_id
+    WHERE pc.product_id = #{productId,jdbcType=INTEGER}
+      AND c.deleted = 0
+      AND c.`status` = 1
+      AND ( c.total > 0 OR c.total = - 1 )
+      AND c.type = 1
+      AND c.use_type = 2
+      AND ( ( c.start_time IS NULL AND c.end_time IS NULL ) OR ( c.start_time <![CDATA[<=]]> now( ) AND c.end_time <![CDATA[>=]]> now( ) ) )
+    UNION
+    SELECT
+    <include refid="Vo_c_Column_List" />
+    FROM mall_coupon AS c
+    WHERE c.deleted = 0
+      AND c.`status` = 1
+      AND ( c.total > 0 OR c.total = - 1 )
+      AND c.type = 1
+      AND c.use_type = 1
+      AND ( ( c.start_time IS NULL AND c.end_time IS NULL ) OR ( c.start_time <![CDATA[<=]]> now( ) AND c.end_time <![CDATA[>=]]> now( ) ) )
   </select>
 
 </mapper>

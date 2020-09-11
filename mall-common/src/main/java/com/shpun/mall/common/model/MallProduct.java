@@ -66,6 +66,9 @@ public class MallProduct implements Serializable {
     @ApiModelProperty("标签")
     private String label;
 
+    @ApiModelProperty("标签颜色")
+    private String labelColor;
+
     @ApiModelProperty("规格")
     private String format;
 
@@ -222,6 +225,14 @@ public class MallProduct implements Serializable {
         this.label = label;
     }
 
+    public String getLabelColor() {
+        return labelColor;
+    }
+
+    public void setLabelColor(String labelColor) {
+        this.labelColor = labelColor;
+    }
+
     public String getFormat() {
         return format;
     }
@@ -293,6 +304,7 @@ public class MallProduct implements Serializable {
         sb.append(", newStatus=").append(newStatus);
         sb.append(", publishStatus=").append(publishStatus);
         sb.append(", label=").append(label);
+        sb.append(", labelColor=").append(labelColor);
         sb.append(", format=").append(format);
         sb.append(", storage=").append(storage);
         sb.append(", origin=").append(origin);

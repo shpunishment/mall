@@ -20,6 +20,7 @@
     <result column="new_status" jdbcType="INTEGER" property="newStatus" />
     <result column="publish_status" jdbcType="INTEGER" property="publishStatus" />
     <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="label_color" jdbcType="VARCHAR" property="labelColor" />
     <result column="format" jdbcType="VARCHAR" property="format" />
     <result column="storage" jdbcType="VARCHAR" property="storage" />
     <result column="origin" jdbcType="VARCHAR" property="origin" />
@@ -41,28 +42,31 @@
     <result column="new_status" jdbcType="INTEGER" property="newStatus" />
     <result column="publish_status" jdbcType="INTEGER" property="publishStatus" />
     <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="label_color" jdbcType="VARCHAR" property="labelColor" />
     <result column="format" jdbcType="VARCHAR" property="format" />
     <result column="storage" jdbcType="VARCHAR" property="storage" />
     <result column="origin" jdbcType="VARCHAR" property="origin" />
     <result column="detail" jdbcType="INTEGER" property="detail" />
     <result column="favorite_id" jdbcType="INTEGER" property="favoriteId" />
     <result column="footprint_id" jdbcType="INTEGER" property="footprintId" />
+
+    <association columnPrefix="c_" property="cartVo" resultMap="com.shpun.mall.common.mapper.MallCartMapper.VoResultMap" />
   </resultMap>
 
   <sql id="Base_Column_List">
     product_id, create_time, create_id, update_time, update_id, product_name, `desc`, brand_id,
     pic, original_price, current_price, stock, `limit`, sales, new_status, publish_status, label,
-    format, `storage`, origin, detail
+    label_color, format, `storage`, origin, detail
   </sql>
 
   <sql id="Vo_Column_List">
     product_id, product_name, `desc`, pic, original_price, current_price, stock, `limit`,
-    new_status, label
+    new_status, label, label_color
   </sql>
 
   <sql id="Vo_Detail_Column_List">
     product_id, product_name, `desc`, pic, original_price, current_price, stock, `limit`,
-    new_status, label, format, `storage`, origin, detail
+    new_status, label, label_color, format, `storage`, origin, detail
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -129,6 +133,9 @@
       <if test="label != null">
         label,
       </if>
+      <if test="labelColor != null">
+        label_color,
+      </if>
       <if test="format != null">
         format,
       </if>
@@ -190,6 +197,9 @@
       </if>
       <if test="label != null">
         #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="labelColor != null">
+        #{labelColor,jdbcType=VARCHAR},
       </if>
       <if test="format != null">
         #{format,jdbcType=VARCHAR},
@@ -257,6 +267,9 @@
       <if test="label != null">
         label = #{label,jdbcType=VARCHAR},
       </if>
+      <if test="labelColor != null">
+        label_color = #{labelColor,jdbcType=VARCHAR},
+      </if>
       <if test="format != null">
         format = #{format,jdbcType=VARCHAR},
       </if>
@@ -298,7 +311,8 @@
       p.stock,
       p.`limit`,
       p.new_status,
-      p.label
+      p.label,
+      p.label_color
     FROM
       mall_product AS p
       LEFT JOIN mall_product_classify AS pc ON pc.product_id = p.product_id
@@ -378,7 +392,8 @@
       p.stock,
       p.`limit`,
       p.new_status,
-      p.label
+      p.label,
+      p.label_color
     FROM
       mall_product AS p
       LEFT JOIN mall_product_classify AS pc ON pc.product_id = p.product_id

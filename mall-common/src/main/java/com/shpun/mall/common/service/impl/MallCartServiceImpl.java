@@ -8,6 +8,7 @@ import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallCartMapper;
 import com.shpun.mall.common.model.MallCart;
 import com.shpun.mall.common.model.vo.MallCartVo;
+import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallCartService;
 import com.shpun.mall.common.service.MallProductService;
 import com.shpun.mall.common.service.RedisService;
@@ -102,20 +103,20 @@ public class MallCartServiceImpl implements MallCartService {
         cartMapper.deleteBatch(cartIdList);
     }
 
-    @Override
-    public List<MallCartVo> getVoByUserId(Integer userId) {
-        return cartMapper.getVoByUserId(userId);
-    }
-
     @RedisCache
     @Override
     public MallCartVo getVoByUserIdAndProductId(Integer userId, Integer productId) {
         return cartMapper.getVoByUserIdAndProductId(userId, productId);
     }
 
+    @Override
+    public List<MallProductVo> getVoByUserId(Integer userId) {
+        return cartMapper.getVoByUserId(userId);
+    }
+
     @RedisCache
     @Override
-    public PageInfo<MallCartVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit) {
+    public PageInfo<MallProductVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
         return new PageInfo<>(this.getVoByUserId(userId));
     }

@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -98,6 +98,28 @@ public class MallOrderServiceTest {
         order.setScore(4);
         order.setComment("不错不错");
         orderService.commentSuccess(order);
+    }
+
+    @Test
+    public void generateOrderNumber() {
+        List<String> orderNumberList = Collections.synchronizedList(new ArrayList<>());
+        IntStream.range(0,100000).parallel().forEach(i->{
+            orderNumberList.add(generate());
+        });
+
+        List<String> filterOrderNumberList = orderNumberList.stream().distinct().collect(Collectors.toList());
+
+        System.out.println("生成的订单数：" + orderNumberList.size());
+        System.out.println("过滤重复后的订单数：" + filterOrderNumberList.size());
+        System.out.println("重复的订单数：" + (orderNumberList.size() - filterOrderNumberList.size()));
+    }
+
+    private static final AtomicInteger ORDER_SEQ = new AtomicInteger(1000);
+    private String generate() {
+        if(ORDER_SEQ.intValue() > 9990){
+            ORDER_SEQ.getAndSet(1000);
+        }
+        return new Date().getTime() + "" + ORDER_SEQ.getAndIncrement();
     }
 
 }

@@ -16,8 +16,6 @@
     <id column="cart_id" jdbcType="INTEGER" property="cartId" />
     <result column="product_id" jdbcType="INTEGER" property="productId" />
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
-
-    <association columnPrefix="p_" property="productVo" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -127,21 +125,22 @@
     </foreach>
   </update>
 
-  <select id="getVoByUserId" parameterType="java.lang.Integer" resultMap="VoResultMap">
+  <select id="getVoByUserId" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
     SELECT
-	  p.product_id as p_product_id,
-	  p.product_name as p_product_name,
-	  p.`desc` as p_desc,
-	  p.pic as p_pic,
-	  p.original_price as p_original_price,
-	  p.current_price as p_current_price,
-	  p.stock as p_stock,
-	  p.`limit` as p_limit,
-	  p.new_status as p_new_status,
-	  p.label as p_label,
-	  c.cart_id,
-	  c.product_id,
-	  c.quantity
+	  p.product_id,
+	  p.product_name,
+	  p.`desc`,
+	  p.pic,
+	  p.original_price,
+	  p.current_price,
+	  p.stock,
+	  p.`limit`,
+	  p.new_status,
+	  p.label,
+	  p.label_color,
+	  c.cart_id as c_cart_id,
+	  c.product_id as c_product_id,
+	  c.quantity as c_quantity
     FROM
 	  mall_cart AS c
 	  LEFT JOIN mall_product AS p ON p.product_id = c.product_id

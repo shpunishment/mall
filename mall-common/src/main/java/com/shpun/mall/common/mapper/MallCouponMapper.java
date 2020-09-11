@@ -36,4 +36,6 @@ public interface MallCouponMapper {
      */
     List<Integer> getNewUserCouponId();
 
+    List<MallCouponVo> getVoListByProductId(Integer productId);
+
 }

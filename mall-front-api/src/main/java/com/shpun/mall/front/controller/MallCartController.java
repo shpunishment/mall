@@ -42,17 +42,13 @@ public class MallCartController {
             @ApiImplicitParam(name = "limit", value = "数量", dataType = "Integer")
     })
     @GetMapping("/page")
-    public PageInfo<MallCartVo> page(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
+    public PageInfo<MallProductVo> page(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
                                      @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
-        PageInfo<MallCartVo> cartVoPageInfo = cartService.getVoPageByUserId(SecurityUserUtils.getUserId(), offset, limit);
+        PageInfo<MallProductVo> productVoPageInfo = cartService.getVoPageByUserId(SecurityUserUtils.getUserId(), offset, limit);
 
-        if (CollectionUtils.isNotEmpty(cartVoPageInfo.getList())) {
-            cartVoPageInfo.getList().forEach(cartVo -> {
-                productService.additionalVo(cartVo.getProductVo(), null, true, false);
-            });
-        }
-        return cartVoPageInfo;
+        productService.additionalVoList(productVoPageInfo.getList(), null, true);
+        return productVoPageInfo;
     }
 
     @ApiOperation("添加商品到购物车")

@@ -93,6 +93,7 @@
       p.`limit`,
       p.new_status,
       p.label,
+      p.label_color,
       f.footprint_id
     FROM
       mall_user_footprint AS f

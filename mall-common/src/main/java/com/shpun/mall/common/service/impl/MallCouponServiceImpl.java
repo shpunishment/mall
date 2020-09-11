@@ -148,12 +148,20 @@ public class MallCouponServiceImpl implements MallCouponService {
     }
 
     @Override
-    public void deleteCache() {
-        redisService.deleteByPrefix(MallCouponServiceImpl.class, "getVoPage");
-    }
-
-    @Override
     public List<Integer> getNewUserCouponId() {
         return couponMapper.getNewUserCouponId();
     }
+
+    @RedisCache
+    @Override
+    public List<MallCouponVo> getVoListByProductId(Integer productId) {
+        return couponMapper.getVoListByProductId(productId);
+    }
+
+    @Override
+    public void deleteCache() {
+        redisService.deleteByPrefix(MallCouponServiceImpl.class, "getVoPage");
+        redisService.deleteByPrefix(MallCouponServiceImpl.class, "getVoListByProductId");
+    }
+
 }
