@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 10/09/2020 18:19:04
+ Date: 11/09/2020 17:55:47
 */
 
 SET NAMES utf8mb4;
@@ -224,7 +224,8 @@ CREATE TABLE `mall_delivery_order`  (
   `receive_time` timestamp(0) NULL DEFAULT NULL COMMENT '收货时间',
   `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '订单状态，1待配送，2配送中，3已收货',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `delivery_order_index_delivery_id_status_order_id`(`delivery_id`, `status`, `order_id`) USING BTREE COMMENT '配送员与订单关联表配送员id、状态和订单id索引'
+  INDEX `delivery_order_index_delivery_id_status_order_id`(`delivery_id`, `status`, `order_id`) USING BTREE COMMENT '配送员与订单关联表配送员id、状态和订单id索引',
+  INDEX `delivery_order_index_order_id_delivery_id`(`order_id`, `delivery_id`) USING BTREE COMMENT '配送员与订单关联表订单id和配送员id索引'
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '配送员与订单关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -361,6 +362,7 @@ CREATE TABLE `mall_product`  (
   `new_status` tinyint(1) NOT NULL DEFAULT 0 COMMENT '新品状态，0否，1是',
   `publish_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '上架状态，0否，1是',
   `label` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标签',
+  `label_color` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '标签颜色',
   `format` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '规格',
   `storage` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '存储条件',
   `origin` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '产地',
