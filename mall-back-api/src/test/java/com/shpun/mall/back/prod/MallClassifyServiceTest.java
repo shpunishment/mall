@@ -213,23 +213,21 @@ public class MallClassifyServiceTest {
         MallClassify classify9_8 = buildMallClassify(null,"水", 9);
         classifyService.insertSelective(classify9_8);
 
-        // 酒水冲饮
-        MallClassify classify10_1 = buildMallClassify(null,"进口零食", 10);
+        // 休闲零食
+        MallClassify classify10_1 = buildMallClassify(null,"肉干肉松", 10);
         classifyService.insertSelective(classify10_1);
-        MallClassify classify10_2 = buildMallClassify(null,"坚果炒货", 10);
+        MallClassify classify10_2 = buildMallClassify(null,"薯片米饼", 10);
         classifyService.insertSelective(classify10_2);
-        MallClassify classify10_3 = buildMallClassify(null,"蜜饯果干", 10);
+        MallClassify classify10_3 = buildMallClassify(null,"饼干糕点", 10);
         classifyService.insertSelective(classify10_3);
-        MallClassify classify10_4 = buildMallClassify(null,"饼干糕点", 10);
+        MallClassify classify10_4 = buildMallClassify(null,"坚果炒货", 10);
         classifyService.insertSelective(classify10_4);
-        MallClassify classify10_5 = buildMallClassify(null,"薯片米饼", 10);
+        MallClassify classify10_5 = buildMallClassify(null,"海产小食", 10);
         classifyService.insertSelective(classify10_5);
-        MallClassify classify10_6 = buildMallClassify(null,"巧克力", 10);
+        MallClassify classify10_6 = buildMallClassify(null,"进口零食", 10);
         classifyService.insertSelective(classify10_6);
-        MallClassify classify10_7 = buildMallClassify(null,"肉干肉松", 10);
+        MallClassify classify10_7 = buildMallClassify(null,"蜜饯果干", 10);
         classifyService.insertSelective(classify10_7);
-        MallClassify classify10_8 = buildMallClassify(null,"海产小食", 10);
-        classifyService.insertSelective(classify10_8);
 
     }
 

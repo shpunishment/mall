@@ -16,7 +16,7 @@ public class MallFileServerServiceTest {
     @Autowired
     private MallFileServerService fileServerService;
 
-    private String projectPath = "E:\\IDEA-workspace\\mall";
+    private String projectPath = "E:\\IDEA_workspace\\mall";
 
     @Test
     public void insert() {
@@ -181,6 +181,37 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\吐司.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\芝士蛋糕.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\牛奶面包\\生日蛋糕.jpg");
+    }
+
+    /**
+     * 造数据 酒水冲饮
+     * 84~91
+     */
+    @Test
+    public void insertFirstClassifyWater() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\百威啤酒.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\百事可乐.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\果粒橙.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\江小白.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\拉菲.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\白朗姆酒.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\日本清酒.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\酒水冲饮\\饮用水.jpg");
+    }
+
+    /**
+     * 造数据 休闲零食
+     * 92~98
+     */
+    @Test
+    public void insertFirstClassifyEat() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\儿童猪肉酥.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\原味薯片.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\切糕.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\夏威夷果.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\鳕鱼棒.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\果汁软糖.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\冰糖杨梅.jpg");
     }
 
 }
