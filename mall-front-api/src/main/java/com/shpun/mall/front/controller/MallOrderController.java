@@ -74,8 +74,6 @@ public class MallOrderController {
         MallOrderVo orderVo = new MallOrderVo();
         MallOrder order = orderService.calculatePrice(SecurityUserUtils.getUserId(), cartIdList);
         BeanUtils.copyProperties(order, orderVo);
-        // 价格改为文本
-        orderService.price2Str(orderVo);
         return orderVo;
     }
 
@@ -157,9 +155,6 @@ public class MallOrderController {
         if (MallOrderStatusEnums.WAIT2PAY.getValue().equals(orderVo.getStatus())) {
             orderVo.setEndTime(new Date(orderVo.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT));
         }
-
-        // 价格改为文本
-        orderService.price2Str(orderVo);
 
         // 添加配送员
         if (orderVo.getDeliveryId() != null) {

@@ -254,8 +254,6 @@ public class MallOrderServiceImpl implements MallOrderService {
                         if (order.getCouponId() != null) {
                             MallOrderVo orderVo = new MallOrderVo();
                             BeanUtils.copyProperties(order, orderVo);
-                            // 价格改为文本
-                            this.price2Str(orderVo);
                             couponVo.setOrderVo(orderVo);
                             resultMap.get("can").add(couponVo);
                         } else {
@@ -672,16 +670,6 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public List<Integer> getUserIdListByOrderIdList(List<Integer> orderIdList) {
         return orderMapper.getUserIdListByOrderIdList(orderIdList);
-    }
-
-    @Override
-    public void price2Str(MallOrderVo orderVo) {
-        orderVo.setProductPriceStr(orderVo.getProductPrice().toString());
-        orderVo.setDeliveryPriceStr(orderVo.getDeliveryPrice().toString());
-        if (orderVo.getCouponPrice() != null) {
-            orderVo.setCouponPriceStr(orderVo.getCouponPrice().toString());
-        }
-        orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
     }
 
     @Override
