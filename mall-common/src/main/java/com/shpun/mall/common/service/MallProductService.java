@@ -101,13 +101,17 @@ public interface MallProductService {
 
     List<MallProduct> getListByClassifyId(Integer classifyId);
 
-    List<MallProductVo> getVoListByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort);
+    List<MallProductVo> getVoListByFilterClassifyIdList(List<Integer> classifyIdList, Integer inStock, Integer priceSort);
 
-    PageInfo<MallProductVo> getVoPageByFilterClassifyId(List<Integer> classifyIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+    PageInfo<MallProductVo> getVoPageByFilterClassifyIdList(List<Integer> classifyIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
 
-    List<MallProductVo> getVoListByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort);
+    List<MallProductVo> getVoListByFilterProductIdList(List<Integer> productIdList, Integer inStock, Integer priceSort);
 
-    PageInfo<MallProductVo> getVoPageByFilterProductId(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+    PageInfo<MallProductVo> getVoPageByFilterProductIdList(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+
+    List<MallProductVo> getVoListByFilterNotProductIdList(List<Integer> notProductIdList, Integer inStock, Integer priceSort);
+
+    PageInfo<MallProductVo> getVoPageByFilterNotProductIdList(List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
 
     /**
      * 下单成功，删除缓存

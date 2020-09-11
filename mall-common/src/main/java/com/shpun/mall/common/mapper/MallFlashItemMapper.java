@@ -31,4 +31,6 @@ public interface MallFlashItemMapper {
 
     List<MallProductVo> getVoListByFlashId(Integer flashId);
 
+    List<Integer> getProductIdByFlashIdList(@Param("flashIdList") List<Integer> flashIdList);
+
 }

@@ -43,4 +43,8 @@ public interface MallProductMapper {
                                                  @Param("inStock") Integer inStock,
                                                  @Param("priceSort") Integer priceSort);
 
+    List<MallProductVo> getVoListByNotProductIdList(@Param("notProductIdList") List<Integer> notProductIdList,
+                                                    @Param("inStock") Integer inStock,
+                                                    @Param("priceSort") Integer priceSort);
+
 }

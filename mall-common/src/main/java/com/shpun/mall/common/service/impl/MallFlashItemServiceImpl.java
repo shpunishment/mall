@@ -89,6 +89,12 @@ public class MallFlashItemServiceImpl implements MallFlashItemService {
         return new PageInfo<>(this.getVoListByFlashId(flashId));
     }
 
+    @RedisCache
+    @Override
+    public List<Integer> getProductIdByFlashIdList(List<Integer> flashIdList) {
+        return flashItemMapper.getProductIdByFlashIdList(flashIdList);
+    }
+
     @Override
     public void deleteCache() {
         redisService.deleteByPrefix(MallFlashItemServiceImpl.class, null);

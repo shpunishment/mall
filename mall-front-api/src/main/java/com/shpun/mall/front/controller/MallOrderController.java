@@ -153,18 +153,20 @@ public class MallOrderController {
         if (MallOrderStatusEnums.WAIT2PAY.getValue().equals(orderVo.getStatus())) {
             orderVo.setEndTime(new Date(orderVo.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT));
         }
+
         // 价格改为文本
         orderVo.setProductPriceStr(orderVo.getProductPrice().toString());
         orderVo.setDeliveryPriceStr(orderVo.getDeliveryPrice().toString());
         if (orderVo.getCouponPrice() != null) {
             orderVo.setCouponPriceStr(orderVo.getCouponPrice().toString());
         }
+        orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
+
         // 添加配送员
         if (orderVo.getDeliveryId() != null) {
             MallDelivery delivery = deliveryService.selectByPrimaryKey(orderVo.getDeliveryId());
             orderVo.setDeliveryMan(delivery.getName());
         }
-        orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
         List<MallOrderItemVo> orderItemVoList = orderItemService.getVoByOrderId(orderVo.getOrderId());
         orderVo.setOrderItemVoList(orderItemVoList);
         return orderVo;

@@ -6,15 +6,15 @@ import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserFootprint;
+import com.shpun.mall.common.model.vo.MallFlashVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
-import com.shpun.mall.common.service.MallCouponService;
-import com.shpun.mall.common.service.MallProductService;
-import com.shpun.mall.common.service.MallUserFootprintService;
+import com.shpun.mall.common.service.*;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,6 +44,12 @@ public class MallProductController {
 
     @Autowired
     private MallUserFootprintService userFootprintService;
+
+    @Autowired
+    private MallFlashService flashService;
+
+    @Autowired
+    private MallFlashItemService flashItemService;
 
     @ApiOperation("根据商品二级分类id分页获取商品")
     @ApiImplicitParams(value = {
@@ -107,18 +114,30 @@ public class MallProductController {
 
         // 判断优惠券id是否可用
         MallCoupon coupon = couponService.getAvailable(couponId);
-        if (coupon == null || MallCouponUseTypeEnums.ALL.getValue().equals(coupon.getUseType())) {
+        if (coupon == null) {
             throw new MallException(MallError.MallErrorEnum.COUPON_ERROR);
         }
 
         PageInfo<MallProductVo> productVoPageInfo = null;
-        if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(coupon.getUseType())) {
+        if (MallCouponUseTypeEnums.ALL.getValue().equals(coupon.getUseType())) {
+            // 获取今日限时抢购
+            List<MallFlashVo> flashVoList = flashService.getTodayAvailableVoList();
+            if (CollectionUtils.isNotEmpty(flashVoList)) {
+                List<Integer> flashIdList = flashVoList.stream().map(MallFlashVo::getFlashId).collect(Collectors.toList());
+                // 获取今日限时抢购商品
+                List<Integer> flashProductIdList = flashItemService.getProductIdByFlashIdList(flashIdList);
+                // 搜索商品排除限时抢购商品
+                productVoPageInfo = productService.getVoPageByFilterNotProductIdList(flashProductIdList, inStock, priceSort, offset, limit);
+            } else {
+                productVoPageInfo = productService.getVoPageByFilter("", inStock, priceSort, offset, limit);
+            }
+        } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(coupon.getUseType())) {
             List<Integer> classifyIdList = couponService.getClassifyIdList(couponId);
-            productVoPageInfo = productService.getVoPageByFilterClassifyId(classifyIdList, inStock, priceSort, offset, limit);
+            productVoPageInfo = productService.getVoPageByFilterClassifyIdList(classifyIdList, inStock, priceSort, offset, limit);
 
         } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(coupon.getUseType())) {
             List<Integer> productIdList = couponService.getProductIdList(couponId);
-            productVoPageInfo = productService.getVoPageByFilterProductId(productIdList, inStock, priceSort, offset, limit);
+            productVoPageInfo = productService.getVoPageByFilterProductIdList(productIdList, inStock, priceSort, offset, limit);
         }
 
         // 检查商品是否在用户购物车中

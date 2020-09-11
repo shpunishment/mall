@@ -421,4 +421,26 @@
       </if>
   </select>
 
+  <select id="getVoListByNotProductIdList" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from
+    mall_product
+    where product_id not in
+    <foreach item="productId" collection="productIdList" open="(" separator="," close=")">
+      #{productId,jdbcType=INTEGER}
+    </foreach>
+    and deleted = 0
+    and publish_status = 1
+    <if test="inStock == 1">
+      and stock > 0
+    </if>
+    <if test="priceSort == 1">
+      order by current_price asc
+    </if>
+    <if test="priceSort == 2">
+      order by current_price desc
+    </if>
+  </select>
+
 </mapper>

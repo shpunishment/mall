@@ -20,6 +20,8 @@ public interface MallFlashService {
 
     void updateByPrimaryKeySelective(MallFlash record);
 
+    List<MallFlashVo> getTodayAvailableVoList();
+
     List<MallFlashVo> getTodayVoList();
 
     boolean isFlashing(Integer flashId);

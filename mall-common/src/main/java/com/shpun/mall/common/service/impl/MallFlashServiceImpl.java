@@ -68,8 +68,14 @@ public class MallFlashServiceImpl implements MallFlashService {
 
     @RedisCache
     @Override
+    public List<MallFlashVo> getTodayAvailableVoList() {
+        return flashMapper.getTodayAvailableVoList();
+    }
+
+    @RedisCache
+    @Override
     public List<MallFlashVo> getTodayVoList() {
-        List<MallFlashVo> todayAvailableVoList = flashMapper.getTodayAvailableVoList();
+        List<MallFlashVo> todayAvailableVoList = this.getTodayAvailableVoList();
 
         // 获取明天
         Calendar tomorrow = Calendar.getInstance();

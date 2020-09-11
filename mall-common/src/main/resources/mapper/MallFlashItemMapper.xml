@@ -199,4 +199,14 @@
 	  AND p.deleted = 0 AND p.publish_status = 1
   </select>
 
+  <select id="getProductIdByFlashIdList" resultType="java.lang.Integer">
+    SELECT product_id
+    FROM mall_flash_item
+    WHERE flash_id in
+    <foreach item="flashId" collection="flashIdList" open="(" separator="," close=")">
+      #{flashId,jdbcType=INTEGER}
+    </foreach>
+    and deleted = 0
+  </select>
+
 </mapper>

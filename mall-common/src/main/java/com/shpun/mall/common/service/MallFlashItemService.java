@@ -43,6 +43,8 @@ public interface MallFlashItemService {
 
     PageInfo<MallProductVo> getVoPageByFlashId(Integer flashId, Integer offset, Integer limit);
 
+    List<Integer> getProductIdByFlashIdList(List<Integer> flashIdList);
+
     /**
      * 下单成功，删除缓存
      */
