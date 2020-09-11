@@ -31,6 +31,9 @@ public class MallProductServiceTest {
         this.insert5();
         this.insert6();
         this.insert7();
+        this.insert8();
+        this.insert9();
+        this.insert10();
     }
 
     /**

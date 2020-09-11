@@ -30,8 +30,7 @@ public class MallFlashServiceTest {
      */
     @Test
     public void insert() throws ParseException {
-        insertByDate("2020-09-09");
-        for (int i = 10; i <= 30; i++) {
+        for (int i = 12; i <= 30; i++) {
             insertByDate("2020-09-"+i);
         }
     }

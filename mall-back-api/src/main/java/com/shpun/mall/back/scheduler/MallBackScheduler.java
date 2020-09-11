@@ -183,7 +183,7 @@ public class MallBackScheduler {
      */
     @Scheduled(cron = "0 0/1 * * * ?")
     public void toDelivery() {
-        // 检查配送员的订单，大于等于5个，就去配送
+        // 检查配送员的订单，大于等于1个，就去配送
         List<Integer> need2DeliveryIdList = deliveryService.getNeed2DeliveryIdList();
         if (CollectionUtils.isNotEmpty(need2DeliveryIdList)) {
             // 更新配送员信息，配送员订单信息，订单信息

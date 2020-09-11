@@ -145,6 +145,10 @@ public class MallCouponServiceTest {
 
     /**
      * 指定商品
+     *
+     * 指定商品id：
+     * 1,2,16
+     *
      * @throws Exception
      */
     @Test

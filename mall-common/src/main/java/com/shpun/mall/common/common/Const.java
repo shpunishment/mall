@@ -165,8 +165,6 @@ public class Const {
     /**
      * 默认需要去配送的订单数量
      */
-    public static final Integer DEFAULT_NEED_2_DELIVERY_AMOUNT = 2;
-
-
+    public static final Integer DEFAULT_NEED_2_DELIVERY_AMOUNT = 1;
 
 }
