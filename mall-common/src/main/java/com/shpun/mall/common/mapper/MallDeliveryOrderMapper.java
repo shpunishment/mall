@@ -16,4 +16,6 @@ public interface MallDeliveryOrderMapper {
 
     List<MallDeliveryOrder> getListByFilter(@Param("deliveryId") Integer deliveryId, @Param("status") Integer status);
 
+    Integer getByOrderId(Integer orderId);
+
 }

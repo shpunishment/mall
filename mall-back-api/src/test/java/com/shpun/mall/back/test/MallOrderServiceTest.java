@@ -77,7 +77,12 @@ public class MallOrderServiceTest {
      */
     @Test
     public void paySuccess() {
-        orderService.paySuccess(8, "11", new Date());
+        orderService.paySuccess(10, "15998171107121002", new Date());
+        orderService.paySuccess(11, "15998171266661003", new Date());
+        orderService.paySuccess(12, "15998171287321004", new Date());
+        orderService.paySuccess(13, "15998171307821005", new Date());
+        orderService.paySuccess(14, "15998171327661006", new Date());
+        orderService.paySuccess(15, "15998171348841007", new Date());
     }
 
     /**

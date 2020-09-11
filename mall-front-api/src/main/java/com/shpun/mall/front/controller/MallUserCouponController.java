@@ -2,31 +2,26 @@ package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.enums.MallCouponTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponGetTypeEnums;
-import com.shpun.mall.common.enums.MallUserCouponStatusEnums;
-import com.shpun.mall.common.model.MallOrder;
+import com.shpun.mall.common.exception.MallError;
+import com.shpun.mall.common.exception.MallException;
+import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserCoupon;
 import com.shpun.mall.common.model.vo.MallCouponVo;
-import com.shpun.mall.common.model.vo.MallUserCouponVo;
 import com.shpun.mall.common.service.MallCouponService;
-import com.shpun.mall.common.service.MallOrderService;
 import com.shpun.mall.common.service.MallUserCouponService;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @Description:
@@ -51,16 +46,22 @@ public class MallUserCouponController {
     })
     @GetMapping("/{couponId}")
     public void get(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId) {
-        MallUserCoupon userCoupon = new MallUserCoupon();
-        userCoupon.setUserId(SecurityUserUtils.getUserId());
-        userCoupon.setCouponId(couponId);
-        userCoupon.setGetType(MallUserCouponGetTypeEnums.INITIATIVE.getValue());
-        userCouponService.insertSelective(userCoupon);
+        MallCoupon coupon = couponService.getAvailable(couponId);
+        // 用户只能主动领取 通用券类型的优惠券
+        if (MallCouponTypeEnums.UNIVERSAL.getValue().equals(coupon.getType())) {
+            MallUserCoupon userCoupon = new MallUserCoupon();
+            userCoupon.setUserId(SecurityUserUtils.getUserId());
+            userCoupon.setCouponId(couponId);
+            userCoupon.setGetType(MallUserCouponGetTypeEnums.INITIATIVE.getValue());
+            userCouponService.insertSelective(userCoupon);
 
-        // 删除优惠券缓存
-        couponService.deleteCache();
-        // 删除用户优惠券缓存
-        userCouponService.deleteCache(SecurityUserUtils.getUserId());
+            // 删除优惠券缓存
+            couponService.deleteCache();
+            // 删除用户优惠券缓存
+            userCouponService.deleteCache(SecurityUserUtils.getUserId());
+        } else {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
     }
 
     @ApiOperation("分页获取用户已领取的优惠券")

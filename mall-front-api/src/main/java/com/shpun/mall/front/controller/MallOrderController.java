@@ -130,9 +130,6 @@ public class MallOrderController {
 
         if (CollectionUtils.isNotEmpty(orderVoPageInfo.getList())) {
             orderVoPageInfo.getList().forEach(orderVo -> {
-                // 价格改为文本
-                orderVo.setTotalPriceStr(orderVo.getTotalPrice().toString());
-
                 List<MallOrderItemVo> orderItemVoList = orderItemService.getLimitVoListByOrderId(orderVo.getOrderId());
                 orderVo.setOrderItemVoList(orderItemVoList);
             });

@@ -48,7 +48,7 @@
         update_id,
       </if>
       <if test="name != null">
-        name,
+        `name`,
       </if>
       <if test="phone != null">
         phone,
@@ -98,7 +98,7 @@
         update_id = #{updateId,jdbcType=INTEGER},
       </if>
       <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+        `name` = #{name,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},

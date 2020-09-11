@@ -21,4 +21,6 @@ public interface MallDeliveryOrderService {
 
     List<MallDeliveryOrder> getListByFilter(Integer deliveryId, Integer status);
 
+    Integer getByOrderId(Integer orderId);
+
 }

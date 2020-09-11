@@ -9,3 +9,8 @@ spring:
 mybatis:
   typeAliasesPackage: com.shpun.mall.common.model
   mapper-locations: classpath:mapper/**.xml
+
+
+logging:
+  level:
+    com.shpun: debug

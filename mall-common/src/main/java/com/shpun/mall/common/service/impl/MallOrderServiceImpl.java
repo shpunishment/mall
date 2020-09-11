@@ -118,7 +118,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
 
             MallOrder order = new MallOrder();
-            this.setPrice(order, productPrice, new BigDecimal("0.00"));
+            this.setPrice(order, productPrice, null);
             return order;
         } else {
             throw new MallException(MallError.MallErrorEnum.CART_NULL);
@@ -175,7 +175,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             }
 
             MallOrder order = new MallOrder();
-            BigDecimal discount = new BigDecimal("0.00");
+            BigDecimal discount = null;
             if (coupon != null) {
                 BigDecimal minPrice = coupon.getMinPrice();
                 if (meetPrice.compareTo(minPrice) > -1) {
@@ -395,7 +395,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             flashItemService.updateBatch(flashItemList);
 
             // 计算价格
-            BigDecimal discount = new BigDecimal("0.00");
+            BigDecimal discount = null;
             if (canUseCoupon && coupon != null) {
                 BigDecimal minPrice = coupon.getMinPrice();
                 if (meetPrice.compareTo(minPrice) > -1) {
@@ -439,12 +439,18 @@ public class MallOrderServiceImpl implements MallOrderService {
         order.setProductPrice(productPrice);
         order.setCouponPrice(couponPrice);
         // 商品价格超过，则不用运费
+        BigDecimal totalPrice;
         if (productPrice.compareTo(Const.PRODUCT_PRICE) > -1) {
             order.setDeliveryPrice(Const.FREE_DELIVERY);
-            order.setTotalPrice(productPrice.subtract(couponPrice));
+            totalPrice = productPrice;
         } else {
             order.setDeliveryPrice(Const.DELIVERY_PRICE);
-            order.setTotalPrice(productPrice.add(Const.DELIVERY_PRICE).subtract(couponPrice));
+            totalPrice = productPrice.add(Const.DELIVERY_PRICE);
+        }
+        if (couponPrice != null) {
+            order.setTotalPrice(totalPrice.subtract(couponPrice));
+        } else {
+            order.setTotalPrice(totalPrice);
         }
     }
 

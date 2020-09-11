@@ -140,12 +140,12 @@ public class Const {
     /**
      * 超时订单的redis zset key
      */
-    public static final String REDIS_KEY_ORDER_TIMEOUT_ZSET = "ORDER_TIMEOUT_ZSET";
+    public static final String REDIS_KEY_ORDER_TIMEOUT_ZSET = "order_timeout_zset";
 
     /**
      * 待分配配送员订单的redis zset key
      */
-    public static final String REDIS_KEY_WAIT_2_DELIVERY_ORDER_ZSET = "WAIT_2_DELIVERY_ORDER_ZSET";
+    public static final String REDIS_KEY_WAIT_2_DELIVERY_ORDER_ZSET = "wait_2_delivery_order_zset";
 
     /**
      * 订单值前缀
@@ -165,7 +165,7 @@ public class Const {
     /**
      * 默认需要去配送的订单数量
      */
-    public static final Integer DEFAULT_NEED_2_DELIVERY_AMOUNT = 5;
+    public static final Integer DEFAULT_NEED_2_DELIVERY_AMOUNT = 2;
 
 
 

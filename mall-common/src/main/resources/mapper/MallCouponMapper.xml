@@ -283,7 +283,7 @@
 
   <select id="getAvailable" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
-      use_type
+      `type`, use_type
     from mall_coupon
     where coupon_id = #{couponId,jdbcType=INTEGER}
       AND deleted = 0

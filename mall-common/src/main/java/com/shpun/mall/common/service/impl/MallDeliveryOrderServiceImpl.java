@@ -45,4 +45,9 @@ public class MallDeliveryOrderServiceImpl implements MallDeliveryOrderService {
     public List<MallDeliveryOrder> getListByFilter(Integer deliveryId, Integer status) {
         return deliveryOrderMapper.getListByFilter(deliveryId, status);
     }
+
+    @Override
+    public Integer getByOrderId(Integer orderId) {
+        return deliveryOrderMapper.getByOrderId(orderId);
+    }
 }

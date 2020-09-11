@@ -9,6 +9,7 @@ import com.shpun.mall.common.model.MallUserCoupon;
 import com.shpun.mall.common.service.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ import java.util.Set;
  * @Date: 2020/9/9 13:37
  */
 @Component
+@EnableScheduling
 public class MallBackScheduler {
 
     @Autowired
@@ -44,9 +46,9 @@ public class MallBackScheduler {
     private MallDeliveryOrderService deliveryOrderService;
 
     /**
-     * 订单超时调度器，每分钟执行一次
+     * 订单超时调度器，每三十秒执行一次
      */
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void orderTimeoutScheduler() {
         // 生产模式从redis的zset中获取
         if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
@@ -143,8 +145,6 @@ public class MallBackScheduler {
                         deliveryOrder.setStatus(MallDeliveryOrderStatusEnums.WAIT2DELIVERY.getValue());
                         deliveryOrderService.insertSelective(deliveryOrder);
                         redisService.zRemove(keySb.toString(), orderKey);
-                    } else {
-                        break;
                     }
                 }
             }
@@ -154,6 +154,11 @@ public class MallBackScheduler {
             List<MallOrder> paidOrderList = orderService.getList(MallOrderStatusEnums.PAID.getValue(), SortEnums.ASC.getValue());
             if (CollectionUtils.isNotEmpty(paidOrderList)) {
                 for (MallOrder order : paidOrderList) {
+                    // 检查订单是否已分配
+                    if (deliveryOrderService.getByOrderId(order.getOrderId()) != null) {
+                        continue;
+                    }
+
                     // 先获取空闲的，待配送订单数量最少的配送员
                     Integer deliveryId = deliveryService.getIdleDeliveryId(MallDeliveryStatusEnums.WAIT2DELIVERY.getValue());
                     if (deliveryId == null) {
@@ -167,8 +172,6 @@ public class MallBackScheduler {
                         deliveryOrder.setOrderId(order.getOrderId());
                         deliveryOrder.setStatus(MallDeliveryOrderStatusEnums.WAIT2DELIVERY.getValue());
                         deliveryOrderService.insertSelective(deliveryOrder);
-                    } else {
-                        break;
                     }
                 }
             }
@@ -187,12 +190,14 @@ public class MallBackScheduler {
             need2DeliveryIdList.forEach(deliveryId -> {
                 List<Integer> orderIdList = deliveryService.wait2Receive(deliveryId);
 
-                List<Integer> userIdList = orderService.getUserIdListByOrderIdList(orderIdList);
-                Set<Integer> userIdSet = new HashSet<>(userIdList);
-                userIdSet.forEach(userId -> {
-                    // 删除订单缓存
-                    orderService.deleteCache(userId);
-                });
+                if (CollectionUtils.isNotEmpty(orderIdList)) {
+                    List<Integer> userIdList = orderService.getUserIdListByOrderIdList(orderIdList);
+                    Set<Integer> userIdSet = new HashSet<>(userIdList);
+                    userIdSet.forEach(userId -> {
+                        // 删除订单缓存
+                        orderService.deleteCache(userId);
+                    });
+                }
             });
         }
     }
@@ -209,12 +214,14 @@ public class MallBackScheduler {
             deliveringIdList.forEach(deliveryId -> {
                 List<Integer> orderIdList = deliveryService.receiveSuccess(deliveryId);
 
-                List<Integer> userIdList = orderService.getUserIdListByOrderIdList(orderIdList);
-                Set<Integer> userIdSet = new HashSet<>(userIdList);
-                userIdSet.forEach(userId -> {
-                    // 删除订单缓存
-                    orderService.deleteCache(userId);
-                });
+                if (CollectionUtils.isNotEmpty(orderIdList)) {
+                    List<Integer> userIdList = orderService.getUserIdListByOrderIdList(orderIdList);
+                    Set<Integer> userIdSet = new HashSet<>(userIdList);
+                    userIdSet.forEach(userId -> {
+                        // 删除订单缓存
+                        orderService.deleteCache(userId);
+                    });
+                }
             });
         }
     }
