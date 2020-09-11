@@ -666,7 +666,7 @@ public class MallOrderServiceImpl implements MallOrderService {
     public void zAddWait2DeliveryOrder(Integer orderId, Date payTime) {
         StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
                 .append(Const.REDIS_KEY_DELIMITER)
-                .append(Const.REDIS_KEY_WAIT_2_DELIVERY_ORDER_ZSET);
+                .append(Const.REDIS_KEY_ALLOCATE_DELIVERY_ZSET);
         StringBuilder valueSb = new StringBuilder(Const.REDIS_KEY_ORDER_PREFIX)
                 .append(Const.REDIS_PARAM_DELIMITER)
                 .append(orderId);

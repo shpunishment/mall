@@ -145,7 +145,7 @@ public class Const {
     /**
      * 待分配配送员订单的redis zset key
      */
-    public static final String REDIS_KEY_WAIT_2_DELIVERY_ORDER_ZSET = "wait_2_delivery_order_zset";
+    public static final String REDIS_KEY_ALLOCATE_DELIVERY_ZSET = "allocate_delivery_zset";
 
     /**
      * 订单值前缀

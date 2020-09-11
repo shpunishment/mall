@@ -122,7 +122,7 @@ public class MallBackScheduler {
         if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
             StringBuilder keySb = new StringBuilder(Const.REDIS_KEY_PREFIX)
                     .append(Const.REDIS_KEY_DELIMITER)
-                    .append(Const.REDIS_KEY_WAIT_2_DELIVERY_ORDER_ZSET);
+                    .append(Const.REDIS_KEY_ALLOCATE_DELIVERY_ZSET);
 
             Set<Object> wait2DeliveryOrderSet = redisService.zRangeByScore(keySb.toString(), 0, new Date().getTime());
             if (CollectionUtils.isNotEmpty(wait2DeliveryOrderSet)) {
