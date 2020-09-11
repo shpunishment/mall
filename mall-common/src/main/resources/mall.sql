@@ -11,7 +11,7 @@
  Target Server Version : 50726
  File Encoding         : 65001
 
- Date: 11/09/2020 17:55:47
+ Date: 11/09/2020 23:45:44
 */
 
 SET NAMES utf8mb4;
@@ -296,9 +296,9 @@ CREATE TABLE `mall_order`  (
   `user_id` int(11) NOT NULL COMMENT '用户id',
   `coupon_id` int(11) NULL DEFAULT NULL COMMENT '优惠券id',
   `address_id` int(11) NOT NULL COMMENT '收货地址id',
-  `receive_name` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货人',
-  `receive_phone` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货电话',
-  `receive_address` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货地址',
+  `receive_name` varchar(25) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货人',
+  `receive_phone` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货电话',
+  `receive_address` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '收货地址',
   `product_price` decimal(10, 2) NOT NULL COMMENT '商品费用',
   `delivery_price` decimal(10, 2) NOT NULL COMMENT '配送费用',
   `coupon_price` decimal(10, 2) NULL DEFAULT 0.00 COMMENT '优惠券抵扣金额',
