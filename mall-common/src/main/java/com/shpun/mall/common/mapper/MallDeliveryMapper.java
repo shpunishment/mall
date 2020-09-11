@@ -14,7 +14,7 @@ public interface MallDeliveryMapper {
 
     int updateByPrimaryKeySelective(MallDelivery record);
 
-    Integer getIdleDeliveryId();
+    Integer getIdleDeliveryId(Integer status);
 
     List<Integer> getNeed2DeliveryIdList(Integer maxOrderAmount);
 

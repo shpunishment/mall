@@ -35,4 +35,6 @@ public interface MallUserCouponMapper {
 
     Integer getAvailableCount(Integer userId);
 
+    List<MallUserCoupon> getUnusedExpiredList();
+
 }

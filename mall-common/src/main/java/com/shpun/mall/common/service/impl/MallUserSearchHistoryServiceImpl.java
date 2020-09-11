@@ -4,6 +4,7 @@ import com.shpun.mall.common.aop.RedisCache;
 import com.shpun.mall.common.mapper.MallUserSearchHistoryMapper;
 import com.shpun.mall.common.model.MallUserSearchHistory;
 import com.shpun.mall.common.service.MallUserSearchHistoryService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,24 +36,26 @@ public class MallUserSearchHistoryServiceImpl implements MallUserSearchHistorySe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void insertOrUpdate(Integer userId, String keyword, Integer type) {
-        MallUserSearchHistory userSearchHistory = userSearchHistoryMapper.getByUserIdAndKeywordAndType(userId, keyword, type);
-        if (userSearchHistory != null) {
-            // 获取最大，将 当前sn<   <=maxSn 之间的，减1
-            Integer maxSn = userSearchHistoryMapper.getMaxSnByUserIdAndType(userId, type);
-            userSearchHistoryMapper.goNext(userId, type, userSearchHistory.getSn(), maxSn);
-            userSearchHistory.setSn(maxSn);
-            userSearchHistory.setUpdateTime(new Date());
-            userSearchHistoryMapper.updateByPrimaryKeySelective(userSearchHistory);
-        } else {
-            MallUserSearchHistory record = new MallUserSearchHistory();
-            record.setUserId(userId);
-            record.setKeyword(keyword);
-            record.setCreateTime(new Date());
-            // 新插入获取最大的sn
-            Integer maxSn = userSearchHistoryMapper.getMaxSnByUserIdAndType(userId, type);
-            record.setSn(maxSn == null ? 1 : maxSn + 1);
-            record.setType(type);
-            userSearchHistoryMapper.insertSelective(record);
+        if (StringUtils.isNotBlank(keyword)) {
+            MallUserSearchHistory userSearchHistory = userSearchHistoryMapper.getByUserIdAndKeywordAndType(userId, keyword, type);
+            if (userSearchHistory != null) {
+                // 获取最大，将 当前sn<   <=maxSn 之间的，减1
+                Integer maxSn = userSearchHistoryMapper.getMaxSnByUserIdAndType(userId, type);
+                userSearchHistoryMapper.goNext(userId, type, userSearchHistory.getSn(), maxSn);
+                userSearchHistory.setSn(maxSn);
+                userSearchHistory.setUpdateTime(new Date());
+                userSearchHistoryMapper.updateByPrimaryKeySelective(userSearchHistory);
+            } else {
+                MallUserSearchHistory record = new MallUserSearchHistory();
+                record.setUserId(userId);
+                record.setKeyword(keyword);
+                record.setCreateTime(new Date());
+                // 新插入获取最大的sn
+                Integer maxSn = userSearchHistoryMapper.getMaxSnByUserIdAndType(userId, type);
+                record.setSn(maxSn == null ? 1 : maxSn + 1);
+                record.setType(type);
+                userSearchHistoryMapper.insertSelective(record);
+            }
         }
     }
 

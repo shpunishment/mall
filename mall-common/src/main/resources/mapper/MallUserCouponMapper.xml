@@ -277,4 +277,11 @@
       AND uc.end_time <![CDATA[>=]]> now( )
   </select>
 
+  <select id="getUnusedExpiredList" resultMap="BaseResultMap">
+    select id, status
+    from mall_user_coupon
+    where `status` = 1
+      and end_time <![CDATA[<]]> now( )
+  </select>
+
 </mapper>

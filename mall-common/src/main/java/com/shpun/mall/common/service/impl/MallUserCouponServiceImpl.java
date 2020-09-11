@@ -193,6 +193,11 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     }
 
     @Override
+    public List<MallUserCoupon> getUnusedExpiredList() {
+        return userCouponMapper.getUnusedExpiredList();
+    }
+
+    @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);

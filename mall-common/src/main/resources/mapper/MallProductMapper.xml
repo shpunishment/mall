@@ -321,18 +321,20 @@
     <include refid="Vo_Column_List" />
     FROM
       mall_product
-    WHERE product_name like concat('%', #{productName,jdbcType=VARCHAR}, '%')
-      AND deleted = 0
+    WHERE deleted = 0
       AND publish_status = 1
-      <if test="inStock == 1">
-        AND stock > 0
-      </if>
-      <if test="priceSort == 1">
-        order by current_price asc
-      </if>
-      <if test="priceSort == 2">
-        order by current_price desc
-      </if>
+    <if test="productName != null and productName != ''">
+      AND product_name like concat('%', #{productName,jdbcType=VARCHAR}, '%')
+    </if>
+    <if test="inStock == 1">
+      AND stock > 0
+    </if>
+    <if test="priceSort == 1">
+      order by current_price asc
+    </if>
+    <if test="priceSort == 2">
+      order by current_price desc
+    </if>
   </select>
 
   <select id="getHotVoList" resultMap="VoResultMap">

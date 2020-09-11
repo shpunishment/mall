@@ -60,8 +60,8 @@ public class MallDeliveryServiceImpl implements MallDeliveryService {
     }
 
     @Override
-    public Integer getIdleDeliveryId() {
-        return deliveryMapper.getIdleDeliveryId();
+    public Integer getIdleDeliveryId(Integer status) {
+        return deliveryMapper.getIdleDeliveryId(status);
     }
 
     @Override

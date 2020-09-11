@@ -3,7 +3,6 @@ package com.shpun.mall.back.scheduler;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.config.ProfileConfig;
 import com.shpun.mall.common.enums.*;
-import com.shpun.mall.common.model.MallDelivery;
 import com.shpun.mall.common.model.MallDeliveryOrder;
 import com.shpun.mall.common.model.MallOrder;
 import com.shpun.mall.common.model.MallUserCoupon;
@@ -55,6 +54,7 @@ public class MallBackScheduler {
                     .append(Const.REDIS_KEY_DELIMITER)
                     .append(Const.REDIS_KEY_ORDER_TIMEOUT_ZSET);
 
+            // 获取支付时间已超时的订单
             Set<Object> timeoutOrderSet = redisService.zRangeByScore(keySb.toString(), 0, new Date().getTime());
             if (CollectionUtils.isNotEmpty(timeoutOrderSet)) {
                 timeoutOrderSet.forEach(obj -> {
@@ -102,13 +102,11 @@ public class MallBackScheduler {
      */
     @Scheduled(cron = "0 0 0 */1 * ?")
     public void userCouponTimeoutScheduler() {
-        List<MallUserCoupon> unusedCouponList = userCouponService.getList(MallUserCouponStatusEnums.UNUSED.getValue());
+        List<MallUserCoupon> unusedCouponList = userCouponService.getUnusedExpiredList();
         if (CollectionUtils.isNotEmpty(unusedCouponList)) {
             unusedCouponList.forEach(userCoupon -> {
-                if (userCoupon.getEndTime().before(new Date())) {
-                    userCoupon.setStatus(MallUserCouponStatusEnums.EXPIRED.getValue());
-                    userCouponService.updateByPrimaryKeySelective(userCoupon);
-                }
+                userCoupon.setStatus(MallUserCouponStatusEnums.EXPIRED.getValue());
+                userCouponService.updateByPrimaryKeySelective(userCoupon);
             });
         }
     }
@@ -126,13 +124,18 @@ public class MallBackScheduler {
 
             Set<Object> wait2DeliveryOrderSet = redisService.zRangeByScore(keySb.toString(), 0, new Date().getTime());
             if (CollectionUtils.isNotEmpty(wait2DeliveryOrderSet)) {
-                wait2DeliveryOrderSet.forEach(obj -> {
+                for (Object obj : wait2DeliveryOrderSet) {
                     String orderKey = (String) obj;
                     String[] orderKeys = orderKey.split(Const.REDIS_PARAM_DELIMITER);
                     Integer orderId = Integer.valueOf(orderKeys[1]);
 
-                    // 获取空闲的配送员，分配配送员
-                    Integer deliveryId = deliveryService.getIdleDeliveryId();
+                    // 先获取空闲的，待配送订单数量最少的配送员
+                    Integer deliveryId = deliveryService.getIdleDeliveryId(MallDeliveryStatusEnums.WAIT2DELIVERY.getValue());
+                    if (deliveryId == null) {
+                        // 没有空闲配送员，获取配送中订单数量最少的配送员
+                        deliveryId = deliveryService.getIdleDeliveryId(MallDeliveryStatusEnums.DELIVERING.getValue());
+                    }
+
                     if (deliveryId != null) {
                         MallDeliveryOrder deliveryOrder = new MallDeliveryOrder();
                         deliveryOrder.setDeliveryId(deliveryId);
@@ -140,25 +143,34 @@ public class MallBackScheduler {
                         deliveryOrder.setStatus(MallDeliveryOrderStatusEnums.WAIT2DELIVERY.getValue());
                         deliveryOrderService.insertSelective(deliveryOrder);
                         redisService.zRemove(keySb.toString(), orderKey);
+                    } else {
+                        break;
                     }
-                });
+                }
             }
 
             // 开发模式从表中获取
         } else if (Const.PROFILE_DEV.equals(profileConfig.getActiveProfile())) {
             List<MallOrder> paidOrderList = orderService.getList(MallOrderStatusEnums.PAID.getValue(), SortEnums.ASC.getValue());
             if (CollectionUtils.isNotEmpty(paidOrderList)) {
-                paidOrderList.forEach(order -> {
-                    // 获取空闲的配送员，分配配送员
-                    Integer deliveryId = deliveryService.getIdleDeliveryId();
+                for (MallOrder order : paidOrderList) {
+                    // 先获取空闲的，待配送订单数量最少的配送员
+                    Integer deliveryId = deliveryService.getIdleDeliveryId(MallDeliveryStatusEnums.WAIT2DELIVERY.getValue());
+                    if (deliveryId == null) {
+                        // 没有空闲配送员，获取配送中订单数量最少的配送员
+                        deliveryId = deliveryService.getIdleDeliveryId(MallDeliveryStatusEnums.DELIVERING.getValue());
+                    }
+
                     if (deliveryId != null) {
                         MallDeliveryOrder deliveryOrder = new MallDeliveryOrder();
                         deliveryOrder.setDeliveryId(deliveryId);
                         deliveryOrder.setOrderId(order.getOrderId());
                         deliveryOrder.setStatus(MallDeliveryOrderStatusEnums.WAIT2DELIVERY.getValue());
                         deliveryOrderService.insertSelective(deliveryOrder);
+                    } else {
+                        break;
                     }
-                });
+                }
             }
         }
     }
@@ -186,11 +198,11 @@ public class MallBackScheduler {
     }
 
     /**
-     * 配送成功调度器，每分钟执行一次
+     * 配送成功调度器，每十分钟执行一次
      */
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void deliverySuccess() {
-        // 检查配送员的订单，如果最早的订单配送时间超过30分钟，自动收货
+        // 获取配送中的配送员，将订单自动收货
         List<Integer> deliveringIdList = deliveryService.getDeliveringIdList();
         if (CollectionUtils.isNotEmpty(deliveringIdList)) {
             // 更新配送员信息，配送员订单信息，订单信息

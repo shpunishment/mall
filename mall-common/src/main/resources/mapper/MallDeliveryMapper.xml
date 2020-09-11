@@ -115,7 +115,7 @@
     FROM
 	( SELECT d.delivery_id, ( SELECT count( * ) FROM mall_delivery_order AS o WHERE o.delivery_id = d.delivery_id ) AS amount
     FROM mall_delivery AS d
-    WHERE d.deleted = 0 and d.`status` = 1
+    WHERE d.deleted = 0 and d.`status` = #{status,jdbcType=INTEGER}
     ) A
     ORDER BY A.amount
     limit 1
