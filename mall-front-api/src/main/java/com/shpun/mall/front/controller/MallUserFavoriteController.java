@@ -56,13 +56,17 @@ public class MallUserFavoriteController {
     })
     @GetMapping("/favorite/{productId}")
     public void favorite(@PathVariable("productId") @Min(1) @Max(2147483647) Integer productId) {
-        MallUserFavorite userFavorite = new MallUserFavorite();
-        userFavorite.setProductId(productId);
-        userFavorite.setUserId(SecurityUserUtils.getUserId());
-        userFavoriteService.insertSelective(userFavorite);
+        // 校验，防止重复收藏
+        Integer favoriteId = userFavoriteService.isFavorite(SecurityUserUtils.getUserId(), productId);
+        if (favoriteId == null) {
+            MallUserFavorite userFavorite = new MallUserFavorite();
+            userFavorite.setProductId(productId);
+            userFavorite.setUserId(SecurityUserUtils.getUserId());
+            userFavoriteService.insertSelective(userFavorite);
 
-        // 删除用户收藏缓存
-        userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
+            // 删除用户收藏缓存
+            userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
+        }
     }
 
     @ApiOperation("取消收藏商品")
@@ -71,10 +75,13 @@ public class MallUserFavoriteController {
     })
     @GetMapping("/unfavorite/{favoriteId}")
     public void unfavorite(@PathVariable("favoriteId") @Min(1) @Max(2147483647) Integer favoriteId) {
-        userFavoriteService.deleteByPrimaryKey(favoriteId);
+        MallUserFavorite userFavorite = userFavoriteService.selectByPrimaryKey(favoriteId);
+        if (userFavorite != null && SecurityUserUtils.getUserId().equals(userFavorite.getUserId())) {
+            userFavoriteService.deleteByPrimaryKey(favoriteId);
 
-        // 删除用户收藏缓存
-        userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
+            // 删除用户收藏缓存
+            userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
+        }
     }
 
 }

@@ -200,21 +200,6 @@ public class MallUserCouponServiceImpl implements MallUserCouponService {
     }
 
     @Override
-    public void additionalVoList(List<MallCouponVo> couponVoList, Integer userId) {
-        if (CollectionUtils.isNotEmpty(couponVoList) && userId != null) {
-            List<Integer> couponIdList = couponVoList.stream().map(MallCouponVo::getCouponId).collect(Collectors.toList());
-            List<Integer> receivedList = this.getReceivedCouponId(userId, couponIdList);
-            for (MallCouponVo couponVo : couponVoList) {
-                Integer couponId = couponVo.getCouponId();
-                couponVo.setReceived(receivedList.contains(couponId));
-                // 数量标识
-                couponVo.setTotal(null);
-                couponVo.setHasTotal(true);
-            }
-        }
-    }
-
-    @Override
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getVoPageByFilter", userId);
         redisService.deleteByPrefix(MallUserCouponServiceImpl.class, "getTodayUseCount", userId);

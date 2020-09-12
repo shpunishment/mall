@@ -23,7 +23,7 @@ public interface MallCartMapper {
 
     void deleteBatch(@Param("cartIdList") List<Integer> cartIdList);
 
-    List<MallProductVo> getVoByUserId(Integer userId);
+    List<MallProductVo> getVoListByUserId(Integer userId);
 
     MallCartVo getVoByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
 
@@ -31,6 +31,6 @@ public interface MallCartMapper {
 
     MallCart getByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
 
-    Integer getAvailableCartCount(@Param("userId") Integer userId);
+    Integer getAvailableCartSum(@Param("userId") Integer userId);
 
 }

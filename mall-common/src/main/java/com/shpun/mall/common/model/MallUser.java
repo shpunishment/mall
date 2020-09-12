@@ -29,18 +29,20 @@ public class MallUser implements Serializable {
     private Integer avatar;
 
     @NotBlank(groups = Register.class)
-    @Length(min = 2, max = 20, groups = Register.class)
+    @Length(min = 1, max = 20, groups = Register.class)
     @ApiModelProperty("用户名")
     private String username;
 
+    @Length(min = 1, max = 20, groups = Update.class)
     @ApiModelProperty("昵称")
     private String nickname;
 
     @NotBlank(groups = Register.class)
-    @Length(min = 16, max = 32, groups = Register.class)
+    @Length(min = 32, max = 32, groups = Register.class)
     @ApiModelProperty("密码")
     private String password;
 
+    @Length(min = 1, max = 15, groups = Update.class)
     @ApiModelProperty("电话")
     private String phone;
 
@@ -145,6 +147,12 @@ public class MallUser implements Serializable {
      * 用户注册校验分组
      */
     public interface Register {
+    }
+
+    /**
+     * 用户更新校验分组
+     */
+    public interface Update {
     }
 
 }

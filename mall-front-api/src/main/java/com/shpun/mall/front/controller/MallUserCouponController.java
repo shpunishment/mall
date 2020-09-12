@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,9 +47,9 @@ public class MallUserCouponController {
     })
     @GetMapping("/{couponId}")
     public void get(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId) {
-        MallCoupon coupon = couponService.getAvailable(couponId);
+        MallCouponVo couponVo = couponService.getAvailable(couponId);
         // 用户只能主动领取 通用券类型的优惠券
-        if (MallCouponTypeEnums.UNIVERSAL.getValue().equals(coupon.getType())) {
+        if (MallCouponTypeEnums.UNIVERSAL.getValue().equals(couponVo.getType())) {
             MallUserCoupon userCoupon = new MallUserCoupon();
             userCoupon.setUserId(SecurityUserUtils.getUserId());
             userCoupon.setCouponId(couponId);
@@ -76,13 +77,23 @@ public class MallUserCouponController {
                                        @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallCouponVo> couponVoPageInfo = userCouponService.getCouponVoPageByFilter(SecurityUserUtils.getUserId(), status, offset, limit);
+        if (CollectionUtils.isNotEmpty(couponVoPageInfo.getList())) {
+            couponVoPageInfo.getList().forEach(couponVo -> {
+
+            });
+        }
         return couponVoPageInfo;
     }
 
     @ApiOperation("今日是否能使用优惠券")
     @GetMapping("/can")
     public Boolean canUseCoupon() {
-        return userCouponService.getTodayUseCount(SecurityUserUtils.getUserId()) < Const.TODAY_USE_COUPON_COUNT;
+        if (userCouponService.getTodayUseCount(SecurityUserUtils.getUserId()) < Const.TODAY_USE_COUPON_COUNT) {
+            Integer couponCount = userCouponService.getAvailableCount(SecurityUserUtils.getUserId());
+            return couponCount > 0;
+        } else {
+            return false;
+        }
     }
 
 }

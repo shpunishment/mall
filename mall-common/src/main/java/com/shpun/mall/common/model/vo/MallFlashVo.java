@@ -38,6 +38,9 @@ public class MallFlashVo implements Serializable {
     @ApiModelProperty("结束时间")
     private Date endTime;
 
+    @ApiModelProperty("今日活动标识")
+    private Boolean today;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getFlashId() {
@@ -102,5 +105,13 @@ public class MallFlashVo implements Serializable {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Boolean getToday() {
+        return today;
+    }
+
+    public void setToday(Boolean today) {
+        this.today = today;
     }
 }

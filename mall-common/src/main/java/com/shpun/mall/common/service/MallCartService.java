@@ -32,11 +32,11 @@ public interface MallCartService {
 
     MallCartVo getVoByUserIdAndProductId(Integer userId, Integer productId);
 
-    List<MallProductVo> getVoByUserId(Integer userId);
+    List<MallProductVo> getVoListByUserId(Integer userId);
 
     PageInfo<MallProductVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit);
 
-    Integer getAvailableCartCount(Integer userId);
+    Integer getAvailableCartSum(Integer userId);
 
     /**
      * 新增更新购物车，下单成功，根据用户id删除

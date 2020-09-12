@@ -125,7 +125,7 @@
     </foreach>
   </update>
 
-  <select id="getVoByUserId" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
+  <select id="getVoListByUserId" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
     SELECT
 	  p.product_id,
 	  p.product_name,
@@ -180,8 +180,8 @@
       and deleted = 0
   </select>
 
-  <select id="getAvailableCartCount" resultType="java.lang.Integer">
-    SELECT count( * )
+  <select id="getAvailableCartSum" resultType="java.lang.Integer">
+    SELECT sum(c.quantity)
     FROM mall_cart AS c
 	  LEFT JOIN mall_product AS p ON p.product_id = c.product_id
     WHERE c.user_id = #{userId,jdbcType=INTEGER}

@@ -1,6 +1,9 @@
 package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.shpun.mall.common.exception.MallError;
+import com.shpun.mall.common.exception.MallException;
+import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallCouponService;
@@ -49,8 +52,25 @@ public class MallCouponController {
         PageInfo<MallCouponVo> couponVoPageInfo = couponService.getVoPage(offset, limit);
 
         // 添加用户领取标识，库存标识
-        userCouponService.additionalVoList(couponVoPageInfo.getList(), SecurityUserUtils.getUserId());
+        couponService.additionalVoList(couponVoPageInfo.getList(), SecurityUserUtils.getUserId());
         return couponVoPageInfo;
+    }
+
+    @ApiOperation("根据优惠券id获取优惠券")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "couponId", value = "优惠券id", dataType = "Integer")
+    })
+    @GetMapping("/{couponId}")
+    public MallCouponVo getByCouponId(@PathVariable("couponId") @Min(1) @Max(2147483647) Integer couponId) {
+        // 判断优惠券id是否可用
+        MallCouponVo couponVo = couponService.getAvailable(couponId);
+        if (couponVo == null) {
+            throw new MallException(MallError.MallErrorEnum.COUPON_ERROR);
+        }
+
+        // 添加用户领取标识，库存标识
+        couponService.additionalVo(couponVo, SecurityUserUtils.getUserId());
+        return couponVo;
     }
 
 }

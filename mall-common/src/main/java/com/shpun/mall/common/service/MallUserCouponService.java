@@ -60,8 +60,6 @@ public interface MallUserCouponService {
 
     List<MallUserCoupon> getUnusedExpiredList();
 
-    void additionalVoList(List<MallCouponVo> couponVoList, Integer userId);
-
     /**
      * 领取优惠券，下单成功，根据用户id删除缓存
      * @param userId

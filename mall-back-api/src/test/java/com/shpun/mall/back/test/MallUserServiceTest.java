@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.DigestUtils;
+
+import java.math.BigDecimal;
 
 /**
  * @Description:
@@ -23,7 +26,7 @@ public class MallUserServiceTest {
 
     @Test
     public void insert() {
-        MallUser user = buildMallUser("zhangsan","zhangsan123","zhangsan","18911112222");
+        MallUser user = buildMallUser("zhangsan","zhangsan123",DigestUtils.md5DigestAsHex("zhangsan".getBytes()),"18911112222");
         userService.insertSelective(user);
     }
 
@@ -50,6 +53,18 @@ public class MallUserServiceTest {
     @Test
     public void decode() {
         System.out.println(passwordEncoder.matches("zhangsan","$2a$10$4Whl2BAvJ5xcThUEchGve.i3xbEQwPWdoZGQq6AeHd3Fm0tAlzWYa"));
+    }
+
+    @Test
+    public void md5() {
+        System.out.println("--------------------");
+        System.out.println(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        System.out.println("--------------------");
+    }
+
+    @Test
+    public void test() {
+        System.out.println(new BigDecimal("30.00").stripTrailingZeros().toPlainString());
     }
 
 }

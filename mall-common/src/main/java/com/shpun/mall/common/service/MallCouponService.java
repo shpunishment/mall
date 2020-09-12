@@ -43,7 +43,7 @@ public interface MallCouponService {
 
     List<Integer> getProductIdList(Integer couponId);
 
-    MallCoupon getAvailable(Integer couponId);
+    MallCouponVo getAvailable(Integer couponId);
 
     MallCoupon lockCoupon(Integer couponId);
 
@@ -54,6 +54,12 @@ public interface MallCouponService {
     List<Integer> getNewUserCouponId();
 
     List<MallCouponVo> getVoListByProductId(Integer productId);
+
+    void price2Str(MallCouponVo couponVo);
+
+    void additionalVo(MallCouponVo couponVo, Integer userId);
+
+    void additionalVoList(List<MallCouponVo> couponVoList, Integer userId);
 
     /**
      * 优惠券被领取，删除缓存

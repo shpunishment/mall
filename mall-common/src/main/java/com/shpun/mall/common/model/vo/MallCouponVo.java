@@ -27,8 +27,14 @@ public class MallCouponVo implements Serializable {
     @ApiModelProperty("最低消费")
     private BigDecimal minPrice;
 
+    @ApiModelProperty("最低消费str")
+    private String minPriceStr;
+
     @ApiModelProperty("优惠金额")
     private BigDecimal discount;
+
+    @ApiModelProperty("优惠金额str")
+    private String discountStr;
 
     @ApiModelProperty("限领数，默认1")
     private Integer limit;
@@ -103,12 +109,28 @@ public class MallCouponVo implements Serializable {
         this.minPrice = minPrice;
     }
 
+    public String getMinPriceStr() {
+        return minPriceStr;
+    }
+
+    public void setMinPriceStr(String minPriceStr) {
+        this.minPriceStr = minPriceStr;
+    }
+
     public BigDecimal getDiscount() {
         return discount;
     }
 
     public void setDiscount(BigDecimal discount) {
         this.discount = discount;
+    }
+
+    public String getDiscountStr() {
+        return discountStr;
+    }
+
+    public void setDiscountStr(String discountStr) {
+        this.discountStr = discountStr;
     }
 
     public Integer getLimit() {

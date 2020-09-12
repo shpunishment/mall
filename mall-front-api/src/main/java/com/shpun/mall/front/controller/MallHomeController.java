@@ -139,7 +139,7 @@ public class MallHomeController {
     public Integer getCartAmount() {
         Integer amount = 0;
         if (SecurityUserUtils.getUserId() != null) {
-            amount = cartService.getAvailableCartCount(SecurityUserUtils.getUserId());
+            amount = cartService.getAvailableCartSum(SecurityUserUtils.getUserId());
         }
         return amount;
     }

@@ -74,6 +74,7 @@ public class MallFlashServiceImpl implements MallFlashService {
         if (CollectionUtils.isNotEmpty(flashVoList)) {
             for (Iterator<MallFlashVo> iterator = flashVoList.iterator(); iterator.hasNext();) {
                 MallFlashVo flashVo = iterator.next();
+                flashVo.setToday(true);
                 Integer hour = flashVo.getHour();
                 Calendar now = Calendar.getInstance();
 
@@ -102,6 +103,9 @@ public class MallFlashServiceImpl implements MallFlashService {
         List<MallFlashVo> tomorrowAvailableVoList = flashMapper.getTomorrowAvailableVoList(tomorrow.get(Calendar.YEAR),
                 tomorrow.get(Calendar.MONTH) + 1, tomorrow.get(Calendar.DAY_OF_MONTH), tomorrow.get(Calendar.HOUR_OF_DAY));
         if (CollectionUtils.isNotEmpty(tomorrowAvailableVoList)) {
+            tomorrowAvailableVoList.forEach(flashVo -> {
+                flashVo.setToday(false);
+            });
             todayAvailableVoList.addAll(tomorrowAvailableVoList);
         }
 

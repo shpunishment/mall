@@ -48,7 +48,7 @@ public class MallUserController {
 
     @ApiOperation("注册")
     @PostMapping("/register")
-    public void register(@RequestBody@Validated(MallUser.Register.class) MallUser user) {
+    public void register(@RequestBody @Validated(MallUser.Register.class) MallUser user) {
         if (userService.isExist(user.getUsername())) {
             throw new MallException(MallError.MallErrorEnum.USERNAME_EXIST.format(user.getUsername()));
         }
@@ -83,7 +83,7 @@ public class MallUserController {
 
     @ApiOperation("更新用户信息")
     @PostMapping("/update")
-    public void update(@RequestBody MallUser user) {
+    public void update(@RequestBody @Validated(MallUser.Update.class) MallUser user) {
         user.setUserId(SecurityUserUtils.getUserId());
         userService.updateByPrimaryKeySelective(user);
 
@@ -97,8 +97,8 @@ public class MallUserController {
             @ApiImplicitParam(name = "newPassword", value = "新密码", dataType = "String")
     })
     @PostMapping("/changePassword")
-    public void changePassword(@RequestParam("oldPassword") @NotBlank @Length(min = 16, max = 32) String oldPassword,
-                               @RequestParam("newPassword") @NotBlank @Length(min = 16, max = 32) String newPassword) {
+    public void changePassword(@RequestParam("oldPassword") @NotBlank @Length(min = 32, max = 32) String oldPassword,
+                               @RequestParam("newPassword") @NotBlank @Length(min = 32, max = 32) String newPassword) {
         MallUser user = userService.selectByPrimaryKey(SecurityUserUtils.getUserId());
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));

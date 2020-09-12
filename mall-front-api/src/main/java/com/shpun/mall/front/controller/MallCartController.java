@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 /**
  * @Description:
@@ -43,12 +44,20 @@ public class MallCartController {
     })
     @GetMapping("/page")
     public PageInfo<MallProductVo> page(@RequestParam(value = "offset",defaultValue = "0") @Min(0) @Max(2147483647) Integer offset,
-                                     @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
-
+                                        @RequestParam(value = "limit",defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
         PageInfo<MallProductVo> productVoPageInfo = cartService.getVoPageByUserId(SecurityUserUtils.getUserId(), offset, limit);
 
         productService.additionalVoList(productVoPageInfo.getList(), null, true);
         return productVoPageInfo;
+    }
+
+    @ApiOperation("获取用户购物车")
+    @GetMapping("/list")
+    public List<MallProductVo> list() {
+        List<MallProductVo> productVoList = cartService.getVoListByUserId(SecurityUserUtils.getUserId());
+
+        productService.additionalVoList(productVoList, null, true);
+        return productVoList;
     }
 
     @ApiOperation("添加/修改购物车中商品")

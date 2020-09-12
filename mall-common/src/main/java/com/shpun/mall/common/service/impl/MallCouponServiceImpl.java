@@ -7,16 +7,15 @@ import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.mapper.MallCouponMapper;
 import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.vo.MallCouponVo;
-import com.shpun.mall.common.service.MallCouponClassifyService;
-import com.shpun.mall.common.service.MallCouponProductService;
-import com.shpun.mall.common.service.MallCouponService;
-import com.shpun.mall.common.service.RedisService;
+import com.shpun.mall.common.service.*;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -37,6 +36,9 @@ public class MallCouponServiceImpl implements MallCouponService {
 
     @Autowired
     private RedisService redisService;
+
+    @ApiModelProperty
+    private MallUserCouponService userCouponService;
 
     @Override
     public void deleteByPrimaryKey(Integer couponId) {
@@ -128,7 +130,7 @@ public class MallCouponServiceImpl implements MallCouponService {
     }
 
     @Override
-    public MallCoupon getAvailable(Integer couponId) {
+    public MallCouponVo getAvailable(Integer couponId) {
         return couponMapper.getAvailable(couponId);
     }
 
@@ -156,6 +158,54 @@ public class MallCouponServiceImpl implements MallCouponService {
     @Override
     public List<MallCouponVo> getVoListByProductId(Integer productId) {
         return couponMapper.getVoListByProductId(productId);
+    }
+
+    @Override
+    public void price2Str(MallCouponVo couponVo) {
+        couponVo.setMinPriceStr(couponVo.getMinPrice().stripTrailingZeros().toPlainString());
+        couponVo.setDiscountStr(couponVo.getDiscount().stripTrailingZeros().toPlainString());
+    }
+
+    @Override
+    public void additionalVo(MallCouponVo couponVo, Integer userId) {
+        if (userId != null) {
+            couponVo.setReceived(userCouponService.getByUserIdAndCouponId(userId, couponVo.getCouponId()) != null);
+        } else {
+            couponVo.setReceived(false);
+        }
+
+        // 数量标识
+        couponVo.setTotal(null);
+        couponVo.setHasTotal(true);
+        // 金额转成字符串
+        this.price2Str(couponVo);
+    }
+
+    @Override
+    public void additionalVoList(List<MallCouponVo> couponVoList, Integer userId) {
+        if (CollectionUtils.isNotEmpty(couponVoList)) {
+            List<Integer> couponIdList;
+            List<Integer> receivedList = null;
+            if (userId != null) {
+                couponIdList = couponVoList.stream().map(MallCouponVo::getCouponId).collect(Collectors.toList());
+                receivedList = userCouponService.getReceivedCouponId(userId, couponIdList);
+            }
+
+            for (MallCouponVo couponVo : couponVoList) {
+                Integer couponId = couponVo.getCouponId();
+                if (userId != null) {
+                    couponVo.setReceived(receivedList.contains(couponId));
+                } else {
+                    couponVo.setReceived(false);
+                }
+
+                // 数量标识
+                couponVo.setTotal(null);
+                couponVo.setHasTotal(true);
+                // 金额转成字符串
+                this.price2Str(couponVo);
+            }
+        }
     }
 
     @Override

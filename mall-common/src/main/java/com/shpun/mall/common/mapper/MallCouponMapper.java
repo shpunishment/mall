@@ -24,7 +24,7 @@ public interface MallCouponMapper {
 
     List<Integer> getProductIdList(Integer couponId);
 
-    MallCoupon getAvailable(Integer couponId);
+    MallCouponVo getAvailable(Integer couponId);
 
     MallCoupon lockCoupon(Integer couponId);
 

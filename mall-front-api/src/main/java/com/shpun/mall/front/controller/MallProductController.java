@@ -104,7 +104,7 @@ public class MallProductController {
             List<MallCouponVo> couponVoList = couponService.getVoListByProductId(productId);
 
             // 添加用户领取标识，库存标识
-            userCouponService.additionalVoList(couponVoList, SecurityUserUtils.getUserId());
+            couponService.additionalVoList(couponVoList, SecurityUserUtils.getUserId());
             productVo.setCouponVoList(couponVoList);
         }
 
@@ -127,8 +127,8 @@ public class MallProductController {
                                                           @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         // 判断优惠券id是否可用
-        MallCoupon coupon = couponService.getAvailable(couponId);
-        if (coupon == null) {
+        MallCouponVo couponVo = couponService.getAvailable(couponId);
+        if (couponVo == null) {
             throw new MallException(MallError.MallErrorEnum.COUPON_ERROR);
         }
 
@@ -141,18 +141,18 @@ public class MallProductController {
         }
 
         PageInfo<MallProductVo> productVoPageInfo = null;
-        if (MallCouponUseTypeEnums.ALL.getValue().equals(coupon.getUseType())) {
+        if (MallCouponUseTypeEnums.ALL.getValue().equals(couponVo.getUseType())) {
             if (CollectionUtils.isNotEmpty(flashProductIdList)) {
                 // 过滤限时抢购商品
                 productVoPageInfo = productService.getVoPageByFilterNotProductIdList(flashProductIdList, inStock, priceSort, offset, limit);
             } else {
                 productVoPageInfo = productService.getVoPageByFilter("", inStock, priceSort, offset, limit);
             }
-        } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(coupon.getUseType())) {
+        } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(couponVo.getUseType())) {
             List<Integer> classifyIdList = couponService.getClassifyIdList(couponId);
             // 过滤限时抢购商品
             productVoPageInfo = productService.getVoPageFilterByClassifyIdListAndNotProductIdList(classifyIdList, flashProductIdList, inStock, priceSort, offset, limit);
-        } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(coupon.getUseType())) {
+        } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(couponVo.getUseType())) {
             List<Integer> productIdList = couponService.getProductIdList(couponId);
             // 过滤限时抢购商品
             productVoPageInfo = productService.getVoPageFilterByProductIdListAndNotProductIdList(productIdList, flashProductIdList, inStock, priceSort, offset, limit);
