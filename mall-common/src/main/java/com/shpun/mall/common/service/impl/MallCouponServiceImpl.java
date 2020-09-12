@@ -37,7 +37,7 @@ public class MallCouponServiceImpl implements MallCouponService {
     @Autowired
     private RedisService redisService;
 
-    @ApiModelProperty
+    @Autowired
     private MallUserCouponService userCouponService;
 
     @Override

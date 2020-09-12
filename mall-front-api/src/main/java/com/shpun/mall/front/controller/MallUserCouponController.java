@@ -6,7 +6,6 @@ import com.shpun.mall.common.enums.MallCouponTypeEnums;
 import com.shpun.mall.common.enums.MallUserCouponGetTypeEnums;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
-import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserCoupon;
 import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.service.MallCouponService;
@@ -16,7 +15,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -77,11 +75,9 @@ public class MallUserCouponController {
                                        @RequestParam(value = "limit", defaultValue = "10") @Min(1) @Max(2147483647) Integer limit) {
 
         PageInfo<MallCouponVo> couponVoPageInfo = userCouponService.getCouponVoPageByFilter(SecurityUserUtils.getUserId(), status, offset, limit);
-        if (CollectionUtils.isNotEmpty(couponVoPageInfo.getList())) {
-            couponVoPageInfo.getList().forEach(couponVo -> {
 
-            });
-        }
+        // 添加用户领取标识，库存标识
+        couponService.additionalVoList(couponVoPageInfo.getList(), SecurityUserUtils.getUserId());
         return couponVoPageInfo;
     }
 

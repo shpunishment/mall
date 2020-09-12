@@ -58,13 +58,9 @@ public class MallUserServiceTest {
     @Test
     public void md5() {
         System.out.println("--------------------");
-        System.out.println(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        // 01d7f40760960e7bd9443513f22ab9af
+        System.out.println(DigestUtils.md5DigestAsHex("zhangsan".getBytes()));
         System.out.println("--------------------");
-    }
-
-    @Test
-    public void test() {
-        System.out.println(new BigDecimal("30.00").stripTrailingZeros().toPlainString());
     }
 
 }
