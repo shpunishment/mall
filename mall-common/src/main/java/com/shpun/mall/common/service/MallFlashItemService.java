@@ -45,6 +45,8 @@ public interface MallFlashItemService {
 
     List<Integer> getProductIdByFlashIdList(List<Integer> flashIdList);
 
+    void additionalVoList(List<MallProductVo> productVoList, Integer userId, Integer flashId);
+
     /**
      * 下单成功，删除缓存
      */

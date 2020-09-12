@@ -129,8 +129,8 @@ public class MallHomeController {
 
         PageInfo<MallProductVo> productVoPageInfo = flashItemService.getVoPageByFlashId(flashId, offset, limit);
 
-        // 检查商品是否在用户购物车中
-        productService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), true);
+        // 赋值库存比例，检查商品是否在用户购物车中
+        flashItemService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), flashId);
         return productVoPageInfo;
     }
 
