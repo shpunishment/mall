@@ -36,6 +36,8 @@ public interface MallCartService {
 
     PageInfo<MallProductVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit);
 
+    Integer getAvailableCartCount(Integer userId);
+
     /**
      * 新增更新购物车，下单成功，根据用户id删除
      * @param userId

@@ -7,10 +7,7 @@ import com.shpun.mall.common.model.MallActivity;
 import com.shpun.mall.common.model.vo.*;
 import com.shpun.mall.common.service.*;
 import com.shpun.mall.front.security.SecurityUserUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -48,6 +45,9 @@ public class MallHomeController {
 
     @Autowired
     private MallFlashItemService flashItemService;
+
+    @Autowired
+    private MallCartService cartService;
 
     @ApiOperation("搜索商品")
     @ApiImplicitParams(value = {
@@ -132,6 +132,16 @@ public class MallHomeController {
         // 检查商品是否在用户购物车中
         productService.additionalVoList(productVoPageInfo.getList(), SecurityUserUtils.getUserId(), true);
         return productVoPageInfo;
+    }
+
+    @ApiOperation("获取当前购物车数量")
+    @GetMapping("/getCartAmount")
+    public Integer getCartAmount() {
+        Integer amount = 0;
+        if (SecurityUserUtils.getUserId() != null) {
+            amount = cartService.getAvailableCartCount(SecurityUserUtils.getUserId());
+        }
+        return amount;
     }
 
 }

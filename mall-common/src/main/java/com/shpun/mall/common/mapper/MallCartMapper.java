@@ -31,4 +31,6 @@ public interface MallCartMapper {
 
     MallCart getByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
 
+    Integer getAvailableCartCount(@Param("userId") Integer userId);
+
 }

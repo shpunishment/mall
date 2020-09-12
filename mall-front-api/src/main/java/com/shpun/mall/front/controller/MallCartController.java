@@ -51,17 +51,17 @@ public class MallCartController {
         return productVoPageInfo;
     }
 
-    @ApiOperation("添加商品到购物车")
+    @ApiOperation("添加/修改购物车中商品")
     @PostMapping("/add")
     public void add(@RequestBody @Validated(MallCart.Add.class) MallCart cart){
         cart.setUserId(SecurityUserUtils.getUserId());
         cartService.addOrUpdate(cart);
     }
 
-    @ApiOperation("更新购物车商品")
-    @PostMapping("/update")
-    public void update(@RequestBody @Validated(MallCart.Update.class) MallCart cart) {
-        cartService.addOrUpdate(cart);
+    @ApiOperation("清空购物车")
+    @GetMapping("/clear")
+    public void clear() {
+        cartService.deleteAllByUserId(SecurityUserUtils.getUserId());
     }
 
 }

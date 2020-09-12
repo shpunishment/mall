@@ -16,7 +16,7 @@ public class MallFileServerServiceTest {
     @Autowired
     private MallFileServerService fileServerService;
 
-    private String projectPath = "E:\\IDEA_workspace\\mall";
+    private String projectPath = "E:\\IDEA-workspace\\mall";
 
     @Test
     public void insert() {
@@ -26,6 +26,11 @@ public class MallFileServerServiceTest {
         this.insertFirstClassifyMeat();
         this.insertFirstClassifySeafood();
         this.insertFirstClassifyOil();
+        this.insertFirstClassifyDelicatessen();
+        this.insertFirstClassifyIce();
+        this.insertFirstClassifyMilk();
+        this.insertFirstClassifyWater();
+        this.insertFirstClassifyEat();
     }
 
     /**

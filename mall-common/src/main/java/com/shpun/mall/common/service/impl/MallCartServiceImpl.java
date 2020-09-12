@@ -82,7 +82,12 @@ public class MallCartServiceImpl implements MallCartService {
                 this.insertSelective(cart);
             } else {
                 cart.setCartId(isExist.getCartId());
-                this.updateByPrimaryKeySelective(cart);
+                if (cart.getQuantity() == 0) {
+                    this.deleteByPrimaryKey(isExist.getCartId());
+                } else {
+                    this.updateByPrimaryKeySelective(cart);
+                }
+
             }
         }
     }
@@ -119,6 +124,11 @@ public class MallCartServiceImpl implements MallCartService {
     public PageInfo<MallProductVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
         return new PageInfo<>(this.getVoByUserId(userId));
+    }
+
+    @Override
+    public Integer getAvailableCartCount(Integer userId) {
+        return cartMapper.getAvailableCartCount(userId);
     }
 
     @Override

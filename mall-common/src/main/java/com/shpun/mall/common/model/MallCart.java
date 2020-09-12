@@ -17,9 +17,8 @@ import java.util.Date;
 @ApiModel
 public class MallCart implements Serializable {
 
-    @NotNull(groups = Update.class)
-    @Min(value = 1, groups = Update.class)
-    @Max(value = 2147483647, groups = Update.class)
+    @Min(value = 1, groups = { Add.class, Update.class })
+    @Max(value = 2147483647, groups = { Add.class, Update.class })
     @ApiModelProperty("购物车id")
     private Integer cartId;
 
@@ -39,7 +38,7 @@ public class MallCart implements Serializable {
     private Integer productId;
 
     @NotNull(groups = { Add.class, Update.class })
-    @Min(value = 1, groups = { Add.class, Update.class })
+    @Min(value = 0, groups = { Add.class, Update.class })
     @Max(value = 2147483647, groups = { Add.class, Update.class })
     @ApiModelProperty("数量")
     private Integer quantity;

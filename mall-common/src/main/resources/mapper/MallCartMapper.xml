@@ -180,4 +180,15 @@
       and deleted = 0
   </select>
 
+  <select id="getAvailableCartCount" resultType="java.lang.Integer">
+    SELECT count( * )
+    FROM mall_cart AS c
+	  LEFT JOIN mall_product AS p ON p.product_id = c.product_id
+    WHERE c.user_id = #{userId,jdbcType=INTEGER}
+	  AND c.deleted = 0
+	  AND p.deleted = 0
+	  AND p.publish_status = 1
+	  AND p.stock > 0
+  </select>
+
 </mapper>
