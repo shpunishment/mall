@@ -268,38 +268,39 @@ public class MallProductServiceImpl implements MallProductService {
     }
 
     @Override
-    public List<MallProductVo> getVoListByFilterClassifyIdList(List<Integer> classifyIdList, Integer inStock, Integer priceSort) {
-        return productMapper.getVoListFilterByClassifyIdList(classifyIdList, inStock, priceSort);
-    }
-
-    @RedisCache
-    @Override
-    public PageInfo<MallProductVo> getVoPageByFilterClassifyIdList(List<Integer> classifyIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
-        PageHelper.offsetPage(offset, limit);
-        return new PageInfo<>(this.getVoListByFilterClassifyIdList(classifyIdList, inStock, priceSort));
-    }
-
-    @RedisCache
-    @Override
-    public List<MallProductVo> getVoListByFilterProductIdList(List<Integer> productIdList, Integer inStock, Integer priceSort) {
-        return productMapper.getVoListByProductIdList(productIdList, inStock, priceSort);
-    }
-
-    @Override
-    public PageInfo<MallProductVo> getVoPageByFilterProductIdList(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
-        PageHelper.offsetPage(offset, limit);
-        return new PageInfo<>(this.getVoListByFilterProductIdList(productIdList, inStock, priceSort));
-    }
-
-    @Override
     public List<MallProductVo> getVoListByFilterNotProductIdList(List<Integer> notProductIdList, Integer inStock, Integer priceSort) {
         return productMapper.getVoListByNotProductIdList(notProductIdList, inStock, priceSort);
     }
 
+    @RedisCache
     @Override
     public PageInfo<MallProductVo> getVoPageByFilterNotProductIdList(List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
         PageHelper.offsetPage(offset, limit);
         return new PageInfo<>(this.getVoListByFilterNotProductIdList(notProductIdList, inStock, priceSort));
+    }
+
+    @Override
+    public List<MallProductVo> getVoListFilterByClassifyIdListAndNotProductIdList(List<Integer> classifyIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort) {
+        return productMapper.getVoListFilterByClassifyIdListAndNotProductIdList(classifyIdList, notProductIdList, inStock, priceSort);
+    }
+
+    @RedisCache
+    @Override
+    public PageInfo<MallProductVo> getVoPageFilterByClassifyIdListAndNotProductIdList(List<Integer> classifyIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
+        PageHelper.offsetPage(offset, limit);
+        return new PageInfo<>(this.getVoListFilterByClassifyIdListAndNotProductIdList(classifyIdList, notProductIdList, inStock, priceSort));
+    }
+
+    @Override
+    public List<MallProductVo> getVoListFilterByProductIdListAndNotProductIdList(List<Integer> productIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort) {
+        return productMapper.getVoListFilterByProductIdListAndNotProductIdList(productIdList, notProductIdList, inStock, priceSort);
+    }
+
+    @RedisCache
+    @Override
+    public PageInfo<MallProductVo> getVoPageFilterByProductIdListAndNotProductIdList(List<Integer> productIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit) {
+        PageHelper.offsetPage(offset, limit);
+        return new PageInfo<>(this.getVoListFilterByProductIdListAndNotProductIdList(productIdList, notProductIdList, inStock, priceSort));
     }
 
     @Override

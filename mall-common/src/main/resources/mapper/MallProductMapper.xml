@@ -316,9 +316,9 @@
     FROM
       mall_product AS p
       LEFT JOIN mall_product_classify AS pc ON pc.product_id = p.product_id
-    WHERE
-      pc.classify_id = #{classifyId,jdbcType=INTEGER}
-      AND p.deleted = 0 AND p.publish_status = 1
+    WHERE pc.classify_id = #{classifyId,jdbcType=INTEGER}
+      AND p.deleted = 0
+      AND p.publish_status = 1
       <if test="inStock == 1">
         and p.stock > 0
       </if>
@@ -381,7 +381,32 @@
       AND p.deleted = 0
   </select>
 
-  <select id="getVoListFilterByClassifyIdList" resultMap="VoResultMap">
+  <select id="getVoListByNotProductIdList" resultMap="VoResultMap">
+    select
+    <include refid="Vo_Column_List" />
+    from mall_product
+    <where>
+      <if test="notProductIdList != null and notProductIdList.size() > 0">
+        and product_id not in
+        <foreach item="notProductId" collection="notProductIdList" open="(" separator="," close=")">
+          #{notProductId,jdbcType=INTEGER}
+        </foreach>
+      </if>
+      and deleted = 0
+      and publish_status = 1
+      <if test="inStock == 1">
+        and stock > 0
+      </if>
+    </where>
+    <if test="priceSort == 1">
+      order by current_price asc
+    </if>
+    <if test="priceSort == 2">
+      order by current_price desc
+    </if>
+  </select>
+
+  <select id="getVoListFilterByClassifyIdListAndNotProductIdList" resultMap="VoResultMap">
     SELECT distinct
       p.product_id,
       p.product_name,
@@ -394,62 +419,58 @@
       p.new_status,
       p.label,
       p.label_color
-    FROM
-      mall_product AS p
+    FROM mall_product AS p
       LEFT JOIN mall_product_classify AS pc ON pc.product_id = p.product_id
-    WHERE pc.classify_id in
-      <foreach item="classifyId" collection="classifyIdList" open="(" separator="," close=")">
-        #{classifyId,jdbcType=INTEGER}
-      </foreach>
+    <where>
+      <if test="classifyIdList != null and classifyIdList.size() > 0">
+        AND pc.classify_id in
+        <foreach item="classifyId" collection="classifyIdList" open="(" separator="," close=")">
+          #{classifyId,jdbcType=INTEGER}
+        </foreach>
+      </if>
+      <if test="notProductIdList != null and notProductIdList.size() > 0">
+        AND pc.product_id not in
+        <foreach item="notProductId" collection="notProductIdList" open="(" separator="," close=")">
+          #{notProductId,jdbcType=INTEGER}
+        </foreach>
+      </if>
       AND p.deleted = 0
       AND p.publish_status = 1
       <if test="inStock == 1">
-        and p.stock > 0
+        AND p.stock > 0
       </if>
-      <if test="priceSort == 1">
-        order by p.current_price asc
-      </if>
-      <if test="priceSort == 2">
-        order by p.current_price desc
-      </if>
+    </where>
+    <if test="priceSort == 1">
+      order by p.current_price asc
+    </if>
+    <if test="priceSort == 2">
+      order by p.current_price desc
+    </if>
   </select>
 
-  <select id="getVoListByProductIdList" resultMap="VoResultMap">
+  <select id="getVoListFilterByProductIdListAndNotProductIdList" resultMap="VoResultMap">
     select
     <include refid="Vo_Column_List" />
-    from
-      mall_product
-    where product_id in
-      <foreach item="productId" collection="productIdList" open="(" separator="," close=")">
-        #{productId,jdbcType=INTEGER}
-      </foreach>
+    from mall_product
+    <where>
+      <if test="productIdList != null and productIdList.size() > 0">
+        AND product_id in
+        <foreach item="productId" collection="productIdList" open="(" separator="," close=")">
+          #{productId,jdbcType=INTEGER}
+        </foreach>
+      </if>
+      <if test="notProductIdList != null and notProductIdList.size() > 0">
+        AND product_id not in
+        <foreach item="notProductId" collection="notProductIdList" open="(" separator="," close=")">
+          #{notProductId,jdbcType=INTEGER}
+        </foreach>
+      </if>
       and deleted = 0
       and publish_status = 1
       <if test="inStock == 1">
         and stock > 0
       </if>
-      <if test="priceSort == 1">
-        order by current_price asc
-      </if>
-      <if test="priceSort == 2">
-        order by current_price desc
-      </if>
-  </select>
-
-  <select id="getVoListByNotProductIdList" resultMap="VoResultMap">
-    select
-    <include refid="Vo_Column_List" />
-    from
-    mall_product
-    where product_id not in
-    <foreach item="productId" collection="productIdList" open="(" separator="," close=")">
-      #{productId,jdbcType=INTEGER}
-    </foreach>
-    and deleted = 0
-    and publish_status = 1
-    <if test="inStock == 1">
-      and stock > 0
-    </if>
+    </where>
     <if test="priceSort == 1">
       order by current_price asc
     </if>

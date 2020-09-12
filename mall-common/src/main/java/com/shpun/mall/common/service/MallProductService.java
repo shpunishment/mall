@@ -74,8 +74,6 @@ public interface MallProductService {
 
     PageInfo<MallProductVo> getHotVoPage(Integer offset, Integer limit);
 
-
-
     MallProductVo getDetailVo(Integer productId);
 
     /**
@@ -101,17 +99,40 @@ public interface MallProductService {
 
     List<MallProduct> getListByClassifyId(Integer classifyId);
 
-    List<MallProductVo> getVoListByFilterClassifyIdList(List<Integer> classifyIdList, Integer inStock, Integer priceSort);
-
-    PageInfo<MallProductVo> getVoPageByFilterClassifyIdList(List<Integer> classifyIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
-
-    List<MallProductVo> getVoListByFilterProductIdList(List<Integer> productIdList, Integer inStock, Integer priceSort);
-
-    PageInfo<MallProductVo> getVoPageByFilterProductIdList(List<Integer> productIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
-
+    /**
+     * 获取除了 notProductIdList 外的商品
+     * @param notProductIdList
+     * @param inStock
+     * @param priceSort
+     * @return
+     */
     List<MallProductVo> getVoListByFilterNotProductIdList(List<Integer> notProductIdList, Integer inStock, Integer priceSort);
 
     PageInfo<MallProductVo> getVoPageByFilterNotProductIdList(List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+
+    /**
+     * 获取 classifyIdList 下的，除了 notProductIdList 外的商品
+     * @param classifyIdList
+     * @param notProductIdList
+     * @param inStock
+     * @param priceSort
+     * @return
+     */
+    List<MallProductVo> getVoListFilterByClassifyIdListAndNotProductIdList(List<Integer> classifyIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort);
+
+    PageInfo<MallProductVo> getVoPageFilterByClassifyIdListAndNotProductIdList(List<Integer> classifyIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
+
+    /**
+     * 获取 productIdList 下的，除了 notProductIdList 外的商品
+     * @param productIdList
+     * @param notProductIdList
+     * @param inStock
+     * @param priceSort
+     * @return
+     */
+    List<MallProductVo> getVoListFilterByProductIdListAndNotProductIdList(List<Integer> productIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort);
+
+    PageInfo<MallProductVo> getVoPageFilterByProductIdListAndNotProductIdList(List<Integer> productIdList, List<Integer> notProductIdList, Integer inStock, Integer priceSort, Integer offset, Integer limit);
 
     /**
      * 下单成功，删除缓存

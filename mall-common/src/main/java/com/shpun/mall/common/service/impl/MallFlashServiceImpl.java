@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -69,7 +70,25 @@ public class MallFlashServiceImpl implements MallFlashService {
     @RedisCache
     @Override
     public List<MallFlashVo> getTodayAvailableVoList() {
-        return flashMapper.getTodayAvailableVoList();
+        List<MallFlashVo> flashVoList = flashMapper.getTodayAvailableVoList();
+        if (CollectionUtils.isNotEmpty(flashVoList)) {
+            for (Iterator<MallFlashVo> iterator = flashVoList.iterator(); iterator.hasNext();) {
+                MallFlashVo flashVo = iterator.next();
+                Integer hour = flashVo.getHour();
+                Calendar now = Calendar.getInstance();
+
+                // 小时为当前小时
+                if (hour.equals(now.get(Calendar.HOUR_OF_DAY))) {
+                    Integer minute = flashVo.getMinute();
+                    Integer nowMinute = now.get(Calendar.MINUTE);
+                    // 判断分钟是否在限时抢购范围内
+                    if (nowMinute < minute || nowMinute >= minute + Const.DEFAULT_FLASH_LIMIT_MINS) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        return flashVoList;
     }
 
     @RedisCache

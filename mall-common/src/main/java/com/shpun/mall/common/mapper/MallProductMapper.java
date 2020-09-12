@@ -35,16 +35,18 @@ public interface MallProductMapper {
 
     List<MallProduct> getListByClassifyId(Integer classifyId);
 
-    List<MallProductVo> getVoListFilterByClassifyIdList(@Param("classifyIdList") List<Integer> classifyIdList,
-                                                        @Param("inStock") Integer inStock,
-                                                        @Param("priceSort") Integer priceSort);
-
-    List<MallProductVo> getVoListByProductIdList(@Param("productIdList") List<Integer> productIdList,
-                                                 @Param("inStock") Integer inStock,
-                                                 @Param("priceSort") Integer priceSort);
-
     List<MallProductVo> getVoListByNotProductIdList(@Param("notProductIdList") List<Integer> notProductIdList,
                                                     @Param("inStock") Integer inStock,
                                                     @Param("priceSort") Integer priceSort);
+
+    List<MallProductVo> getVoListFilterByClassifyIdListAndNotProductIdList(@Param("classifyIdList") List<Integer> classifyIdList,
+                                                                           @Param("notProductIdList") List<Integer> notProductIdList,
+                                                                           @Param("inStock") Integer inStock,
+                                                                           @Param("priceSort") Integer priceSort);
+
+    List<MallProductVo> getVoListFilterByProductIdListAndNotProductIdList(@Param("productIdList") List<Integer> productIdList,
+                                                                          @Param("notProductIdList") List<Integer> notProductIdList,
+                                                                          @Param("inStock") Integer inStock,
+                                                                          @Param("priceSort") Integer priceSort);
 
 }

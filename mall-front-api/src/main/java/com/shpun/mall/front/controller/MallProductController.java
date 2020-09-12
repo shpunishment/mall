@@ -132,26 +132,30 @@ public class MallProductController {
             throw new MallException(MallError.MallErrorEnum.COUPON_ERROR);
         }
 
+        // 获取今日限时抢购商品idList
+        List<Integer> flashProductIdList = null;
+        List<MallFlashVo> flashVoList = flashService.getTodayAvailableVoList();
+        if (CollectionUtils.isNotEmpty(flashVoList)) {
+            List<Integer> flashIdList = flashVoList.stream().map(MallFlashVo::getFlashId).collect(Collectors.toList());
+            flashProductIdList = flashItemService.getProductIdByFlashIdList(flashIdList);
+        }
+
         PageInfo<MallProductVo> productVoPageInfo = null;
         if (MallCouponUseTypeEnums.ALL.getValue().equals(coupon.getUseType())) {
-            // 获取今日限时抢购
-            List<MallFlashVo> flashVoList = flashService.getTodayAvailableVoList();
-            if (CollectionUtils.isNotEmpty(flashVoList)) {
-                List<Integer> flashIdList = flashVoList.stream().map(MallFlashVo::getFlashId).collect(Collectors.toList());
-                // 获取今日限时抢购商品
-                List<Integer> flashProductIdList = flashItemService.getProductIdByFlashIdList(flashIdList);
-                // 搜索商品排除限时抢购商品
+            if (CollectionUtils.isNotEmpty(flashProductIdList)) {
+                // 过滤限时抢购商品
                 productVoPageInfo = productService.getVoPageByFilterNotProductIdList(flashProductIdList, inStock, priceSort, offset, limit);
             } else {
                 productVoPageInfo = productService.getVoPageByFilter("", inStock, priceSort, offset, limit);
             }
         } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(coupon.getUseType())) {
             List<Integer> classifyIdList = couponService.getClassifyIdList(couponId);
-            productVoPageInfo = productService.getVoPageByFilterClassifyIdList(classifyIdList, inStock, priceSort, offset, limit);
-
+            // 过滤限时抢购商品
+            productVoPageInfo = productService.getVoPageFilterByClassifyIdListAndNotProductIdList(classifyIdList, flashProductIdList, inStock, priceSort, offset, limit);
         } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(coupon.getUseType())) {
             List<Integer> productIdList = couponService.getProductIdList(couponId);
-            productVoPageInfo = productService.getVoPageByFilterProductIdList(productIdList, inStock, priceSort, offset, limit);
+            // 过滤限时抢购商品
+            productVoPageInfo = productService.getVoPageFilterByProductIdListAndNotProductIdList(productIdList, flashProductIdList, inStock, priceSort, offset, limit);
         }
 
         // 检查商品是否在用户购物车中
