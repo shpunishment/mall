@@ -2,6 +2,7 @@ package com.shpun.mall.common.service;
 
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallCart;
+import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallCartVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 
@@ -35,6 +36,8 @@ public interface MallCartService {
     List<MallProductVo> getVoListByUserId(Integer userId);
 
     PageInfo<MallProductVo> getVoPageByUserId(Integer userId, Integer offset, Integer limit);
+
+    List<MallProductVo> getStockAndNoStockVoList(Integer userId);
 
     Integer getAvailableCartSum(Integer userId);
 

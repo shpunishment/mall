@@ -23,6 +23,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
+        httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         httpServletResponse.getWriter()
                 .write(JSON.toJSONString(MallResultVo.failure(Const.API_RETRUN_CODE_ACCESS_DENIED, "无权限访问")));
     }

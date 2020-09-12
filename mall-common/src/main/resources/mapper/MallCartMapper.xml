@@ -153,6 +153,64 @@
 	  c.create_time DESC
   </select>
 
+  <select id="getHasStockVoList" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
+    SELECT
+	  p.product_id,
+	  p.product_name,
+	  p.`desc`,
+	  p.pic,
+	  p.original_price,
+	  p.current_price,
+	  p.stock,
+	  p.`limit`,
+	  p.new_status,
+	  p.label,
+	  p.label_color,
+	  c.cart_id as c_cart_id,
+	  c.product_id as c_product_id,
+	  c.quantity as c_quantity
+    FROM
+	  mall_cart AS c
+	  LEFT JOIN mall_product AS p ON p.product_id = c.product_id
+    WHERE c.user_id = #{userId,jdbcType=INTEGER}
+	  AND c.deleted = 0
+	  AND p.deleted = 0
+	  AND p.publish_status = 1
+	  AND p.stock > 0
+    ORDER BY
+	  c.update_time DESC,
+	  c.create_time DESC
+  </select>
+
+  <select id="getNoStockVoList" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
+    SELECT
+	  p.product_id,
+	  p.product_name,
+	  p.`desc`,
+	  p.pic,
+	  p.original_price,
+	  p.current_price,
+	  p.stock,
+	  p.`limit`,
+	  p.new_status,
+	  p.label,
+	  p.label_color,
+	  c.cart_id as c_cart_id,
+	  c.product_id as c_product_id,
+	  c.quantity as c_quantity
+    FROM
+	  mall_cart AS c
+	  LEFT JOIN mall_product AS p ON p.product_id = c.product_id
+    WHERE c.user_id = #{userId,jdbcType=INTEGER}
+	  AND c.deleted = 0
+	  AND p.deleted = 0
+	  AND p.publish_status = 1
+	  AND p.stock = 0
+    ORDER BY
+	  c.update_time DESC,
+	  c.create_time DESC
+  </select>
+
   <select id="getVoByUserIdAndProductId" resultMap="VoResultMap">
     select
     <include refid="Vo_Column_List" />

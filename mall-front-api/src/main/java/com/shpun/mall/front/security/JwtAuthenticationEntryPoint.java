@@ -23,6 +23,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.getWriter()
                 .write(JSON.toJSONString(MallResultVo.failure(Const.API_RETRUN_CODE_AUTHENTICATION_FAIL, "未认证通过，请登录！")));
     }

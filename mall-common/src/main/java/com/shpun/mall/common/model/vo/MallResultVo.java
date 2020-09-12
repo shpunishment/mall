@@ -23,6 +23,13 @@ public class MallResultVo<T> implements Serializable {
         return new MallResultVo<>();
     }
 
+    public static MallResultVo<?> ok(Integer code, String message) {
+        MallResultVo<?> resultVo = new MallResultVo<>();
+        resultVo.setCode(code);
+        resultVo.setMessage(message);
+        return resultVo;
+    }
+
     public static <T> MallResultVo<T> okData(T data) {
         MallResultVo<T> resultVo = new MallResultVo<>();
         resultVo.setData(data);

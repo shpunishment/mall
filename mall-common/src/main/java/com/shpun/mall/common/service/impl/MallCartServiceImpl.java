@@ -7,14 +7,18 @@ import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
 import com.shpun.mall.common.mapper.MallCartMapper;
 import com.shpun.mall.common.model.MallCart;
+import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallCartVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallCartService;
 import com.shpun.mall.common.service.MallProductService;
 import com.shpun.mall.common.service.RedisService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +71,7 @@ public class MallCartServiceImpl implements MallCartService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void addOrUpdate(MallCart cart) {
         Integer cartId = cart.getCartId();
@@ -118,7 +123,6 @@ public class MallCartServiceImpl implements MallCartService {
         return cartMapper.getVoByUserIdAndProductId(userId, productId);
     }
 
-    @RedisCache
     @Override
     public List<MallProductVo> getVoListByUserId(Integer userId) {
         return cartMapper.getVoListByUserId(userId);
@@ -130,6 +134,21 @@ public class MallCartServiceImpl implements MallCartService {
         return new PageInfo<>(this.getVoListByUserId(userId));
     }
 
+    @RedisCache
+    @Override
+    public List<MallProductVo> getStockAndNoStockVoList(Integer userId) {
+        List<MallProductVo> resultList = new ArrayList<>(1);
+        List<MallProductVo> hasStockVoList = cartMapper.getHasStockVoList(userId);
+        if (CollectionUtils.isNotEmpty(hasStockVoList)) {
+            resultList.addAll(hasStockVoList);
+        }
+        List<MallProductVo> noStockVoList = cartMapper.getNoStockVoList(userId);
+        if (CollectionUtils.isNotEmpty(noStockVoList)) {
+            resultList.addAll(noStockVoList);
+        }
+        return resultList;
+    }
+
     @Override
     public Integer getAvailableCartSum(Integer userId) {
         return cartMapper.getAvailableCartSum(userId);
@@ -139,7 +158,7 @@ public class MallCartServiceImpl implements MallCartService {
     public void deleteCache(Integer userId) {
         redisService.deleteByPrefix(MallCartServiceImpl.class, "getByUserIdAndCartIdList", userId);
         redisService.deleteByPrefix(MallCartServiceImpl.class, "getVoByUserIdAndProductId", userId);
-        redisService.deleteByPrefix(MallCartServiceImpl.class, "getVoListByUserId", userId);
+        redisService.deleteByPrefix(MallCartServiceImpl.class, "getStockAndNoStockVoList", userId);
     }
 
 }

@@ -55,7 +55,7 @@ public class MallUserFavoriteController {
             @ApiImplicitParam(name = "productId", value = "商品id", dataType = "Integer")
     })
     @GetMapping("/favorite/{productId}")
-    public void favorite(@PathVariable("productId") @Min(1) @Max(2147483647) Integer productId) {
+    public Integer favorite(@PathVariable("productId") @Min(1) @Max(2147483647) Integer productId) {
         // 校验，防止重复收藏
         Integer favoriteId = userFavoriteService.isFavorite(SecurityUserUtils.getUserId(), productId);
         if (favoriteId == null) {
@@ -63,10 +63,12 @@ public class MallUserFavoriteController {
             userFavorite.setProductId(productId);
             userFavorite.setUserId(SecurityUserUtils.getUserId());
             userFavoriteService.insertSelective(userFavorite);
+            favoriteId = userFavorite.getFavoriteId();
 
             // 删除用户收藏缓存
             userFavoriteService.deleteCache(SecurityUserUtils.getUserId());
         }
+        return favoriteId;
     }
 
     @ApiOperation("取消收藏商品")

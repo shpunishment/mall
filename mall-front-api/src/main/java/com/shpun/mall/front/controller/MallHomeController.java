@@ -134,12 +134,13 @@ public class MallHomeController {
         return productVoPageInfo;
     }
 
-    @ApiOperation("获取当前购物车数量")
+    @ApiOperation("获取当前购物车商品数量")
     @GetMapping("/getCartAmount")
     public Integer getCartAmount() {
         Integer amount = 0;
         if (SecurityUserUtils.getUserId() != null) {
             amount = cartService.getAvailableCartSum(SecurityUserUtils.getUserId());
+            amount = amount == null ? 0 : amount;
         }
         return amount;
     }

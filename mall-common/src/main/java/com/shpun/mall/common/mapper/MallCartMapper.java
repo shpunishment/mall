@@ -1,6 +1,7 @@
 package com.shpun.mall.common.mapper;
 
 import com.shpun.mall.common.model.MallCart;
+import com.shpun.mall.common.model.MallProduct;
 import com.shpun.mall.common.model.vo.MallCartVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import org.apache.ibatis.annotations.Param;
@@ -24,6 +25,10 @@ public interface MallCartMapper {
     void deleteBatch(@Param("cartIdList") List<Integer> cartIdList);
 
     List<MallProductVo> getVoListByUserId(Integer userId);
+
+    List<MallProductVo> getHasStockVoList(Integer userId);
+
+    List<MallProductVo> getNoStockVoList(Integer userId);
 
     MallCartVo getVoByUserIdAndProductId(@Param("userId") Integer userId, @Param("productId") Integer productId);
 

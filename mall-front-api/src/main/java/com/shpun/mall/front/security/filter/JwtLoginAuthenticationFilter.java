@@ -2,6 +2,7 @@ package com.shpun.mall.front.security.filter;
 
 import com.alibaba.fastjson.JSON;
 import com.shpun.mall.common.common.Const;
+import com.shpun.mall.common.model.vo.MallResultVo;
 import com.shpun.mall.front.security.JwtTokenUtils;
 import com.shpun.mall.front.security.SecurityUserDetails;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -80,6 +81,9 @@ public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthentication
                 .collect(Collectors.toList());
 
         String token = JwtTokenUtils.createJwtToken(userDetails.getUsername(), authorities);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write(JSON.toJSONString(MallResultVo.ok(Const.API_RETURN_CODE_SUCCESS, "登录成功！")));
         response.setHeader(JwtTokenUtils.TOKEN_HEADER, token);
     }
 
@@ -93,11 +97,8 @@ public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthentication
      */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        Map<String, Object> map = new HashMap<>(2);
-        map.put("code", 401);
-        map.put("msg", "未认证通过，请重新登录！");
-
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(JSON.toJSONString(map));
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write(JSON.toJSONString(MallResultVo.failure(Const.API_RETRUN_CODE_AUTHENTICATION_FAIL, "未认证通过，请登录！")));
     }
 }

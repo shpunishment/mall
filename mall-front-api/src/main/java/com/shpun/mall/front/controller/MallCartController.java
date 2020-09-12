@@ -54,7 +54,7 @@ public class MallCartController {
     @ApiOperation("获取用户购物车")
     @GetMapping("/list")
     public List<MallProductVo> list() {
-        List<MallProductVo> productVoList = cartService.getVoListByUserId(SecurityUserUtils.getUserId());
+        List<MallProductVo> productVoList = cartService.getStockAndNoStockVoList(SecurityUserUtils.getUserId());
 
         productService.additionalVoList(productVoList, null, true);
         return productVoList;
