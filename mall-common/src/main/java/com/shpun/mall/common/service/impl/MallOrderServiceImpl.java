@@ -254,15 +254,19 @@ public class MallOrderServiceImpl implements MallOrderService {
                         if (order.getCouponId() != null) {
                             MallOrderVo orderVo = new MallOrderVo();
                             BeanUtils.copyProperties(order, orderVo);
+                            couponService.price2Str(couponVo);
                             couponVo.setOrderVo(orderVo);
                             resultMap.get("can").add(couponVo);
                         } else {
+                            couponService.price2Str(couponVo);
                             resultMap.get("cannot").add(couponVo);
                         }
                     } else {
+                        couponService.price2Str(couponVo);
                         resultMap.get("cannot").add(couponVo);
                     }
                 } else {
+                    couponService.price2Str(couponVo);
                     resultMap.get("cannot").add(couponVo);
                 }
             }
@@ -492,55 +496,56 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void closeOrder(Integer orderId, Integer userId) {
-        // 查找订单是否存在
         MallOrder order = this.selectByPrimaryKey(orderId);
-        if (!order.getUserId().equals(userId)) {
-            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
-        }
+        // 查找订单是否存在，并且订单未支付
+        if (order.getUserId().equals(userId) && MallOrderStatusEnums.WAIT2PAY.getValue().equals(order.getStatus())) {
 
-        order.setStatus(MallOrderStatusEnums.CLOSE.getValue());
-        order.setEndTime(new Date());
-        this.updateByPrimaryKeySelective(order);
+            order.setStatus(MallOrderStatusEnums.CLOSE.getValue());
+            order.setEndTime(new Date());
+            this.updateByPrimaryKeySelective(order);
 
-        // 商品库存回滚
-        List<MallOrderItem> orderItemList = orderItemService.getByOrderId(orderId);
-        List<MallProduct> productList = new ArrayList<>(orderItemList.size());
-        List<MallFlashItem> flashItemList = new ArrayList<>(orderItemList.size());
-        for (MallOrderItem orderItem : orderItemList) {
-            Integer quantity = orderItem.getQuantity();
-            Integer flashItemId = orderItem.getFlashItemId();
-            if (flashItemId.equals(Const.DEFAULT_NO_FLASH_ITEM_ID)) {
-                Integer productId = orderItem.getProductId();
-                MallProduct product = productService.lockStock(productId);
+            // 商品库存回滚
+            List<MallOrderItem> orderItemList = orderItemService.getByOrderId(orderId);
+            List<MallProduct> productList = new ArrayList<>(orderItemList.size());
+            List<MallFlashItem> flashItemList = new ArrayList<>(orderItemList.size());
+            for (MallOrderItem orderItem : orderItemList) {
+                Integer quantity = orderItem.getQuantity();
+                Integer flashItemId = orderItem.getFlashItemId();
+                if (flashItemId.equals(Const.DEFAULT_NO_FLASH_ITEM_ID)) {
+                    Integer productId = orderItem.getProductId();
+                    MallProduct product = productService.lockStock(productId);
 
-                // 加库存，减销量
-                product.setStock(product.getStock() + quantity);
-                product.setSales(product.getSales() - quantity);
-                productList.add(product);
-            } else {
-                MallFlashItem flashItem = flashItemService.lockStock(flashItemId);
-                // 判断该限时抢购是否还在进行
-                if (flashService.isFlashing(flashItem.getFlashId())) {
                     // 加库存，减销量
-                    flashItem.setStock(flashItem.getStock() + quantity);
-                    flashItem.setSales(flashItem.getSales() - quantity);
-                    flashItemList.add(flashItem);
+                    product.setStock(product.getStock() + quantity);
+                    product.setSales(product.getSales() - quantity);
+                    productList.add(product);
+                } else {
+                    MallFlashItem flashItem = flashItemService.lockStock(flashItemId);
+                    // 判断该限时抢购是否还在进行
+                    if (flashService.isFlashing(flashItem.getFlashId())) {
+                        // 加库存，减销量
+                        flashItem.setStock(flashItem.getStock() + quantity);
+                        flashItem.setSales(flashItem.getSales() - quantity);
+                        flashItemList.add(flashItem);
+                    }
                 }
             }
-        }
 
-        // 更新商品，加库存，减销量
-        productService.updateBatch(productList);
-        // 更新限时抢购商品，加库存，减销量
-        flashItemService.updateBatch(flashItemList);
-        // 返还优惠券
-        Integer couponId = order.getCouponId();
-        if (couponId != null) {
-            MallUserCoupon userCoupon = userCouponService.getByUserIdAndCouponId(userId, couponId);
-            userCoupon.setStatus(MallUserCouponStatusEnums.UNUSED.getValue());
-            userCoupon.setUseTime(null);
-            userCoupon.setOrderId(null);
-            userCouponService.updateByPrimaryKeySelective(userCoupon);
+            // 更新商品，加库存，减销量
+            productService.updateBatch(productList);
+            // 更新限时抢购商品，加库存，减销量
+            flashItemService.updateBatch(flashItemList);
+            // 返还优惠券
+            Integer couponId = order.getCouponId();
+            if (couponId != null) {
+                MallUserCoupon userCoupon = userCouponService.getByUserIdAndCouponId(userId, couponId);
+                userCoupon.setStatus(MallUserCouponStatusEnums.UNUSED.getValue());
+                userCoupon.setUseTime(null);
+                userCoupon.setOrderId(null);
+                userCouponService.updateByPrimaryKeySelective(userCoupon);
+            }
+        } else {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
     }
 

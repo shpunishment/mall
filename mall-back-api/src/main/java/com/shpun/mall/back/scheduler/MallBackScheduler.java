@@ -203,9 +203,9 @@ public class MallBackScheduler {
     }
 
     /**
-     * 配送成功调度器，每十分钟执行一次
+     * 配送成功调度器，每分钟执行一次
      */
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void deliverySuccess() {
         // 获取配送中的配送员，将订单自动收货
         List<Integer> deliveringIdList = deliveryService.getDeliveringIdList();

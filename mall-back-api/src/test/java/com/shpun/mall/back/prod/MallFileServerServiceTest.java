@@ -31,6 +31,7 @@ public class MallFileServerServiceTest {
         this.insertFirstClassifyMilk();
         this.insertFirstClassifyWater();
         this.insertFirstClassifyEat();
+        this.insertFirstClassifyActivity();
     }
 
     /**
@@ -217,6 +218,17 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\鳕鱼棒.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\果汁软糖.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\冰糖杨梅.jpg");
+    }
+
+    /**
+     * 造数据 活动图
+     * 99~101
+     */
+    @Test
+    public void insertFirstClassifyActivity() {
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\活动图\\活动1.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\活动图\\活动2.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\活动图\\活动3.jpg");
     }
 
 }

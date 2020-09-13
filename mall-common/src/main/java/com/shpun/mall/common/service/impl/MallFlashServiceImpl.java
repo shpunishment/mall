@@ -83,7 +83,9 @@ public class MallFlashServiceImpl implements MallFlashService {
                     Integer minute = flashVo.getMinute();
                     Integer nowMinute = now.get(Calendar.MINUTE);
                     // 判断分钟是否在限时抢购范围内
-                    if (nowMinute < minute || nowMinute >= minute + Const.DEFAULT_FLASH_LIMIT_MINS) {
+                    if (nowMinute >= minute && nowMinute < (minute + Const.DEFAULT_FLASH_LIMIT_MINS)) {
+                        flashVo.setFlashing(true);
+                    } else {
                         iterator.remove();
                     }
                 }

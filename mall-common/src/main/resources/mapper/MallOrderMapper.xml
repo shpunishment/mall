@@ -69,7 +69,7 @@
   </sql>
 
   <sql id="Vo_Column_List">
-    order_id, order_time, total_price, `status`, product_amount
+    order_id, order_number, order_time, total_price, `status`, product_amount
   </sql>
 
   <sql id="Vo_Detail_Column_List">

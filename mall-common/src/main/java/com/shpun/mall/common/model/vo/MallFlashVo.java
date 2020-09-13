@@ -41,6 +41,9 @@ public class MallFlashVo implements Serializable {
     @ApiModelProperty("今日活动标识")
     private Boolean today;
 
+    @ApiModelProperty("是否正在限时抢购")
+    private Boolean flashing;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getFlashId() {
@@ -113,5 +116,13 @@ public class MallFlashVo implements Serializable {
 
     public void setToday(Boolean today) {
         this.today = today;
+    }
+
+    public Boolean getFlashing() {
+        return flashing;
+    }
+
+    public void setFlashing(Boolean flashing) {
+        this.flashing = flashing;
     }
 }

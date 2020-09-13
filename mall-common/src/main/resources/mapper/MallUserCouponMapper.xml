@@ -166,6 +166,7 @@
     <if test="status != null and status == 3">
       AND uc.`status` != 2 AND ( uc.`status` = #{status,jdbcType=INTEGER} OR uc.end_time <![CDATA[<]]> now( ) )
     </if>
+    order by c.discount desc
   </select>
 
   <select id="getVoListByFilter" resultMap="VoResultMap">

@@ -34,7 +34,7 @@ public class MallFlashItemServiceTest {
      */
     @Test
     public void insert() {
-        for (int i = 1; i <= 114; i+=6) {
+        for (int i = 1; i <= 108; i+=6) {
             insertByFlashId(i);
         }
     }

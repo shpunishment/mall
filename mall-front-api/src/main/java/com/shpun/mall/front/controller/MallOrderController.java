@@ -130,6 +130,11 @@ public class MallOrderController {
 
         if (CollectionUtils.isNotEmpty(orderVoPageInfo.getList())) {
             orderVoPageInfo.getList().forEach(orderVo -> {
+                // 待支付订单，返回订单结束时间
+                if (MallOrderStatusEnums.WAIT2PAY.getValue().equals(orderVo.getStatus())) {
+                    orderVo.setEndTime(new Date(orderVo.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT));
+                }
+
                 List<MallOrderItemVo> orderItemVoList = orderItemService.getLimitVoListByOrderId(orderVo.getOrderId());
                 orderVo.setOrderItemVoList(orderItemVoList);
             });
@@ -167,7 +172,7 @@ public class MallOrderController {
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "orderId", value = "订单id", dataType = "Integer")
     })
-    @PostMapping("/close/{orderId}")
+    @GetMapping("/close/{orderId}")
     public void closeOrder(@PathVariable("orderId") @Min(1) @Max(2147483647) Integer orderId) {
         orderService.closeOrder(orderId, SecurityUserUtils.getUserId());
 
@@ -202,7 +207,7 @@ public class MallOrderController {
         return orderVoPageInfo;
     }
 
-    @ApiModelProperty("支付订单")
+    @ApiOperation("支付订单")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "orderId", value = "订单id", dataType = "String"),
             @ApiImplicitParam(name = "payType", value = "支付方式，1支付宝，2微信", dataType = "Integer")
@@ -212,19 +217,29 @@ public class MallOrderController {
                          @RequestParam("payType") @Min(1) @Max(2) Integer payType,
                          HttpServletResponse response) {
         MallOrder order = orderService.selectByPrimaryKey(orderId);
-        if (!SecurityUserUtils.getUserId().equals(order.getUserId())) {
+        if (SecurityUserUtils.getUserId().equals(order.getUserId())) {
+            // 判断是否关闭
+            if (MallOrderStatusEnums.CLOSE.getValue().equals(order.getStatus())){
+                throw new MallException(MallError.MallErrorEnum.ORDER_CLOSE);
+
+            }
+            // 判断是否超时
+            if (new Date(order.getOrderTime().getTime() + Const.DEFAULT_ORDER_TIMEOUT).before(new Date())) {
+                throw new MallException(MallError.MallErrorEnum.ORDER_TIMEOUT);
+            }
+
+            order.setPayType(payType);
+            orderService.payOrder(order, response);
+        } else {
             throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
-
-        order.setPayType(payType);
-        orderService.payOrder(order, response);
     }
 
     @ApiOperation("评价订单")
     @PostMapping("/comment")
     public void comment(@RequestBody @Validated(MallOrder.Comment.class) MallOrder order) {
         MallOrder isExist = orderService.selectByPrimaryKey(order.getOrderId());
-        if (SecurityUserUtils.getUserId().equals(isExist.getUserId())) {
+        if (SecurityUserUtils.getUserId().equals(isExist.getUserId()) && MallOrderStatusEnums.WAIT2COMMENT.getValue().equals(isExist.getStatus())) {
             orderService.commentSuccess(order);
 
             // 删除订单缓存

@@ -63,8 +63,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                // /login 为登录url
+                // 开放登录和注册
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/user/register").permitAll()
                 // 以下需要任何身份验证
                 .antMatchers("/api/cart/**","/api/order/**","/api/user/**").authenticated()
                 // 其他请求通过

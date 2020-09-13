@@ -22,7 +22,9 @@ public class MallError {
         USERNAME_EXIST(1012, "用户名 %s 已存在！"),
         OLD_PASSWORD_ERROR(1013, "原密码错误！"),
         ACTIVITY_NOT_FOUND(1014, "活动不存在！"),
-        TRANSACTION_ERROR(1015, "支付失败！")
+        TRANSACTION_ERROR(1015, "支付失败！"),
+        ORDER_TIMEOUT(1016, "订单已超时！"),
+        ORDER_CLOSE(1017, "订单已关闭！"),
         ;
 
         private Integer code;
