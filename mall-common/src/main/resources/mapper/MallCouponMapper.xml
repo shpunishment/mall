@@ -307,13 +307,10 @@
   <select id="getForOrder" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     SELECT
 	 min_price, discount, use_type
-    FROM
-	  mall_user_coupon AS uc
-	  LEFT JOIN mall_coupon AS c ON c.coupon_id = uc.coupon_id
-    WHERE uc.coupon_id = #{couponId,jdbcType=INTEGER}
-	  AND uc.`status` = 1
-	  AND c.deleted = 0
-	  AND c.`status` = 1
+    FROM mall_coupon
+    WHERE coupon_id = #{couponId,jdbcType=INTEGER}
+	  AND `status` = 1
+	  AND deleted = 0
   </select>
 
   <select id="getNewUserCouponId" resultType="java.lang.Integer">

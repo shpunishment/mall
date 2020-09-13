@@ -355,6 +355,7 @@
     <if test="status != null">
       and `status` = #{status,jdbcType=INTEGER}
     </if>
+    order by order_time desc
   </select>
 
   <select id="getDetailVo" resultMap="VoResultMap">

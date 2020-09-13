@@ -42,7 +42,7 @@ public class AlipayConfig {
     public AlipayTradeWapPayResponse pay(String outTradeNo, String totalAmount) {
         AlipayTradeWapPayResponse response;
         try {
-            response = Factory.Payment.Wap().pay(Const.PAY_SUBJECT, outTradeNo, totalAmount, buildUrl("/api/open/quit"), buildUrl("/api/open/callback"));
+            response = Factory.Payment.Wap().pay(Const.PAY_SUBJECT, outTradeNo, totalAmount, buildUrl("/api/open/pay/quit"), buildUrl("/api/open/pay/callback"));
         } catch (Exception e) {
             logger.error("订单编号： {} 交易异常！", outTradeNo);
             throw new RuntimeException(e.getMessage(), e);

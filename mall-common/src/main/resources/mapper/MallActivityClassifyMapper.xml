@@ -18,6 +18,7 @@
     <id column="classify_id" jdbcType="INTEGER" property="classifyId" />
     <result column="classify_name" jdbcType="VARCHAR" property="classifyName" />
     <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
   </resultMap>
 
   <sql id="Base_Column_List">
@@ -163,10 +164,16 @@
   </update>
 
   <select id="getVoByActivityId" parameterType="java.lang.Integer" resultMap="VoResultMap">
-    SELECT classify_id, classify_name
-    FROM mall_activity_classify
-    WHERE activity_id = #{activityId,jdbcType=INTEGER}
-	  AND deleted = 0
+    SELECT
+	  ac.classify_id,
+	  ac.classify_name,
+	  a.`name` AS activity_name
+    FROM mall_activity_classify AS ac
+	  LEFT JOIN mall_activity AS a ON a.activity_id = ac.activity_id
+    WHERE ac.activity_id = #{activityId,jdbcType=INTEGER}
+	  AND ac.deleted = 0
+	  AND a.`status` = 1
+	  AND a.deleted = 0
   </select>
 
 </mapper>

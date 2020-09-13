@@ -223,11 +223,15 @@ public class MallOrderController {
     @ApiOperation("评价订单")
     @PostMapping("/comment")
     public void comment(@RequestBody @Validated(MallOrder.Comment.class) MallOrder order) {
-        // todo 校验：订单是否属于该用户
-        orderService.commentSuccess(order);
+        MallOrder isExist = orderService.selectByPrimaryKey(order.getOrderId());
+        if (SecurityUserUtils.getUserId().equals(isExist.getUserId())) {
+            orderService.commentSuccess(order);
 
-        // 删除订单缓存
-        orderService.deleteCache(SecurityUserUtils.getUserId());
+            // 删除订单缓存
+            orderService.deleteCache(SecurityUserUtils.getUserId());
+        } else {
+            throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
+        }
     }
 
 }

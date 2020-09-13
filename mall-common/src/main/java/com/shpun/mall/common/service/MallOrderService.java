@@ -64,7 +64,7 @@ public interface MallOrderService {
 
     /**
      * 生成订单
-     * @param order 需要用户id，地址id，订单备注，期望送达时间，支付方式，
+     * @param order 需要用户id，地址id，优惠券(可选)，订单备注，期望送达时间，支付方式，
      * @param cartIdList
      * @return
      */

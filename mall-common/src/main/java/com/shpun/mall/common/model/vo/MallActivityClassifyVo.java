@@ -23,6 +23,9 @@ public class MallActivityClassifyVo implements Serializable {
     @ApiModelProperty("活动id")
     private Integer activityId;
 
+    @ApiModelProperty("活动名称")
+    private String activityName;
+
     @ApiModelProperty("商品列表")
     private List<MallProductVo> productVoList;
 
@@ -50,6 +53,14 @@ public class MallActivityClassifyVo implements Serializable {
 
     public void setActivityId(Integer activityId) {
         this.activityId = activityId;
+    }
+
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
     }
 
     public List<MallProductVo> getProductVoList() {

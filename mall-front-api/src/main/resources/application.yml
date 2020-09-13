@@ -4,6 +4,9 @@ server:
   servlet:
     context-path: /mall
 
+mall:
+  ip: localhost
+
 mybatis:
   typeAliasesPackage: com.shpun.mall.db.model
   mapper-locations: classpath:mapper/**.xml
