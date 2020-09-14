@@ -65,7 +65,7 @@ public class MallOpenController {
 
     @ApiModelProperty("支付中断，callback")
     @GetMapping("/pay/quit")
-    public ModelAndView quitCallback(HttpServletRequest request) {
+    public ModelAndView quitCallback() {
         StringBuilder redirectUrlSb = new StringBuilder("http://")
                 .append(ip)
                 .append(":")

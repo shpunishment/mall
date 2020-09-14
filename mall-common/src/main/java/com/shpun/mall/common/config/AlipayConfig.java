@@ -20,6 +20,9 @@ public class AlipayConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(AlipayConfig.class);
 
+    @Value("${mall.ip:}")
+    private String ip;
+
     @Value("${server.port:}")
     private String port;
 
@@ -88,7 +91,12 @@ public class AlipayConfig {
     }
 
     private String buildUrl(String path) {
-        StringBuilder urlSb = new StringBuilder("http://localhost:").append(port).append(contextPath).append(path);
+        StringBuilder urlSb = new StringBuilder("http://")
+                .append(ip)
+                .append(":")
+                .append(port)
+                .append(contextPath)
+                .append(path);
         return urlSb.toString();
     }
 
