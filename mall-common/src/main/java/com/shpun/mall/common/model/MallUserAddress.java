@@ -50,7 +50,7 @@ public class MallUserAddress implements Serializable {
     private String phone;
 
     @NotBlank(groups = { Add.class, Update.class })
-    @Length(min = 5, max = 100, groups = { Add.class, Update.class })
+    @Length(min = 1, max = 100, groups = { Add.class, Update.class })
     @ApiModelProperty("收货地址")
     private String address;
 

@@ -99,6 +99,6 @@ public class JwtLoginAuthenticationFilter extends UsernamePasswordAuthentication
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write(JSON.toJSONString(MallResultVo.failure(Const.API_RETRUN_CODE_AUTHENTICATION_FAIL, "未认证通过，请登录！")));
+        response.getWriter().write(JSON.toJSONString(MallResultVo.failure(Const.API_RETRUN_CODE_AUTHENTICATION_FAIL, "用户名或密码错误，请重新登录！")));
     }
 }

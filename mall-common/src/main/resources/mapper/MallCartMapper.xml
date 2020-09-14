@@ -178,8 +178,7 @@
 	  AND p.publish_status = 1
 	  AND p.stock > 0
     ORDER BY
-	  c.update_time DESC,
-	  c.create_time DESC
+	  c.update_time DESC
   </select>
 
   <select id="getNoStockVoList" parameterType="java.lang.Integer" resultMap="com.shpun.mall.common.mapper.MallProductMapper.VoResultMap">
@@ -207,8 +206,7 @@
 	  AND p.publish_status = 1
 	  AND p.stock = 0
     ORDER BY
-	  c.update_time DESC,
-	  c.create_time DESC
+	  c.update_time DESC
   </select>
 
   <select id="getVoByUserIdAndProductId" resultMap="VoResultMap">

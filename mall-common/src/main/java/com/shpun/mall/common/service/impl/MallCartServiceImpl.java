@@ -49,6 +49,7 @@ public class MallCartServiceImpl implements MallCartService {
         // 添加购物车前，检查商品的库存和限购
         if (productService.checkProduct(record.getProductId(), record.getQuantity()) != null) {
             record.setCreateTime(new Date());
+            record.setUpdateTime(new Date());
             cartMapper.insertSelective(record);
 
             // 清空缓存
