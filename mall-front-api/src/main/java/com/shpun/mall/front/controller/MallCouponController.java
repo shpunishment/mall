@@ -3,25 +3,19 @@ package com.shpun.mall.front.controller;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
-import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.vo.MallCouponVo;
-import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallCouponService;
-import com.shpun.mall.common.service.MallUserCouponService;
 import com.shpun.mall.front.security.SecurityUserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -36,9 +30,6 @@ public class MallCouponController {
 
     @Autowired
     private MallCouponService couponService;
-
-    @Autowired
-    private MallUserCouponService userCouponService;
 
     @ApiOperation("分页获取可领取优惠券")
     @ApiImplicitParams(value = {

@@ -51,6 +51,7 @@ public class MallCartServiceImpl implements MallCartService {
             record.setCreateTime(new Date());
             cartMapper.insertSelective(record);
 
+            // 清空缓存
             this.deleteCache(record.getUserId());
         }
     }
@@ -67,6 +68,7 @@ public class MallCartServiceImpl implements MallCartService {
             record.setUpdateTime(new Date());
             cartMapper.updateByPrimaryKeySelective(record);
 
+            // 清空缓存
             this.deleteCache(record.getUserId());
         }
     }
@@ -82,6 +84,8 @@ public class MallCartServiceImpl implements MallCartService {
             } else {
                 if (cart.getQuantity() == 0) {
                     this.deleteByPrimaryKey(isExist.getCartId());
+                    // 清空缓存
+                    this.deleteCache(cart.getUserId());
                 } else {
                     this.updateByPrimaryKeySelective(cart);
                 }
@@ -94,6 +98,8 @@ public class MallCartServiceImpl implements MallCartService {
                 cart.setCartId(isExist.getCartId());
                 if (cart.getQuantity() == 0) {
                     this.deleteByPrimaryKey(isExist.getCartId());
+                    // 清空缓存
+                    this.deleteCache(cart.getUserId());
                 } else {
                     this.updateByPrimaryKeySelective(cart);
                 }

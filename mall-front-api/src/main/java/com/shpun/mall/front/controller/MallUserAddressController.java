@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -85,7 +84,6 @@ public class MallUserAddressController {
         if (!userAddress.getUserId().equals(SecurityUserUtils.getUserId())) {
             throw new MallException(MallError.MallErrorEnum.INTERNAL_SYSTEM_ERROR);
         }
-
         return userAddressService.getVoByAddressId(addressId);
     }
 

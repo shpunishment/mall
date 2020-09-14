@@ -2,7 +2,6 @@ package com.shpun.mall.front.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.model.MallCart;
-import com.shpun.mall.common.model.vo.MallCartVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallCartService;
 import com.shpun.mall.common.service.MallProductService;
@@ -11,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -71,6 +69,9 @@ public class MallCartController {
     @GetMapping("/clear")
     public void clear() {
         cartService.deleteAllByUserId(SecurityUserUtils.getUserId());
+
+        // 删除购物车缓存
+        cartService.deleteCache(SecurityUserUtils.getUserId());
     }
 
 }

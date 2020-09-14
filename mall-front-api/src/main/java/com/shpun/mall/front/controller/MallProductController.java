@@ -4,7 +4,6 @@ import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.enums.MallCouponUseTypeEnums;
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
-import com.shpun.mall.common.model.MallCoupon;
 import com.shpun.mall.common.model.MallUserFootprint;
 import com.shpun.mall.common.model.vo.MallCouponVo;
 import com.shpun.mall.common.model.vo.MallFlashVo;
@@ -51,9 +50,6 @@ public class MallProductController {
 
     @Autowired
     private MallFlashItemService flashItemService;
-
-    @Autowired
-    private MallUserCouponService userCouponService;
 
     @ApiOperation("根据商品二级分类id分页获取商品")
     @ApiImplicitParams(value = {

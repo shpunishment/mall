@@ -66,11 +66,11 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void deleteByPrefix(Class cls, String methodName, Object... params) {
+    public void deleteByPrefix(Class<?> cls, String methodName, Object... params) {
         if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
             StringBuilder prefixSb = new StringBuilder(Const.REDIS_KEY_PREFIX)
                     .append(Const.REDIS_KEY_DELIMITER)
-                    .append(cls.toString().split("@")[0]);
+                    .append(cls.getName());
 
             if (methodName != null) {
                 prefixSb.append(Const.REDIS_KEY_DELIMITER)
@@ -84,7 +84,7 @@ public class RedisServiceImpl implements RedisService {
                 }
             }
 
-            this.deleteByPrefix(prefixSb.toString());
+            this.deleteByPrefix(prefixSb.toString() + "*");
         }
     }
 

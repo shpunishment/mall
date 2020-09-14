@@ -2,10 +2,7 @@ package com.shpun.mall.front.controller;
 
 import com.shpun.mall.common.exception.MallError;
 import com.shpun.mall.common.exception.MallException;
-import com.shpun.mall.common.model.MallActivity;
-import com.shpun.mall.common.model.MallActivityClassify;
 import com.shpun.mall.common.model.vo.MallActivityClassifyVo;
-import com.shpun.mall.common.model.vo.MallActivityVo;
 import com.shpun.mall.common.model.vo.MallProductVo;
 import com.shpun.mall.common.service.MallActivityClassifyProductService;
 import com.shpun.mall.common.service.MallActivityClassifyService;

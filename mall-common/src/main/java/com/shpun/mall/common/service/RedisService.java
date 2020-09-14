@@ -21,7 +21,7 @@ public interface RedisService {
 
     void deleteByPrefix(String prefix);
 
-    void deleteByPrefix(Class cls, String methodName, Object...params);
+    void deleteByPrefix(Class<?> cls, String methodName, Object...params);
 
     void zAdd(String key, Object value, Double score);
 

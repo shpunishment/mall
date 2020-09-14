@@ -3,7 +3,6 @@ package com.shpun.mall.front.controller;
 import com.github.pagehelper.PageInfo;
 import com.shpun.mall.common.common.Const;
 import com.shpun.mall.common.enums.MallUserSearchHistoryTypeEnums;
-import com.shpun.mall.common.model.MallActivity;
 import com.shpun.mall.common.model.vo.*;
 import com.shpun.mall.common.service.*;
 import com.shpun.mall.front.security.SecurityUserUtils;
