@@ -95,24 +95,25 @@ public class MallOrderController {
         orderService.generateOrder(order, orderVo.getCartIdList());
 
         if (order.getOrderId() != null) {
-            // 支付订单
-            orderService.payOrder(order, response);
+            // 删除购物车缓存
+            cartService.deleteCache(SecurityUserUtils.getUserId());
+            // 删除商品缓存
+            productService.deleteCache();
+            // 删除限时抢购缓存
+            flashItemService.deleteCache();
+            // 删除订单缓存
+            orderService.deleteCache(SecurityUserUtils.getUserId());
+            // 删除用户优惠券缓存
+            userCouponService.deleteCache(SecurityUserUtils.getUserId());
+
             if (Const.PROFILE_PROD.equals(profileConfig.getActiveProfile())) {
                 // 添加订单超时延迟队列
                 orderService.zAddOrderTimeout(SecurityUserUtils.getUserId(), order.getOrderId(), order.getOrderTime());
             }
-        }
 
-        // 删除购物车缓存
-        cartService.deleteCache(SecurityUserUtils.getUserId());
-        // 删除商品缓存
-        productService.deleteCache();
-        // 删除限时抢购缓存
-        flashItemService.deleteCache();
-        // 删除订单缓存
-        orderService.deleteCache(SecurityUserUtils.getUserId());
-        // 删除用户优惠券缓存
-        userCouponService.deleteCache(SecurityUserUtils.getUserId());
+            // 支付订单
+            orderService.payOrder(order, response);
+        }
     }
 
     @ApiOperation("分页获取订单")

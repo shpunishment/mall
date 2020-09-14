@@ -25,6 +25,7 @@ public class MallError {
         TRANSACTION_ERROR(1015, "支付失败！"),
         ORDER_TIMEOUT(1016, "订单已超时！"),
         ORDER_CLOSE(1017, "订单已关闭！"),
+        CART_PRODUCT_NULL(1018, "购物车商品为空！"),
         ;
 
         private Integer code;

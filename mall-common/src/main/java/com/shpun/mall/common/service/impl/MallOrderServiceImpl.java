@@ -278,157 +278,161 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public void generateOrder(MallOrder order, List<Integer> cartIdList) {
         if (CollectionUtils.isNotEmpty(cartIdList)) {
-            // 订单地址
-            this.setAddress(order);
-
             List<MallCart> cartList = cartService.getByUserIdAndCartIdList(order.getUserId(), cartIdList);
-            List<MallProduct> productList = new ArrayList<>(cartList.size());
-            List<MallFlashItem> flashItemList = new ArrayList<>(cartList.size());
-            List<MallOrderItem> orderItemList = new ArrayList<>(cartList.size());
-            BigDecimal productPrice = new BigDecimal("0.00");
+            if (CollectionUtils.isNotEmpty(cartList)) {
+                // 订单地址
+                this.setAddress(order);
 
-            // 判断优惠券是否可用，获取优惠券中规定的分类id、商品id
-            Integer couponId = order.getCouponId();
-            BigDecimal meetPrice = new BigDecimal("0.00");
-            MallCoupon coupon = null;
-            MallUserCoupon userCoupon = null;
-            Integer useType = null;
-            Set<Integer> meetIdSet = null;
-            boolean canUseCoupon = false;
-            if (couponId != null) {
-                coupon = couponService.getForOrder(couponId);
-                userCoupon = userCouponService.canUse(order.getUserId(), couponId);
-                if (coupon != null && userCoupon != null) {
-                    canUseCoupon = true;
-                    useType = coupon.getUseType();
-                    if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType)) {
-                        List<Integer> classifyIdList = couponService.getClassifyIdList(couponId);
-                        meetIdSet = new HashSet<>(classifyIdList);
-                    } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType)) {
-                        List<Integer> productIdList = couponService.getProductIdList(couponId);
-                        meetIdSet = new HashSet<>(productIdList);
+                List<MallProduct> productList = new ArrayList<>(cartList.size());
+                List<MallFlashItem> flashItemList = new ArrayList<>(cartList.size());
+                List<MallOrderItem> orderItemList = new ArrayList<>(cartList.size());
+                BigDecimal productPrice = new BigDecimal("0.00");
+
+                // 判断优惠券是否可用，获取优惠券中规定的分类id、商品id
+                Integer couponId = order.getCouponId();
+                BigDecimal meetPrice = new BigDecimal("0.00");
+                MallCoupon coupon = null;
+                MallUserCoupon userCoupon = null;
+                Integer useType = null;
+                Set<Integer> meetIdSet = null;
+                boolean canUseCoupon = false;
+                if (couponId != null) {
+                    coupon = couponService.getForOrder(couponId);
+                    userCoupon = userCouponService.canUse(order.getUserId(), couponId);
+                    if (coupon != null && userCoupon != null) {
+                        canUseCoupon = true;
+                        useType = coupon.getUseType();
+                        if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType)) {
+                            List<Integer> classifyIdList = couponService.getClassifyIdList(couponId);
+                            meetIdSet = new HashSet<>(classifyIdList);
+                        } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType)) {
+                            List<Integer> productIdList = couponService.getProductIdList(couponId);
+                            meetIdSet = new HashSet<>(productIdList);
+                        }
                     }
                 }
-            }
 
-            Integer productAmount = 0;
+                // 订单商品总量
+                Integer productAmount = 0;
+                for(MallCart cart : cartList) {
+                    Integer productId = cart.getProductId();
+                    Integer quantity = cart.getQuantity();
+                    productAmount += quantity;
 
-            for(MallCart cart : cartList) {
-                Integer productId = cart.getProductId();
-                Integer quantity = cart.getQuantity();
-                productAmount += quantity;
+                    // 锁定商品库存
+                    MallProduct product = productService.lockStock(productId);
+                    if (product.getPublishStatus() == 1) {
+                        Integer stock;
+                        BigDecimal unitPrice;
 
-                // 锁定商品库存
-                MallProduct product = productService.lockStock(productId);
-                if (product.getPublishStatus() == 1) {
-                    Integer stock;
-                    BigDecimal unitPrice;
-
-                    // 判断当前商品是否限时抢购
-                    boolean flashing = false;
-                    MallFlashItem flashItemTemp = flashItemService.getFlashByProductId(product.getProductId());
-                    MallFlashItem flashItem = null;
-                    if (flashItemTemp != null) {
-                        flashing = true;
-                        // 锁定限时抢购商品库存
-                        flashItem = flashItemService.lockStock(flashItemTemp.getFlashItemId());
-                        stock = flashItem.getStock();
-                        unitPrice = flashItem.getPrice();
-                    } else {
-                        stock = product.getStock();
-                        unitPrice = product.getCurrentPrice();
-                    }
-
-                    if (stock < quantity) {
-                        throw new MallException(MallError.MallErrorEnum.STOCK_NULL.format(product.getProductName()));
-                    } else {
-                        // 减库存，加销量
-                        if (flashing) {
-                            flashItem.setStock(stock - quantity);
-                            flashItem.setSales(flashItem.getSales() + quantity);
-                            flashItemList.add(flashItem);
+                        // 判断当前商品是否限时抢购
+                        boolean flashing = false;
+                        MallFlashItem flashItemTemp = flashItemService.getFlashByProductId(product.getProductId());
+                        MallFlashItem flashItem = null;
+                        if (flashItemTemp != null) {
+                            flashing = true;
+                            // 锁定限时抢购商品库存
+                            flashItem = flashItemService.lockStock(flashItemTemp.getFlashItemId());
+                            stock = flashItem.getStock();
+                            unitPrice = flashItem.getPrice();
                         } else {
-                            product.setStock(stock - quantity);
-                            product.setSales(product.getSales() + quantity);
-                            productList.add(product);
+                            stock = product.getStock();
+                            unitPrice = product.getCurrentPrice();
                         }
 
-                        // 计算价格
-                        BigDecimal price = unitPrice.multiply(new BigDecimal(quantity));
-                        productPrice = productPrice.add(price);
+                        if (stock < quantity) {
+                            throw new MallException(MallError.MallErrorEnum.STOCK_NULL.format(product.getProductName()));
+                        } else {
+                            // 减库存，加销量
+                            if (flashing) {
+                                flashItem.setStock(stock - quantity);
+                                flashItem.setSales(flashItem.getSales() + quantity);
+                                flashItemList.add(flashItem);
+                            } else {
+                                product.setStock(stock - quantity);
+                                product.setSales(product.getSales() + quantity);
+                                productList.add(product);
+                            }
 
-                        // 优惠券不为空，并且商品非限时抢购
-                        if (canUseCoupon && coupon != null && useType != null && !flashing) {
-                            if (MallCouponUseTypeEnums.ALL.getValue().equals(useType)) {
-                                meetPrice = meetPrice.add(price);
-                            } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType) && meetIdSet != null) {
-                                // 判断商品的分类，是否存在于优惠券的分类中
-                                List<Integer> classifyIdList = productClassifyService.getClassifyIdByProductId(productId);
-                                List<Integer> meetClassifyIdList = classifyIdList.stream().filter(meetIdSet::contains).collect(Collectors.toList());
-                                if (CollectionUtils.isNotEmpty(meetClassifyIdList)) {
+                            // 计算价格
+                            BigDecimal price = unitPrice.multiply(new BigDecimal(quantity));
+                            productPrice = productPrice.add(price);
+
+                            // 优惠券不为空，并且商品非限时抢购
+                            if (canUseCoupon && coupon != null && useType != null && !flashing) {
+                                if (MallCouponUseTypeEnums.ALL.getValue().equals(useType)) {
                                     meetPrice = meetPrice.add(price);
-                                }
-                            } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType) && meetIdSet != null) {
-                                // 判断商品，是否存在于优惠券的商品中
-                                if (meetIdSet.contains(productId)) {
-                                    meetPrice = meetPrice.add(price);
+                                } else if (MallCouponUseTypeEnums.CLASSIFY.getValue().equals(useType) && meetIdSet != null) {
+                                    // 判断商品的分类，是否存在于优惠券的分类中
+                                    List<Integer> classifyIdList = productClassifyService.getClassifyIdByProductId(productId);
+                                    List<Integer> meetClassifyIdList = classifyIdList.stream().filter(meetIdSet::contains).collect(Collectors.toList());
+                                    if (CollectionUtils.isNotEmpty(meetClassifyIdList)) {
+                                        meetPrice = meetPrice.add(price);
+                                    }
+                                } else if (MallCouponUseTypeEnums.PRODUCT.getValue().equals(useType) && meetIdSet != null) {
+                                    // 判断商品，是否存在于优惠券的商品中
+                                    if (meetIdSet.contains(productId)) {
+                                        meetPrice = meetPrice.add(price);
+                                    }
                                 }
                             }
+
+                            // 订单商品
+                            MallOrderItem orderItem = new MallOrderItem();
+                            orderItem.setProductId(productId);
+                            orderItem.setProductName(product.getProductName());
+                            orderItem.setPic(product.getPic());
+                            orderItem.setPrice(unitPrice);
+                            orderItem.setQuantity(quantity);
+                            orderItem.setFlashItemId(flashing ? flashItem.getFlashItemId() : Const.DEFAULT_NO_FLASH_ITEM_ID);
+                            orderItemList.add(orderItem);
                         }
-
-                        // 订单商品
-                        MallOrderItem orderItem = new MallOrderItem();
-                        orderItem.setProductId(productId);
-                        orderItem.setProductName(product.getProductName());
-                        orderItem.setPic(product.getPic());
-                        orderItem.setPrice(unitPrice);
-                        orderItem.setQuantity(quantity);
-                        orderItem.setFlashItemId(flashing ? flashItem.getFlashItemId() : Const.DEFAULT_NO_FLASH_ITEM_ID);
-                        orderItemList.add(orderItem);
+                    } else {
+                        throw new MallException(MallError.MallErrorEnum.OFF_SHELF.format(product.getProductName()));
                     }
-                } else {
-                    throw new MallException(MallError.MallErrorEnum.OFF_SHELF.format(product.getProductName()));
                 }
-            }
 
-            // 删除购物车
-            cartService.deleteBatch(cartIdList);
-            // 更新商品，减库存，加销量
-            productService.updateBatch(productList);
-            // 更新限时抢购商品，减库存，加销量
-            flashItemService.updateBatch(flashItemList);
+                // 删除购物车
+                cartService.deleteBatch(cartIdList);
+                // 更新商品，减库存，加销量
+                productService.updateBatch(productList);
+                // 更新限时抢购商品，减库存，加销量
+                flashItemService.updateBatch(flashItemList);
 
-            // 计算价格
-            BigDecimal discount = null;
-            if (canUseCoupon && coupon != null) {
-                BigDecimal minPrice = coupon.getMinPrice();
-                if (meetPrice.compareTo(minPrice) > -1) {
-                    order.setCouponId(couponId);
-                    discount = coupon.getDiscount();
+                // 计算价格
+                BigDecimal discount = null;
+                if (canUseCoupon && coupon != null) {
+                    BigDecimal minPrice = coupon.getMinPrice();
+                    if (meetPrice.compareTo(minPrice) > -1) {
+                        order.setCouponId(couponId);
+                        discount = coupon.getDiscount();
+                    }
                 }
-            }
-            this.setPrice(order, productPrice, discount);
+                this.setPrice(order, productPrice, discount);
 
-            String orderNumber = generateOrderNumber();
-            order.setOrderNumber(orderNumber);
-            order.setOrderTime(new Date());
-            order.setProductAmount(productAmount);
-            orderMapper.insertSelective(order);
+                String orderNumber = generateOrderNumber();
+                order.setOrderNumber(orderNumber);
+                order.setOrderTime(new Date());
+                order.setProductAmount(productAmount);
+                orderMapper.insertSelective(order);
 
-            // 用户优惠券更新
-            if (canUseCoupon && userCoupon != null) {
-                userCoupon.setStatus(MallUserCouponStatusEnums.USED.getValue());
-                userCoupon.setUseTime(new Date());
-                userCoupon.setOrderId(order.getOrderId());
-                userCouponService.updateByPrimaryKeySelective(userCoupon);
-            }
+                // 用户优惠券更新
+                if (canUseCoupon && userCoupon != null) {
+                    userCoupon.setStatus(MallUserCouponStatusEnums.USED.getValue());
+                    userCoupon.setUseTime(new Date());
+                    userCoupon.setOrderId(order.getOrderId());
+                    userCouponService.updateByPrimaryKeySelective(userCoupon);
+                }
 
-            // 订单商品
-            for(MallOrderItem orderItem : orderItemList) {
-                orderItem.setOrderId(order.getOrderId());
-                orderItem.setOrderNumber(orderNumber);
+                // 订单商品
+                for(MallOrderItem orderItem : orderItemList) {
+                    orderItem.setOrderId(order.getOrderId());
+                    orderItem.setOrderNumber(orderNumber);
+                }
+                orderItemService.insertBatch(orderItemList);
+            } else {
+                throw new MallException(MallError.MallErrorEnum.CART_PRODUCT_NULL);
             }
-            orderItemService.insertBatch(orderItemList);
         } else {
             throw new MallException(MallError.MallErrorEnum.CART_NULL);
         }
