@@ -16,7 +16,7 @@ public class MallFileServerServiceTest {
     @Autowired
     private MallFileServerService fileServerService;
 
-    private String projectPath = "E:\\IDEA-workspace\\mall";
+    private String projectPath = "E:\\IDEA_workspace\\mall";
 
     @Test
     public void insert() {
@@ -40,13 +40,13 @@ public class MallFileServerServiceTest {
      */
     @Test
     public void insertFirstClassify() {
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\水果.png");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\蔬菜.png");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\肉禽蛋.png");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\海鲜水产.png");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\水果.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\蔬菜.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\肉禽蛋.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\海鲜水产.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\粮油调味.png");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\熟食卤味.png");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\冰品面包.png");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\熟食卤味.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\冰品面包.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\牛奶面包.png");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\一级分类\\酒水冲饮.png");
     }
@@ -93,7 +93,7 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\蔬菜\\宁夏小白菜.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\蔬菜\\连江管坂空心菜.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\蔬菜\\油面筋.jpg");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\蔬菜\\卤水豆腐.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\蔬菜\\卤水豆腐.png");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\蔬菜\\日本豆腐.jpg");
     }
 
@@ -135,7 +135,7 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\香米.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\葵花籽油.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\螺蛳粉.jpg");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\芝麻油.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\芝麻油.png");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\沙茶酱.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\味精.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\粮油调味\\绿豆.jpg");
@@ -216,7 +216,7 @@ public class MallFileServerServiceTest {
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\切糕.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\夏威夷果.jpg");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\鳕鱼棒.jpg");
-        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\果汁软糖.jpg");
+        fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\果汁软糖.png");
         fileServerService.saveLocalFile(projectPath + "\\pictures\\休闲零食\\冰糖杨梅.jpg");
     }
 
