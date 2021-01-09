@@ -1,5 +1,5 @@
 # mall
-mall是商超类移动端web，项目采用SpringBoot+Vue开发，使用MySQL作为数据库，Redis作为缓存。
+mall 是商超类移动端web后端，项目采用SpringBoot+Vue开发，使用MySQL作为数据库，Redis作为缓存。
 
 前端项目：[mall-ui](https://github.com/SuSu-hst/mall-ui)
 
